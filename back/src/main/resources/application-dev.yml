@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:E:/monitor/main.db
+    driver-class-name: org.sqlite.JDBC
+
+baseDir: E:/monitor/
