@@ -1,5 +1,6 @@
 package nnu.edu.back.common.aspect;
 
+import lombok.extern.slf4j.Slf4j;
 import nnu.edu.back.common.config.DataSourceContextHolder;
 import nnu.edu.back.common.config.DynamicDataSource;
 import nnu.edu.back.common.exception.MyException;
@@ -28,6 +29,7 @@ import java.io.File;
 @Order(1)
 @Aspect
 @Component
+@Slf4j
 public class DynamicDataSourceAspect {
 
     @Value("${baseDir}")
@@ -59,12 +61,14 @@ public class DynamicDataSourceAspect {
         }
         // 切换数据源
         DataSourceContextHolder.setDataSourceKey(datasourceId);
-        System.out.println(DataSourceContextHolder.getDataSourceKey());
+        log.info(DataSourceContextHolder.getDataSourceKey());
     }
 
     @Before("execution(* nnu.edu.back.dao.main.*.*(..))")
     public void restoreDataSource() {
-        DataSourceContextHolder.clearDataSourceKey();
+        if (!DataSourceContextHolder.getDataSourceKey().equals("default")) {
+            DataSourceContextHolder.clearDataSourceKey();
+        }
     }
 
 }
