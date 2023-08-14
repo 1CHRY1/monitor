@@ -1,6 +1,7 @@
 spring:
   datasource:
-    jdbc-url: jdbc:sqlite:E:/2023_work/nhri/data/main.db
+    jdbc-url: jdbc:sqlite:E:/monitor/main.db
     driver-class-name: org.sqlite.JDBC
 
-baseDir: E:/2023_work/nhri/code
+baseDir: E:/monitor/
+avatarDir: E:/monitor/resources/avatar/
