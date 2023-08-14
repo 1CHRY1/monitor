@@ -4,6 +4,7 @@ import nnu.edu.back.pojo.Project;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,5 +22,7 @@ public interface ProjectService {
 
     void mergeMultipartFile(String key, int total);
 
-    Project createProject(String projectName, String avatar, String description, String institution, String location, String time);
+    Project createProject(String projectName, String avatar, String description, String institution, String location, String time, String type);
+
+    List<Project> pageQueryProject(String keyword, String type, int page, int size);
 }

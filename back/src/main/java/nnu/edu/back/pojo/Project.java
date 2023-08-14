@@ -22,4 +22,5 @@ public class Project {
     String institution;
     String location;
     String time;
+    String type;
 }

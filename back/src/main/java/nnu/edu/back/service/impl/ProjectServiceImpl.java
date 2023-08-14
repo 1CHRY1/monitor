@@ -15,6 +15,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -94,10 +95,15 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project createProject(String projectName, String avatar, String description, String institution, String location, String time) {
+    public Project createProject(String projectName, String avatar, String description, String institution, String location, String time, String type) {
         String id = UUID.randomUUID().toString();
-        Project project = new Project(id, projectName, avatar, description, institution, location, time);
+        Project project = new Project(id, projectName, avatar, description, institution, location, time, type);
         projectMapper.insertProject(project);
         return project;
+    }
+
+    @Override
+    public List<Project> pageQueryProject(String keyword, String type, int page, int size) {
+        return projectMapper.pageQuery(keyword, type, page, size);
     }
 }

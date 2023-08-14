@@ -4,6 +4,8 @@ import nnu.edu.back.pojo.Project;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  *
@@ -16,4 +18,6 @@ public interface ProjectMapper {
     Project queryById(@Param("id") String id);
 
     void insertProject(@Param("project") Project project);
+
+    List<Project> pageQuery(@Param("keyword") String keyword, @Param("type") String type, @Param("page") int page, @Param("start") int start);
 }

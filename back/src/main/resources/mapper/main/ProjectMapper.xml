@@ -9,6 +9,7 @@
         <result column="institution" property="institution" />
         <result column="location" property="location" />
         <result column="time" property="time" />
+        <result column="type" property="type" />
     </resultMap>
 
     <select id="queryById" resultMap="ProjectMap">
@@ -16,6 +17,14 @@
     </select>
 
     <insert id="insertProject">
-        insert into projects values(#{project.id}, #{project.projectName}, #{project.avatar}, #{project.description}, #{project.institution}, #{project.location}, #{project.time})
+        insert into projects values(#{project.id}, #{project.projectName}, #{project.avatar}, #{project.description}, #{project.institution}, #{project.location}, #{project.time}, #{project.type})
     </insert>
+
+    <select id="pageQuery" resultMap="ProjectMap">
+        select * from projects where type = #{type}
+        <if test="keyword != ''">
+            and project_name like #{keyword} or description like #{keyword} or institution like #{keyword} or location like #{keyword} or time like #{keyword}
+        </if>
+        limit #{size} offset #{start}
+    </select>
 </mapper>

@@ -25,6 +25,7 @@ public class ProjectController {
     @Autowired
     ProjectService projectService;
 
+    @AuthCheck
     @RequestMapping(value = "/createProject", method = RequestMethod.POST)
     public JsonResult createProject(@RequestBody JSONObject jsonObject) {
         String projectName = jsonObject.getString("projectName");
@@ -33,9 +34,11 @@ public class ProjectController {
         String institution = jsonObject.getString("institution");
         String location = jsonObject.getString("location");
         String time = jsonObject.getString("time");
-        return ResultUtils.success(projectService.createProject(projectName, avatar, description, institution, location, time));
+        String type = jsonObject.getString("type");
+        return ResultUtils.success(projectService.createProject(projectName, avatar, description, institution, location, time, type));
     }
 
+    @AuthCheck
     @RequestMapping(value = "/uploadAvatar", method = RequestMethod.POST)
     public JsonResult uploadAvatar(@RequestParam MultipartFile file) {
         return ResultUtils.success(projectService.uploadAvatar(file));
@@ -46,6 +49,7 @@ public class ProjectController {
         projectService.getAvatar(pictureName, response);
     }
 
+    @AuthCheck
     @RequestMapping(value = "/multipartUpload", method = RequestMethod.POST)
     public JsonResult multipartUpload(@RequestParam MultipartFile file, @RequestParam String key, @RequestParam String number) {
         projectService.multipartUpload(file, key, number);
@@ -60,4 +64,15 @@ public class ProjectController {
         projectService.mergeMultipartFile(key, total);
         return ResultUtils.success();
     }
+
+    @AuthCheck
+    @RequestMapping(value = "/pageQueryProject", method = RequestMethod.POST)
+    public JsonResult pageQueryProject(@RequestBody JSONObject jsonObject) {
+        String type = jsonObject.getString("type");
+        String keyword = jsonObject.getString("keyword");
+        int page = jsonObject.getIntValue("page");
+        int size = jsonObject.getIntValue("size");
+        return ResultUtils.success(projectService.pageQueryProject(keyword, type, page, size));
+    }
+
 }
