@@ -4,3 +4,4 @@ spring:
     driver-class-name: org.sqlite.JDBC
 
 baseDir: E:/monitor/
+avatarDir: E:/monitor/resources/avatar/
