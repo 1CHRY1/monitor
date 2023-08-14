@@ -14,4 +14,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProjectMapper {
     Project queryById(@Param("id") String id);
+
+    void insertProject(@Param("project") Project project);
 }
