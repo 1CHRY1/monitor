@@ -17,10 +17,16 @@ const constantRoutes: Array<RouteRecordRaw> = [
       import(/* webpackChunkName: "about" */ "@/views/RegisterView.vue"),
   },
   {
+    path: "/dataViewer",
+    name: "dataViewer",
+    component: () => import("@/views/DataView.vue"),
+  },
+  {
     path: "/login",
     name: "login",
     component: () => import("@/views/LoginView.vue"),
   },
+  
   {
     path: "/404",
     name: "404",
