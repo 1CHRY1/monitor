@@ -18,10 +18,16 @@ const constantRoutes: Array<RouteRecordRaw> = [
     component: () => import("@/views/RegisterView.vue"),
   },
   {
+    path: "/dataViewer",
+    name: "dataViewer",
+    component: () => import("@/views/DataView.vue"),
+  },
+  {
     path: "/login",
     name: "login",
     component: () => import("@/views/LoginView.vue"),
   },
+  
   {
     path: "/404",
     name: "404",
