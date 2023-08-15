@@ -5,3 +5,4 @@ spring:
 
 baseDir: E:/monitor/
 avatarDir: E:/monitor/resources/avatar/
+tempDir: E:/monitor/temp/

@@ -1,6 +1,8 @@
 package nnu.edu.back.pojo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,9 +12,15 @@ import lombok.Data;
  * @Description:
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Project {
     String id;
     String projectName;
     String avatar;
     String description;
+    String institution;
+    String location;
+    String time;
+    String type;
 }

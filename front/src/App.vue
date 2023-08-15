@@ -3,6 +3,9 @@
 </template>
 
 <style lang="scss">
+html {
+  font-size: 16px;
+}
 html,
 body {
   margin: 0px;

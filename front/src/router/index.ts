@@ -1,20 +1,21 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
-import HomeView from "../views/HomeView.vue";
 
 const constantRoutes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "home",
-    component: HomeView,
+    component: () => import("@/layout/Index.vue"),
+    children: [
+      {
+        path: "",
+        name: "home",
+        component: () => import("@/views/HomeView.vue"),
+      },
+    ],
   },
   {
     path: "/register",
     name: "register",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "@/views/RegisterView.vue"),
+    component: () => import("@/views/RegisterView.vue"),
   },
   {
     path: "/dataViewer",
@@ -24,7 +25,7 @@ const constantRoutes: Array<RouteRecordRaw> = [
   {
     path: "/login",
     name: "login",
-    component: () => import("@/views/LoginView.vue"),
+    component: () => import("@/views/LoginView.vue"), 
   },
   
   {
@@ -37,11 +38,21 @@ const constantRoutes: Array<RouteRecordRaw> = [
 export const asyncRouters: Array<RouteRecordRaw> = [
   {
     path: "/admin",
-    name: "admin",
-    component: () => import("@/views/AdminView.vue"),
-    meta: {
-      requiresAuth: "admin",
-    },
+    component: () => import("@/layout/Index.vue"),
+    children: [
+      {
+        path: "",
+        redirect: "/admin/project",
+      },
+      {
+        path: "project",
+        name: "project",
+        component: () => import("@/views/ProjectAdminView.vue"),
+        meta: {
+          requiresAuth: "admin",
+        },
+      },
+    ],
   },
   {
     path: "/:catchAll(.*)",
