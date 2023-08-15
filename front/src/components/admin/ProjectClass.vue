@@ -1,15 +1,39 @@
 <template>
   <div class="project-class">
     <div class="title">项目分类</div>
-    <div class="class-item">历史监测项目</div>
-    <div class="class-item">实时监测项目</div>
+    <div
+      :class="active === 0 ? 'class-item active' : 'class-item'"
+      @click="clickHandle(0)"
+    >
+      历史监测项目
+    </div>
+    <div
+      :class="active === 1 ? 'class-item active' : 'class-item'"
+      @click="clickHandle(1)"
+    >
+      实时监测项目
+    </div>
+    
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
+import { debounce } from "@/utils/common";
 export default defineComponent({
-  setup() {},
+  emits: ["changeType"],
+  setup(_, context) {
+    const active = ref(0);
+
+    const clickHandle = (val: number) => {
+      const handle = () => {
+        active.value = val;
+        context.emit("changeType", val);
+      };
+      debounce(handle, 100)();
+    };
+    return { active, clickHandle };
+  },
 });
 </script>
 
@@ -40,5 +64,10 @@ export default defineComponent({
       position: relative;
     }
   }
+  .active {
+    color: #ff7049;
+  }
+
+  
 }
 </style>

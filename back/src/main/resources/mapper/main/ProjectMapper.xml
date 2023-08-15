@@ -27,4 +27,11 @@
         </if>
         limit #{size} offset #{start}
     </select>
+
+    <select id="getPageCount" resultType="java.lang.Integer">
+        select count(*) from projects where type = #{type}
+        <if test="keyword != ''">
+            and project_name like #{keyword} or description like #{keyword} or institution like #{keyword} or location like #{keyword} or time like #{keyword}
+        </if>
+    </select>
 </mapper>

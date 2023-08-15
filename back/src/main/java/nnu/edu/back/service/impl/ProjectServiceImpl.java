@@ -15,7 +15,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -103,7 +105,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<Project> pageQueryProject(String keyword, String type, int page, int size) {
-        return projectMapper.pageQuery(keyword, type, page, size);
+    public Map<String, Object> pageQueryProject(String keyword, String type, int page, int size) {
+        int total = projectMapper.getPageCount(keyword, type);
+        List<Project> list = projectMapper.pageQuery(keyword, type, size, size * page);
+        Map<String, Object> map = new HashMap<>();
+        map.put("total", total);
+        map.put("list", list);
+        return map;
     }
 }

@@ -1,27 +1,40 @@
 <template>
   <div class="project-card">
     <div>
-      <img
-        src="https://www.casdc.cn/common/img/xkr/%E4%B8%AD%E5%9B%BD%E7%A7%91%E5%AD%A6%E9%99%A2%E7%A7%91%E5%AD%A6%E6%95%B0%E6%8D%AE%E6%80%BB%E4%B8%AD%E5%BF%83.png"
-      />
+      <img :src="'/monitor/project/getAvatar/' + projectInfo.avatar" />
     </div>
     <div class="text-info">
-      <div class="title">开源处理器小核RTL代码</div>
-      <div class="institution"><strong>施工单位：</strong>南科院</div>
-      <div class="location"><strong>施工地点：</strong>苏通二桥</div>
-      <div class="time"><strong>施工时间：</strong>2023年</div>
+      <div class="title">{{ projectInfo.projectName }}</div>
+      <div class="institution">
+        <strong>施工单位：</strong>{{ projectInfo.institution }}
+      </div>
+      <div class="location">
+        <strong>施工地点：</strong>{{ projectInfo.location }}
+      </div>
+      <div class="time"><strong>施工时间：</strong>{{ projectInfo.time }}</div>
       <div class="des">
-        <strong>简介：</strong
-        >为满足苏通二通道工可阶段研究要求，受华设设计有限公司委托，长江水利委员会水文局长江口水文水资源勘测局（以下简称长江口局）于2022年8月19日至8月28日在工程拟建水域组织开展了大、小两个代表潮的全潮工作。
+        <strong>简介：</strong>{{ projectInfo.description }}
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
+import { ProjectType } from "@/type";
 export default defineComponent({
-  setup() {},
+  props: {
+    projectInfo: {
+      type: Object as PropType<ProjectType>,
+    },
+  },
+  setup(props) {
+    const projectInfo = computed(() => {
+      return props.projectInfo;
+    });
+
+    return { projectInfo };
+  },
 });
 </script>
 
@@ -33,6 +46,7 @@ export default defineComponent({
   border-radius: 8px;
   margin-top: 2rem;
   display: flex;
+  cursor: pointer;
   img {
     width: 18rem;
     height: 12rem;

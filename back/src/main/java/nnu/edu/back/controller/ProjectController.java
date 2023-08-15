@@ -37,8 +37,7 @@ public class ProjectController {
         String type = jsonObject.getString("type");
         return ResultUtils.success(projectService.createProject(projectName, avatar, description, institution, location, time, type));
     }
-
-    @AuthCheck
+    
     @RequestMapping(value = "/uploadAvatar", method = RequestMethod.POST)
     public JsonResult uploadAvatar(@RequestParam MultipartFile file) {
         return ResultUtils.success(projectService.uploadAvatar(file));

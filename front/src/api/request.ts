@@ -30,6 +30,16 @@ export const createProject = async (jsonData: {
   institution: string;
   location: string;
   time: string;
+  type: string;
 }) => {
   return await post(`/project/createProject`, true, jsonData);
+};
+
+export const pageQueryProject = async (jsonData: {
+  type: string;
+  keyword: string;
+  page: number;
+  size: number;
+}) => {
+  return await post(`/project/pageQueryProject`, true, jsonData);
 };

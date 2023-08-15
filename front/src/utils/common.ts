@@ -20,3 +20,14 @@ export function getToken(): string | null {
 export function setToken(token: string): void {
   localStorage.setItem("zymtoken", token);
 }
+
+// 防抖
+export const debounce = (callback: () => void, time: number) => {
+  let timeout: number | null = null;
+  return () => {
+    if (timeout !== null) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      callback();
+    }, time);
+  };
+};

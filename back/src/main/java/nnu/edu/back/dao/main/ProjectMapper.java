@@ -19,5 +19,7 @@ public interface ProjectMapper {
 
     void insertProject(@Param("project") Project project);
 
-    List<Project> pageQuery(@Param("keyword") String keyword, @Param("type") String type, @Param("page") int page, @Param("start") int start);
+    List<Project> pageQuery(@Param("keyword") String keyword, @Param("type") String type, @Param("size") int size, @Param("start") int start);
+
+    int getPageCount(@Param("keyword") String keyword, @Param("type") String type);
 }

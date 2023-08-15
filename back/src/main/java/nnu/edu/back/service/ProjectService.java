@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,5 +25,5 @@ public interface ProjectService {
 
     Project createProject(String projectName, String avatar, String description, String institution, String location, String time, String type);
 
-    List<Project> pageQueryProject(String keyword, String type, int page, int size);
+    Map<String, Object> pageQueryProject(String keyword, String type, int page, int size);
 }
