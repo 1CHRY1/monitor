@@ -20,7 +20,7 @@ const constantRoutes: Array<RouteRecordRaw> = [
   {
     path: "/login",
     name: "login",
-    component: () => import("@/views/LoginView.vue"), 
+    component: () => import("@/views/LoginView.vue"),
   },
   {
     path: "/404",
@@ -30,6 +30,24 @@ const constantRoutes: Array<RouteRecordRaw> = [
 ];
 
 export const asyncRouters: Array<RouteRecordRaw> = [
+  {
+    path: "/resource",
+    component: () => import("@/layout/Index.vue"),
+    children: [
+      {
+        path: "",
+        redirect: "/resource/list",
+      },
+      {
+        path: "list",
+        name: "resourceList",
+        component: () => import("@/views/ResourceListView.vue"),
+        meta: {
+          requiresAuth: "admin",
+        },
+      },
+    ],
+  },
   {
     path: "/admin",
     component: () => import("@/layout/Index.vue"),

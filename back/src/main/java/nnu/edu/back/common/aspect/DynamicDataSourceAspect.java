@@ -64,10 +64,23 @@ public class DynamicDataSourceAspect {
         log.info(DataSourceContextHolder.getDataSourceKey());
     }
 
+    /**
+    * @Description:切换shp数据源
+    * @Author: Yiming
+    * @Date: 2023/8/15
+    */
+    @Before("execution(* nnu.edu.back.dao.shp.*.*(..))")
+    public void switchShpDataSource() {
+        if (!DataSourceContextHolder.getDataSourceKey().equals("shp")) {
+            DataSourceContextHolder.setDataSourceKey("shp");
+        }
+    }
+
+
     @Before("execution(* nnu.edu.back.dao.main.*.*(..))")
     public void restoreDataSource() {
         if (!DataSourceContextHolder.getDataSourceKey().equals("default")) {
-            DataSourceContextHolder.clearDataSourceKey();
+            DataSourceContextHolder.setDataSourceKey("default");
         }
     }
 

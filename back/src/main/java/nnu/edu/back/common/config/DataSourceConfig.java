@@ -31,10 +31,16 @@ public class DataSourceConfig {
      * @return
      */
     @Bean("defaultSource")
-    @ConfigurationProperties("spring.datasource")
+    @ConfigurationProperties("spring.datasource.default")
     public DataSource defaultSource() {
         return DataSourceBuilder.create().build();
     }
+
+
+    @Bean("shpSource")
+    @ConfigurationProperties("spring.datasource.shp")
+    public DataSource shpSource() { return DataSourceBuilder.create().build(); }
+
 
     /**
      * 自定义动态数据源
@@ -46,6 +52,7 @@ public class DataSourceConfig {
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
         Map<Object, Object> dataSourceMap = new HashMap<>();
         dataSourceMap.put("default", defaultSource());
+        dataSourceMap.put("shp", shpSource());
 
         // 默认数据源
         dynamicDataSource.setDefaultDataSource(defaultSource());

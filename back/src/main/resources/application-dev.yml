@@ -1,8 +1,15 @@
 spring:
   datasource:
-    jdbc-url: jdbc:sqlite:E:/monitor/main.db
-    driver-class-name: org.sqlite.JDBC
+    default:
+      jdbc-url: jdbc:sqlite:E:/monitor/main.db
+      driver-class-name: org.sqlite.JDBC
+    shp:
+      jdbc-url: jdbc:postgresql://localhost:5432/shp_dataset?stringtype=unspecified
+      driver-class-name: org.postgresql.Driver
+
 
 baseDir: E:/monitor/
 avatarDir: E:/monitor/resources/avatar/
 tempDir: E:/monitor/temp/
+visualDir: E:/monitor/visual/
+pgPath: D:/App/postgresql/bin/
