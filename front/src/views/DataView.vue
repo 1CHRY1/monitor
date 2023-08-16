@@ -1,23 +1,85 @@
 <template>
     <div class="viewer-header">
         <div class="logo-text">NHRI</div>
+        <div class="clock">
+            <p class="time">{{ curTime.toLocaleTimeString() }}</p>
+        </div>
         <div class="title-text-content">
             <div class="title-wrap-left">
-                <svg class="title-text-down">
-                    <path fill="#fff" fill-opacity="1" d="M 50 450 Q 200 450 200 300 Q 200 150 300 150 "></path>
+                <svg class="title-svg-left" x="0" y="0" width="100%" height="100%" viewBox="0 0 600 600" preserveAspectRatio="none">
+                    <path fill="rgb(6, 60, 112)" fill-opacity="1" d="M 600 0 Q 550 0 500 300 Q 450 600 0 600 L 600 600 Z"></path>
                 </svg>
             </div>
-            <div class="title-text">水沙观测一张图</div>
-            <div class="title-wrap-right"></div>
-            <!-- <div class="title-text-down"></div> -->
+            <div class="title-text">
+                <div class="title-text-up">水沙观测一张图</div>
+                <div class="title-text-bot">{{ currentProject?.name }}</div>
+            </div>
+            <div class="title-wrap-right">
+                <svg class="title-svg-right" x="0" y="0" width="100%" height="100%" viewBox="0 0 600 600" preserveAspectRatio="none">
+                    <path fill="rgb(6, 60, 112)" fill-opacity="1" d="M 0 0 Q 50 0 100 300 Q 150 600 600 600 L 0 600 Z"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="selector-container" :class="{active: expanded}">
+            <el-select v-model="currentProject" value-key="id" placeholder="请选择" size="large">
+                <el-option  
+                    v-for="item in projectOptions"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item"
+                />
+            </el-select>
+        </div>
+        <div class="selector-icon-container">
+            <div class="selector-icon" :class="expanded? 'squeeze' : 'expand'" @click="expandSelector"></div>
+            <!-- <div class="selector-icon squeeze" v-if="expanded"></div> -->
         </div>
     </div>
-    <div class="background">
-        <div class="base-map"></div>
+    <div class="content-container">
+        <div class="content-container-wrapper">
+            <div class="chart-container"></div>
+            <div class="chart-container"></div>
+            <div class="chart-container"></div>
+            <centerMap :mapId="mapIndex"></centerMap>
+            <div class="chart-container under-map"></div>
+            <div class="chart-container"></div>
+            <div class="chart-container"></div>
+            <div class="chart-container"></div>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import centerMap from '@/components/dataViewer/centerMap.vue';
+
+type ProjectOption = {
+    id: number;
+    name: string;
+}
+
+let projectOptions = ref([
+    {id: 1, name: '苏通二通道工可阶段水沙观测'},
+])
+
+let currentProject = ref<ProjectOption>(projectOptions.value[0]);
+
+let expanded = ref(false);
+
+let expandSelector = () => {
+    expanded.value = !expanded.value;
+}
+
+const curTime = ref(new Date());
+const updataTime = (): void => {
+    curTime.value = new Date();
+}
+
+let mapIndex = '0';
+
+onMounted(() => {
+    setInterval(updataTime, 1000);
+});
 
 </script>
 
@@ -25,11 +87,13 @@
 $header-height: 10vh;
 $content-height: calc(100vh - $header-height);
 $title-text-height: calc($header-height/2);
+$main-background-color: rgb(6, 60, 112);
 
 div.viewer-header {
     height: $header-height;
     width: 100vw;
-    background-color: rgb(12, 12, 54);
+    background-color: rgb(1, 15, 44);
+    overflow: hidden;
 
     div.logo-text {
         position: absolute;
@@ -47,6 +111,10 @@ div.viewer-header {
         background-repeat: repeat-x;
         background-image: url('../assets/sand-wave.png');
         animation: animate 15s linear infinite;
+
+        &:hover {
+            cursor: pointer;
+        }
     }
 
     @keyframes animate{
@@ -70,10 +138,45 @@ div.viewer-header {
         }
     }
 
+    div.clock {
+        text-align: center;
+        position: absolute;
+        left: 12vw;
+        top: 0;
+        line-height: 3vh;
+        p {
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 0.05em;
+            font-size: 3vh;
+            text-shadow: 
+                0 0.5px 0 #ccc, 
+                0 1px 0 #c9c9c9, 
+                0 1.5px 0 #bbb, 
+                0 2px 0 #b9b9b9, 
+                0 2.5px 0 #aaa, 
+                0 3px 0.5px rgba(0,0,0,.1), 
+                0 0 2.5px rgba(0,0,0,.1), 
+                0 0.5px 1.5px rgba(0,0,0,.3), 
+                0 1.5px 2.5px rgba(0,0,0,.2), 
+                0 2.5px 5px rgba(0,0,0,.25), 
+                0 5px 5px rgba(0,0,0,.2), 
+                0 10px 10px rgba(0,0,0,.15);
+        }
+
+        p {
+            width: 100%;
+            height: 100%;
+            line-height: 3vh;
+            text-align: center;
+            vertical-align: middle;
+        }
+    }
+
     div.title-text-content {
         display: flex;
         position: absolute;
-        width: 36vw;
+        width: fit-content;
         height: $header-height;
         margin: auto;
         left: 50%;
@@ -82,68 +185,175 @@ div.viewer-header {
         flex-flow: row nowrap;
         justify-content: center;
         overflow: hidden;
-        background-color: #1831c3;
+        background-color: rgb(1, 15, 44);
 
         div.title-wrap-left {
-            width: 6vw;
+            width: 4vw;
             height: $header-height;
-            background-color: #1831c3;
+            background-color: rgb(1, 15, 44);
             overflow: hidden;
+            box-shadow: 2px 0 0 1px $main-background-color;
 
-            // &::after {
-            //     position: absolute;
-            //     left: -3.6vw;
-            //     top: -$header-height;
-            //     width: 6vw;
-            //     height: $header-height;
-            //     content: '';
-            //     border-radius: 100%;
-            //     box-shadow: 0 0 0 7vw rgb(12, 12, 54);
-            //     overflow: hidden;
-            // }
+            .title-svg-left {
+                top: 0;
+                left: 0;
+                // width: 6vw;
+                width: 4vw;
+                height: $header-height;
+
+                // height: $header-height;
+                z-index: 10;
+            }
         }
         div.title-wrap-right {
-            width: 6vw;
+            width: 4vw;
             height: $header-height;
-            background-color: #1831c3;
+            background-color: rgb(1, 15, 44);
             overflow: hidden;
-
-            &::after {
-                position: absolute;
-                right: -3.6vw;
-                top: -$header-height;
-                width: 6vw;
+            box-shadow:inset 3px 0 0 -1px $main-background-color;
+            .title-svg-right {
+                top: 0;
+                left: 0;
+                // width: 6vw;
+                width: 4vw;
                 height: $header-height;
-                content: '';
-                border-radius: 100%;
-                box-shadow: 0 0 0 7vw rgb(12, 12, 54);
-                overflow: hidden;
+
+                // height: $header-height;
+                z-index: 10;
+
             }
         }
         
         div.title-text {
+            display: flex;
+            flex-flow: column nowrap;
+            justify-content: center;
             height: $header-height;
             width: fit-content;
             line-height: $header-height;
             text-align: center;
-            color: white;
-            font-size: 4vh;
+            color: rgb(202, 228, 228);
+            // font-size: 4vh;
             font-weight: 600;
             letter-spacing: 0.5vh;
             overflow: hidden;
-        
+            background-color: $main-background-color;
+
+            div.title-text-up {
+                font-size: 4vh;
+                line-height: $title-text-height;
+                height: $title-text-height;
+
+                background-image: linear-gradient(30deg, #ecfcff 0%, #b1feff 60%, #67fcff 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                -webkit-animation: hue 60s infinite linear;
+            }
+
+            div.title-text-bot {
+                font-size: 3vh;
+                line-height: $title-text-height;
+                height: $title-text-height;
+                font-weight: 400;
+
+                background-image: linear-gradient(30deg, #ffe4ae 0%, #d5af64 60%, #c89733 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                -webkit-animation: hue 60s infinite linear;
+            }
+            
+        }
+    }
+
+    div.selector-container {
+        position: absolute;
+        right: 2vw;
+        top: 0;
+        height: $header-height;
+        overflow: hidden;
+
+        .el-select {
+            margin-top: $title-text-height;
+            transform: translateY(-50%);
+            right: -20vw;
+            line-height: 2vh;
+            height: 2vh;
+            font-size: 1vh;
+            transition: 0.5s ease-in-out;
+        }
+
+        &.active {
+            .el-select {
+                transform: translate(-20vw, -50%);
+                transition: 0.5s ease-in-out;
+            }
+        }
+
+    }
+
+    div.selector-icon-container {
+        position: absolute;
+        right: 0;
+        top: $title-text-height;
+        transform: translateY(-50%);
+        height: 4vh;
+        width: 4vh;
+        // background-color: rgba(240, 248, 255, 0.484);
+
+        div.selector-icon {
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            height: 4vh;
+            width: 4vh;
+            transition: 0.5s ease-in-out;
+            background-image: url('../assets/arrow-left.png');
+
+            &:hover {
+                cursor: pointer;
+            }
+            &.squeeze {
+                transform: rotateY(180deg);
+            }
         }
     }
 }
-div.background{
+div.content-container{
     height: $content-height;
     width: 100vw;
-    background-color: #1831c3;
+    // background-color: $main-background-color;
+    background-image: linear-gradient(#051e449e 0%, #033a88d7 60%, #074aa7d7 100%) , url('../assets/gradient-bg3-rev.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
     z-index: 1;
-    div.base-map{
+    div.content-container-wrapper {
+        position: absolute;
         height: $content-height;
-        width: 100vw;
+        width: 100%;
         z-index: 2;
+        backdrop-filter: blur(6px);
+
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: space-around;
+        align-content: space-around;
+
+        div.chart-container {
+            box-sizing: border-box;
+            width: 30%;
+            height: 32%;
+            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            flex-grow: 0;
+
+            &.under-map {
+                height: 32%;
+                width: 38%;
+            }
+        }
+        
     }
 }
 </style>
