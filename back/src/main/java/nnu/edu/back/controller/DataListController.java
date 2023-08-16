@@ -49,8 +49,8 @@ public class DataListController {
 
     @AuthCheck
     @RequestMapping(value = "/addWatchCount/{id}", method = RequestMethod.PATCH)
-    public JsonResult addWatchCount(@PathVariable String id) {
-        dataListService.addWatchCount(id);
+    public JsonResult addWatchCount(@PathVariable String id, @JwtTokenParser("email") String email) {
+        dataListService.addWatchCount(id, email);
         return ResultUtils.success();
     }
 
@@ -65,7 +65,7 @@ public class DataListController {
         return ResultUtils.success(dataListService.fuzzyQuery(page, size, keyword, property, flag, type));
     }
 
-    @AuthCheck
+
     @RequestMapping(value = "/downloadAll/{id}/{email}", method = RequestMethod.GET)
     public void downloadAll(@PathVariable String email, @PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
         dataListService.downloadAll(email, id, request ,response);
@@ -73,7 +73,7 @@ public class DataListController {
 
     @AuthCheck
     @RequestMapping(value = "/findFiles/{dataListId}", method = RequestMethod.GET)
-    public JsonResult findFiles(@PathVariable String dataListId) {
+    public JsonResult findFiles(@PathVariable String dataListId) throws IllegalAccessException {
         return ResultUtils.success(dataListService.findFiles(dataListId));
     }
 
@@ -85,5 +85,10 @@ public class DataListController {
     @RequestMapping(value = "/getSimilarData/{type}/{id}/{size}/{page}", method = RequestMethod.GET)
     public JsonResult getSimilarData(@PathVariable String type, @PathVariable String id, @PathVariable int size, @PathVariable int page) {
         return ResultUtils.success(dataListService.getSimilarData(type, id, size, page));
+    }
+
+    @RequestMapping(value = "/getIdAndDataListName/{size}", method = RequestMethod.GET)
+    public JsonResult getIdAndDataListName(@PathVariable int size) {
+        return ResultUtils.success(dataListService.getIdAndDataListName(size));
     }
 }

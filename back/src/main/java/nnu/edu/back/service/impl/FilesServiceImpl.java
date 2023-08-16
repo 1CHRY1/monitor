@@ -55,6 +55,9 @@ public class FilesServiceImpl implements FilesService {
     @Value("${pgPath}")
     String pgPath;
 
+    @Value("${baseDir}")
+    String baseDir;
+
     @Override
     public String addFiles(Files file) {
         String uuid = UUID.randomUUID().toString();
@@ -66,7 +69,7 @@ public class FilesServiceImpl implements FilesService {
     @Override
     public void downloadFile(String id, HttpServletResponse response) {
         Files files = filesMapper.findInfoById(id);
-        String address = files.getAddress();
+        String address = baseDir + files.getAddress();
         File file = new File(address);
         if (!file.exists()) {
             throw new MyException(ResultEnum.NO_OBJECT);

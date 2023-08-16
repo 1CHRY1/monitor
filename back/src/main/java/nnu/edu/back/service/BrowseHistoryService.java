@@ -13,7 +13,7 @@ import java.util.Map;
  * @Description:
  */
 public interface BrowseHistoryService {
-    void addHistory(BrowseHistory browseHistory);
+
 
     List<Map<String, Object>> getDataGroupByDate(String dataId, int number);
 }

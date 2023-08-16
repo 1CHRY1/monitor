@@ -39,7 +39,7 @@ public class VisualFileController {
      * @Author: Yiming
      * @Date: 2022/8/22
      */
-
+    @CrossOrigin
     @RequestMapping(value = "/getRaster/{visualId}/{x}/{y}/{z}", method = RequestMethod.GET)
     public void getRaster(@PathVariable String visualId, @PathVariable int x, @PathVariable int y, @PathVariable int z, HttpServletResponse response) {
         visualService.getRaster(visualId, x, y, z, response);
@@ -51,7 +51,7 @@ public class VisualFileController {
      * @Author: Yiming
      * @Date: 2022/8/22
      */
-
+    @CrossOrigin
     @RequestMapping(value = "/getVectorTiles/{visualId}/{x}/{y}/{z}", method = RequestMethod.GET)
     public void getVectorTiles(@PathVariable String visualId, @PathVariable int x, @PathVariable int y, @PathVariable int z, HttpServletResponse response) {
         visualService.getVectorTiles(visualId, x, y, z, response);
@@ -74,11 +74,13 @@ public class VisualFileController {
      * @Author: Yiming
      * @Date: 2022/8/23
      */
+
     @RequestMapping(value = "/getCoordinates/{visualId}", method = RequestMethod.GET)
     public JsonResult getCoordinates(@PathVariable String visualId) {
         return ResultUtils.success(visualService.getCoordinates(visualId));
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/getPngResource/{visualId}", method = RequestMethod.GET)
     public void getPngResource(@PathVariable String visualId, HttpServletResponse response) {
         visualService.getPngResource(visualId, response);

@@ -1,6 +1,7 @@
 package nnu.edu.back.dao.main;
 
 import nnu.edu.back.pojo.DataRelational;
+import nnu.edu.back.pojo.Files;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +19,7 @@ import java.util.Map;
 public interface DataRelationalMapper {
     void batchDeleteByDataListId(@Param("list") List<String> list);
 
-    List<Map<String, Object>> findFilesByDataListId(@Param("dataListId") String dataListId);
+    List<Files> findFilesByDataListId(@Param("dataListId") String dataListId);
 
     List<String> findFileIdByDataListId(@Param("dataListId") String dataListId);
 
