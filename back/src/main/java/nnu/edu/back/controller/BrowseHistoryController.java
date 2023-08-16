@@ -29,17 +29,6 @@ public class BrowseHistoryController {
     BrowseHistoryService browseHistoryService;
 
     @AuthCheck
-    @RequestMapping(value = "/addHistory/{dataId}", method = RequestMethod.POST)
-    public JsonResult addHistory(@JwtTokenParser("email") String userId, @PathVariable String dataId) {
-        BrowseHistory browseHistory = new BrowseHistory();
-        browseHistory.setUserId(userId);
-        browseHistory.setDataId(dataId);
-        browseHistory.setId(UUID.randomUUID().toString());
-        browseHistoryService.addHistory(browseHistory);
-        return ResultUtils.success();
-    }
-
-    @AuthCheck
     @RequestMapping(value = "/getDataGroup/{dataId}/{number}", method = RequestMethod.GET)
     public JsonResult getDataGroup(@PathVariable String dataId, @PathVariable int number) {
         return ResultUtils.success(browseHistoryService.getDataGroupByDate(dataId, number));

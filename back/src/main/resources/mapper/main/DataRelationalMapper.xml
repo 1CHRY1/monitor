@@ -6,6 +6,15 @@
         <result property="dataListId" column="data_list_id"/>
         <result property="fileId" column="file_id"/>
     </resultMap>
+    <resultMap id="FilesMap" type="nnu.edu.back.pojo.Files">
+        <id property="id" column="id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="address" column="address"/>
+        <result property="size" column="size"/>
+        <result property="visualType" column="visual_type"/>
+        <result property="visualId" column="visual_id"/>
+    </resultMap>
+
     <delete id="batchDeleteByDataListId">
         delete from data_relational
         <foreach collection="list" item="item" open="where file_id in (" close=")" separator=",">
@@ -14,8 +23,8 @@
     </delete>
 
 
-    <select id="findFilesByDataListId" resultType="java.util.Map">
-        select files.id as id, files.file_name as "fileName", size, visual_type as "visualType", visual_id as "visualId" from files, data_relational where files.id = data_relational.file_id and data_relational.data_list_id = #{dataListId}
+    <select id="findFilesByDataListId" resultMap="FilesMap">
+        select files.* from files, data_relational where files.id = data_relational.file_id and data_relational.data_list_id = #{dataListId}
     </select>
 
     <select id="findFileIdByDataListId" resultType="java.lang.String">

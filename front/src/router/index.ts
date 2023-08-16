@@ -27,7 +27,7 @@ const constantRoutes: Array<RouteRecordRaw> = [
     name: "login",
     component: () => import("@/views/LoginView.vue"),
   },
-  
+
   {
     path: "/404",
     name: "404",
@@ -49,7 +49,16 @@ export const asyncRouters: Array<RouteRecordRaw> = [
         name: "resourceList",
         component: () => import("@/views/ResourceListView.vue"),
         meta: {
-          requiresAuth: "admin",
+          requiresAuth: "member",
+          keepAlive: true,
+        },
+      },
+      {
+        path: ":id",
+        name: "resourceDetail",
+        component: () => import("@/views/ResourceDetailView.vue"),
+        meta: {
+          requiresAuth: "member",
         },
       },
     ],
@@ -68,6 +77,7 @@ export const asyncRouters: Array<RouteRecordRaw> = [
         component: () => import("@/views/ProjectAdminView.vue"),
         meta: {
           requiresAuth: "admin",
+          keepAlive: true,
         },
       },
     ],

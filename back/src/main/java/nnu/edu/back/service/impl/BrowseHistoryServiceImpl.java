@@ -23,12 +23,6 @@ public class BrowseHistoryServiceImpl implements BrowseHistoryService {
     BrowseHistoryMapper browseHistoryMapper;
 
     @Override
-    public void addHistory(BrowseHistory browseHistory) {
-        browseHistoryMapper.addHistory(browseHistory);
-
-    }
-
-    @Override
     public List<Map<String, Object>> getDataGroupByDate(String dataId, int number) {
         String date = CommonUtils.getDate(number);
         return browseHistoryMapper.getDataGroupByDate(dataId, date);

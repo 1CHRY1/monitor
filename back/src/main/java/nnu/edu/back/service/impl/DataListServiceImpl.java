@@ -4,13 +4,13 @@ import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import nnu.edu.back.common.exception.MyException;
 import nnu.edu.back.common.result.ResultEnum;
+import nnu.edu.back.common.utils.CommonUtils;
 import nnu.edu.back.common.utils.FileUtil;
-import nnu.edu.back.dao.main.DataListMapper;
-import nnu.edu.back.dao.main.DataRelationalMapper;
-import nnu.edu.back.dao.main.DownloadHistoryMapper;
-import nnu.edu.back.dao.main.VisualFileMapper;
+import nnu.edu.back.dao.main.*;
+import nnu.edu.back.pojo.BrowseHistory;
 import nnu.edu.back.pojo.DataList;
 import nnu.edu.back.pojo.DownloadHistory;
+import nnu.edu.back.pojo.Files;
 import nnu.edu.back.service.DataListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,10 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -60,6 +57,9 @@ public class DataListServiceImpl implements DataListService {
     @Autowired
     VisualFileMapper visualFileMapper;
 
+    @Autowired
+    BrowseHistoryMapper browseHistoryMapper;
+
     @Override
     public void addDataList(DataList dataList) {
         dataListMapper.addDataList(dataList);
@@ -76,8 +76,10 @@ public class DataListServiceImpl implements DataListService {
     }
 
     @Override
-    public void addWatchCount(String id) {
+    public void addWatchCount(String id, String email) {
         dataListMapper.addWatchCount(id);
+        BrowseHistory browseHistory = new BrowseHistory(UUID.randomUUID().toString(), email, null, id);
+        browseHistoryMapper.addHistory(browseHistory);
     }
 
     @Override
@@ -104,13 +106,16 @@ public class DataListServiceImpl implements DataListService {
 
     @Override
     public void downloadAll(String email, String id, HttpServletRequest request, HttpServletResponse response) {
-        List<Map<String, Object>> list = dataRelationalMapper.findFilesByDataListId(id);
-        for (Map<String, Object> map : list) {
-            String oldString = (String) map.get("address");
-            map.replace("address", oldString, baseDir + oldString);
+        List<Files> list = dataRelationalMapper.findFilesByDataListId(id);
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        for (Files files : list) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("address", baseDir + files.getAddress());
+            map.put("fileName", files.getFileName());
+            mapList.add(map);
         }
         String destination = tempDir + id + ".zip";
-        int code = FileUtil.compressFile(destination, list);
+        int code = FileUtil.compressFile(destination, mapList);
         if (code == -1) throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
         InputStream in = null;
         ServletOutputStream sos = null;
@@ -147,12 +152,15 @@ public class DataListServiceImpl implements DataListService {
     }
 
     @Override
-    public List<Map<String, Object>> findFiles(String dataListId) {
-        List<Map<String, Object>> list = dataRelationalMapper.findFilesByDataListId(dataListId);
-        for (Map<String, Object> map : list) {
-            if (!map.get("visualType").equals("")) {
+    public List<Map<String, Object>> findFiles(String dataListId) throws IllegalAccessException {
+        List<Map<String, Object>> list = new ArrayList<>();
+        List<Files> filesList = dataRelationalMapper.findFilesByDataListId(dataListId);
+        for (Files files : filesList) {
+            Map<String, Object> map = CommonUtils.objectToMap(files);
+            if (!files.getVisualType().equals("")) {
                 map.put("view", visualFileMapper.getView(map.get("visualId").toString()));
             }
+            list.add(map);
         }
         return list;
     }
@@ -166,6 +174,10 @@ public class DataListServiceImpl implements DataListService {
         map.put("list", list);
         map.put("total", total);
         return map;
+    }
 
+    @Override
+    public List<Map<String, Object>> getIdAndDataListName(int size) {
+        return dataListMapper.getRandom(size);
     }
 }

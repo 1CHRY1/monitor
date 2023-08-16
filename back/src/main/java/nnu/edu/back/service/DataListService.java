@@ -23,7 +23,7 @@ public interface DataListService {
     DataList getFileInfo(String id);
 
 
-    void addWatchCount(String id);
+    void addWatchCount(String id, String email);
 
     Map<String, Object> fuzzyQuery(int page, int size, String keyword, String property, Boolean flag, String type);
 
@@ -34,7 +34,9 @@ public interface DataListService {
 
     void downloadAll(String email, String id, HttpServletRequest request, HttpServletResponse response);
 
-    List<Map<String, Object>> findFiles(String dataListId);
+    List<Map<String, Object>> findFiles(String dataListId) throws IllegalAccessException;
 
     Map<String, Object> getSimilarData(String type, String id, int size, int page);
+
+    List<Map<String, Object>> getIdAndDataListName(int size);
 }

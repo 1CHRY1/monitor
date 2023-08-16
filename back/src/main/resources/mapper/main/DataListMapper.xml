@@ -127,4 +127,8 @@
     <select id="getHot" resultType="java.util.Map">
         select id, name as "dataListName" from data_list order by watch desc limit #{size} offset 0;
     </select>
+
+    <select id="getRandom" resultType="java.util.Map">
+        select id, name from data_list order by RANDOM() limit #{size}
+    </select>
 </mapper>

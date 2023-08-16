@@ -6,9 +6,11 @@ spring:
     shp:
       jdbc-url: jdbc:postgresql://localhost:5432/shp_dataset?stringtype=unspecified
       driver-class-name: org.postgresql.Driver
+      username: postgres
+      password: 123
 
 
-baseDir: E:/monitor/
+baseDir: E:/monitor/resources/raw/
 avatarDir: E:/monitor/resources/avatar/
 tempDir: E:/monitor/temp/
 visualDir: E:/monitor/resources/visual/

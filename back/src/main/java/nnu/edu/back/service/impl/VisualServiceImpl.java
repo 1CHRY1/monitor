@@ -59,7 +59,7 @@ public class VisualServiceImpl implements VisualService {
     VectorTileMapper vectorTileMapper;
 
     @Autowired
-    FilesMapper fileMapper;
+    FilesMapper filesMapper;
 
 
 
@@ -172,7 +172,7 @@ public class VisualServiceImpl implements VisualService {
 
     @Override
     public void getPhoto(String fileId, HttpServletResponse response) {
-        Files files = fileMapper.findInfoById(fileId);
+        Files files = filesMapper.findInfoById(fileId);
         InputStream in = null;
         ServletOutputStream sos = null;
         try {
@@ -323,7 +323,7 @@ public class VisualServiceImpl implements VisualService {
 
     @Override
     public void video(String id, HttpServletRequest request, HttpServletResponse response) {
-        Files files = fileMapper.findInfoById(id);
+        Files files = filesMapper.findInfoById(id);
         String path = baseDir + files.getAddress();
         File file = new File(path);
         if (!file.exists()) {

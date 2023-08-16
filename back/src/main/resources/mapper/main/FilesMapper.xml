@@ -32,7 +32,7 @@
         update files set visual_id = #{visualId}, visual_type = #{type} where id = #{id}
     </update>
 
-    <select id="findInfoById" resultType="java.util.Map">
+    <select id="findInfoById" resultMap="FilesMap">
         select * from files where id = #{id}
     </select>
 </mapper>
