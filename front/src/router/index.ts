@@ -9,6 +9,9 @@ const constantRoutes: Array<RouteRecordRaw> = [
         path: "",
         name: "home",
         component: () => import("@/views/HomeView.vue"),
+        meta: {
+          keepAlive: true,
+        },
       },
     ],
   },
@@ -64,6 +67,21 @@ export const asyncRouters: Array<RouteRecordRaw> = [
     ],
   },
   {
+    path: "/waterway",
+    component: () => import("@/layout/Index.vue"),
+    children: [
+      {
+        path: "",
+        name: "waterway",
+        component: () => import("@/views/WaterwayView.vue"),
+        meta: {
+          requiresAuth: "member",
+          keepAlive: true,
+        },
+      },
+    ],
+  },
+  {
     path: "/admin",
     component: () => import("@/layout/Index.vue"),
     children: [
@@ -77,7 +95,7 @@ export const asyncRouters: Array<RouteRecordRaw> = [
         component: () => import("@/views/ProjectAdminView.vue"),
         meta: {
           requiresAuth: "admin",
-          keepAlive: true,
+          // keepAlive: true,
         },
       },
     ],
