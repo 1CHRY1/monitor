@@ -43,11 +43,6 @@ public class ProjectController {
         return ResultUtils.success(projectService.uploadAvatar(file));
     }
 
-    @RequestMapping(value = "/getAvatar/{pictureName}", method = RequestMethod.GET)
-    public void getAvatar(@PathVariable String pictureName, HttpServletResponse response) {
-        projectService.getAvatar(pictureName, response);
-    }
-
     @AuthCheck
     @RequestMapping(value = "/multipartUpload", method = RequestMethod.POST)
     public JsonResult multipartUpload(@RequestParam MultipartFile file, @RequestParam String key, @RequestParam String number) {

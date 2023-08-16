@@ -17,8 +17,6 @@ import java.util.Map;
 public interface ProjectService {
     String uploadAvatar(MultipartFile file);
 
-    void getAvatar(String pictureName, HttpServletResponse response);
-
     void multipartUpload(MultipartFile file, String key, String number);
 
     void mergeMultipartFile(String key, int total);

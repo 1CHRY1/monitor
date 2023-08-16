@@ -50,29 +50,6 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void getAvatar(String pictureName, HttpServletResponse response) {
-        String pictureAddress = avatarDir + pictureName;
-        File file = new File(pictureAddress);
-        if (!file.exists()) {
-            throw new MyException(ResultEnum.NO_OBJECT);
-        }
-        try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            ServletOutputStream outputStream = response.getOutputStream();
-            byte[] bytes = new byte[1024];
-            int len;
-            while ((len = fileInputStream.read(bytes)) != -1) {
-                outputStream.write(bytes, 0, len);
-            }
-            outputStream.flush();
-            outputStream.close();
-            fileInputStream.close();
-        } catch (Exception e) {
-            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
-        }
-    }
-
-    @Override
     public void multipartUpload(MultipartFile file, String key, String number) {
         String address = tempDir + key;
         int code = FileUtil.uploadFile(file, number, address);

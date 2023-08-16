@@ -1,7 +1,7 @@
 <template>
   <div class="project-card">
     <div>
-      <img :src="'/monitor/project/getAvatar/' + projectInfo.avatar" />
+      <img :src="'/monitor/visual/getAvatar/' + projectInfo.avatar" />
     </div>
     <div class="text-info">
       <div class="title">{{ projectInfo.projectName }}</div>
