@@ -36,10 +36,17 @@ public class DataSourceConfig {
         return DataSourceBuilder.create().build();
     }
 
-
     @Bean("shpSource")
     @ConfigurationProperties("spring.datasource.shp")
     public DataSource shpSource() { return DataSourceBuilder.create().build(); }
+
+    @Bean("shipSource")
+    @ConfigurationProperties("spring.datasource.ship")
+    public DataSource shipSource() { return DataSourceBuilder.create().build(); }
+
+    @Bean("waterwaySource")
+    @ConfigurationProperties("spring.datasource.waterway")
+    public DataSource waterwaySource() { return DataSourceBuilder.create().build(); }
 
 
     /**
@@ -53,6 +60,8 @@ public class DataSourceConfig {
         Map<Object, Object> dataSourceMap = new HashMap<>();
         dataSourceMap.put("default", defaultSource());
         dataSourceMap.put("shp", shpSource());
+        dataSourceMap.put("waterway", waterwaySource());
+        dataSourceMap.put("ship", shipSource());
 
         // 默认数据源
         dynamicDataSource.setDefaultDataSource(defaultSource());

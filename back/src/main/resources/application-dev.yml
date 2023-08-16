@@ -8,6 +8,13 @@ spring:
       driver-class-name: org.postgresql.Driver
       username: postgres
       password: 123
+    ship:
+      jdbc-url: jdbc:sqlite:E:/monitor/resource/ais.db
+      driver-class-name: org.sqlite.JDBC
+    waterway:
+      jdbc-url: jdbc:sqlite:E:/monitor/resource/waterway.db
+      driver-class-name: org.sqlite.JDBC
+
 
 
 baseDir: E:/monitor/resources/raw/

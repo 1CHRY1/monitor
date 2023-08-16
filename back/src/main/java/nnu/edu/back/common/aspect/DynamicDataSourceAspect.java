@@ -76,6 +76,20 @@ public class DynamicDataSourceAspect {
         }
     }
 
+    @Before("execution(* nnu.edu.back.dao.ship.*.*(..))")
+    public void switchShipDataSource() {
+        if (!DataSourceContextHolder.getDataSourceKey().equals("ship")) {
+            DataSourceContextHolder.setDataSourceKey("ship");
+        }
+    }
+
+    @Before("execution(* nnu.edu.back.dao.waterway.*.*(..))")
+    public void switchWaterwayDataSource() {
+        if (!DataSourceContextHolder.getDataSourceKey().equals("waterway")) {
+            DataSourceContextHolder.setDataSourceKey("waterway");
+        }
+    }
+
 
     @Before("execution(* nnu.edu.back.dao.main.*.*(..))")
     public void restoreDataSource() {

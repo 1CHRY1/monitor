@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nnu.edu.back.dao.waterway.WaterwayMapper">
+    <resultMap id="AnchorMap" type="nnu.edu.back.pojo.Anchor">
+        <id property="id" column="id"/>
+        <result property="anchorName" column="mdmc"/>
+        <result property="waterwayName" column="sdcd"/>
+        <result property="type" column="type"/>
+        <result property="longitude" column="zbjd"/>
+        <result property="latitude" column="zbwd"/>
+        <result property="picture" column="tpdz"/>
+        <result property="management" column="gldw"/>
+        <result property="hdHdlyName" column="hd_hdly_name"/>
+        <result property="tyAnbName" column="ty_anb_name"/>
+        <result property="usage" column="yt"/>
+        <result property="buildTime" column="jcsj"/>
+        <result property="hdlc" column="hdlc"/>
+        <result property="region" column="qyfw" typeHandler="nnu.edu.back.common.utils.JsonObjectTypeHandler"/>
+        <result property="hdHdly" column="hd_hdly"/>
+        <result property="tyAnb" column="ty_anb"/>
+        <result property="sdName" column="sd_name"/>
+    </resultMap>
+
+    <resultMap id="BridgeMapper" type="nnu.edu.back.pojo.Bridge">
+        <id property="id" column="id"/>
+        <result property="bridgeAreaRange" column="syfw"/>
+        <result property="bridgeCulvertMarker" column="qhb"/>
+        <result property="navRulesWaterRoutes" column="hlhf"/>
+        <result property="navAssessmentApproval" column="hppfwj"/>
+        <result property="maritimeAdminAgency" column="hsgljg"/>
+        <result property="bridgeAttributes" column="qlsx"/>
+        <result property="designNavRepTypeFleet" column="sjthdbcx"/>
+        <result property="bridgePillarLights" column="qzd"/>
+        <result property="sectionNavRepTypeFleet" column="qdthdbcx"/>
+        <result property="bridgeActiveCollisionPrev" column="qlzdfzss"/>
+        <result property="bridgeOpMgmtUnit" column="qlyxgldw"/>
+        <result property="openingDate" column="tcsj"/>
+        <result property="bridgePassiveCollisionPrev" column="qlbdfzss"/>
+        <result property="avgDailyCrossFlow" column="rjdmll"/>
+        <result property="bridgeAreaVideoFacilities" column="qqspss"/>
+        <result property="waterTrafficSafetyMgmt" column="glzd"/>
+        <result property="riverFacilitiesInArea" column="lhss"/>
+        <result property="other" column="qt"/>
+        <result property="mainNavSpanNumber" column="zthkbh"/>
+        <result property="anchorageBerthingArea" column="tbq"/>
+        <result property="crossRiverFacilities" column="khss"/>
+        <result property="waterNavMarksArrangement" column="hbbz"/>
+        <result property="smallVesselNavSpanNumber" column="xlthkbh"/>
+        <result property="polygon" column="polygon" typeHandler="nnu.edu.back.common.utils.JsonObjectTypeHandler"/>
+        <result property="navMaintenanceUnit" column="yhdw"/>
+        <result property="bridgeName" column="qlmc"/>
+        <result property="name" column="name"/>
+        <result property="mainNavPierCollisionPrev" column="fznl"/>
+    </resultMap>
+    
+    <resultMap id="BuoyMap" type="nnu.edu.back.pojo.Buoy">
+        <id property="id" column="id"/>
+        <result property="picture" column="hbtlpz"/>
+        <result property="photo" column="hbphoto"/>
+        <result property="color" column="bsys"/>
+        <result property="des" column="dbys"/>
+        <result property="name" column="hbmc"/>
+        <result property="shape" column="hbxz"/>
+        <result property="longitude" column="jdwz_84jd"/>
+        <result property="latitude" column="jdwz_84wd" />
+        <result property="waterway" column="sshd" />
+        <result property="noMeaning" column="zxaqjl" />
+    </resultMap>
+
+
+
+    <select id="getAllAnchorInfo" resultMap="AnchorMap">
+        select * from anchor
+    </select>
+
+    <select id="pageQueryAnchor" resultMap="AnchorMap">
+        select * from anchor
+        <if test="keyword != ''">
+            where mdmc like #{keyword} or yt like #{keyword}
+        </if>
+        limit #{size} offset #{start}
+    </select>
+
+    <select id="countAnchor" resultType="java.lang.Integer">
+        select count(*) from anchor
+        <if test="keyword != ''">
+            where mdmc like #{keyword} or yt like #{keyword}
+        </if>
+    </select>
+</mapper>
