@@ -11,6 +11,7 @@ spring:
 baseDir: E:/monitor/
 avatarDir: E:/monitor/resources/avatar/
 tempDir: E:/monitor/temp/
-visualDir: E:/monitor/visual/
+visualDir: E:/monitor/resources/visual/
 pgPath: D:/App/postgresql/bin/
+mapDir: E:/monitor/resources/map/
 

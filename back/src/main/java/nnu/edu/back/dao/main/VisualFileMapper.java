@@ -4,6 +4,8 @@ import nnu.edu.back.pojo.VisualFile;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  *
@@ -14,4 +16,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VisualFileMapper {
     void addVisualFile(@Param("visualFile") VisualFile visualFile);
+
+    VisualFile findById(@Param("id") String id);
+
+    String getView(@Param("id") String id);
 }

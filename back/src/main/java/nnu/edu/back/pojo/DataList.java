@@ -1,9 +1,12 @@
 package nnu.edu.back.pojo;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,9 +21,9 @@ import lombok.NoArgsConstructor;
 public class DataList {
     String id;
     String name;
-    JSONArray location;
+    List<String> location;
     String description;
-    JSONArray tags;
+    List<String> tags;
     String createTime;
     String updateTime;
     Integer download;

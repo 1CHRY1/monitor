@@ -1,17 +1,20 @@
 package nnu.edu.back.common.utils;
 
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.ZipFile;
 import nnu.edu.back.common.exception.MyException;
 import nnu.edu.back.common.result.ResultEnum;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -92,6 +95,27 @@ public class FileUtil {
         }
     }
 
+    public static int compressFile(String destination, List<Map<String, Object>> fileList) {
+        ZipFile zipFile = new ZipFile(destination);
+        try {
+            List<File> files = new ArrayList<>();
+            Map<String, String> maps = new HashMap<>();
+            for(Map<String, Object> map : fileList) {
+                String address = (String) map.get("address");
+                String name = address.split("/")[address.split("/").length - 1];
+                files.add(new File(address));
+                maps.put(name, (String) map.get("fileName"));
+            }
+            zipFile.addFiles(files);
+            zipFile.renameFiles(maps);
+            return 0;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return -1;
+        }
+
+    }
+
     public static int unpack(String destination, String to) {
         File file = new File(destination);
         if (!file.exists()) {
@@ -157,6 +181,68 @@ public class FileUtil {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public static JSONObject readJson(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(path));
+            String jsonString = "";
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                jsonString += line;
+            }
+            br.close();
+            JSONObject jsonObject = JSONObject.parseObject(jsonString);
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+            }
+        }
+    }
+
+    public static JSONArray readJsonArray(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(path));
+            String jsonString = "";
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                jsonString += line;
+            }
+            br.close();
+            JSONArray jsonArray = JSONArray.parseArray(jsonString);
+            return jsonArray;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+            }
         }
     }
 }
