@@ -89,11 +89,11 @@ export default defineComponent({
     const waterLevelChart = ref();
     const loadingFlag = ref(false);
     const keys = computed(() => {
-      const res = props.stationInfo?.keys;
+      const res = props.stationInfo?.keys.key;
       return res;
     });
     const keys_cn = computed(() => {
-      const res = props.stationInfo?.keysCn;
+      const res = props.stationInfo?.keysCn.key;
       return res;
     });
 
@@ -187,6 +187,7 @@ export default defineComponent({
         );
         if (data != null && (data as any).code === 0) {
           tableData.value = data.data;
+          tableData.value.reverse();
           (data.data as any).forEach((item: any) => {
             info.value.timeList.push(item.time.substring(10, 16));
             props.stationInfo!.keys.key.forEach((key, index) => {
@@ -225,13 +226,9 @@ export default defineComponent({
 
     const downloadClick = (name: string) => {
       if (name.indexOf("UTC+") === -1) {
-        window.location.href =
-          "https://geomodeling.njnu.edu.cn/waterLevel/download/downloadOne1/" +
-          name;
+        window.location.href = `${process.env.VUE_APP_WATERLEVEL_ADDRESS}download/downloadOne1/${name}`;
       } else {
-        window.location.href =
-          "https://geomodeling.njnu.edu.cn/waterLevel/download/downloadOne2/" +
-          name;
+        window.location.href = `${process.env.VUE_APP_WATERLEVEL_ADDRESS}download/downloadOne2/${name}`;
       }
     };
 

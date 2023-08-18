@@ -10,7 +10,7 @@
     </resultMap>
 
     <insert id="addHistory">
-        insert into download_history values(#{history.id}, #{history.userId}, CURRENT_TIMESTAMP, #{history.dataListId}, #{history.fileId});
+        insert into download_history values(#{history.id}, #{history.userId}, datetime('now','localtime'), #{history.dataListId}, #{history.fileId});
     </insert>
 
     <select id="pageQuery" resultType="java.util.HashMap">

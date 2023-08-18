@@ -30,7 +30,7 @@ meteorologyPngUrl:
   http://data.cma.cn/dataGis/static/ultra/img/gis/disasterWarning/
 
 waterLevelAddress:
-  http://172.21.212.116:9999
+  https://geomodeling.njnu.edu.cn/waterLevel
 
 AISUrl:
   https://www.cjienc.cn/rest/es/getBoxShips?left={0}&bottom={1}&right={2}&top={3}

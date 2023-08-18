@@ -8,6 +8,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -86,5 +87,24 @@ public class InternetUtil {
         }
         m.appendTail(b);
         return b.toString().replaceAll("\\+", "%20");
+    }
+
+    public static <T>T httpHandle(String url, MultiValueMap<String, Object> param, Class<T> c, String method) throws Exception {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity httpEntity = new HttpEntity(param, headers);
+        ResponseEntity<T> result;
+        if (method.equals("post")) {
+            result = restTemplate.exchange(url, HttpMethod.POST, httpEntity, c);
+        } else if (method.equals("get")) {
+            result = restTemplate.exchange(url, HttpMethod.GET, httpEntity, c);
+        } else if (method.equals("delete")) {
+            result = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, c);
+        } else if (method.equals("put")) {
+            result = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, c);
+        } else {
+            throw new Exception();
+        }
+        return result.getBody();
     }
 }

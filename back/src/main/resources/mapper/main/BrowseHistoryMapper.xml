@@ -8,10 +8,10 @@
         <result property="dataId" column="data_id" />
     </resultMap>
     <insert id="addHistory">
-        insert into browse_history values (#{history.id}, #{history.userId}, CURRENT_TIMESTAMP, #{history.dataId});
+        insert into browse_history values (#{history.id}, #{history.userId}, datetime('now','localtime'), #{history.dataId});
     </insert>
 
     <select id="getDataGroupByDate" resultType="java.util.HashMap">
-        select strftime('%Y-%m-%d %H:%M:%S', browse_time) as date, count(*) as sum from browse_history where data_id = #{dataId} and browse_time >= #{date} GROUP by date;
+        select strftime('%Y-%m-%d', browse_time) as date, count(*) as sum from browse_history where data_id = #{dataId} and browse_time >= #{date} GROUP by date;
     </select>
 </mapper>
