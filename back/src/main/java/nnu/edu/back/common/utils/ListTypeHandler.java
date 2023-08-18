@@ -21,7 +21,7 @@ import java.util.List;
  * @Description:
  */
 
-public class JsonArrayTypeHandler extends BaseTypeHandler<List<String>> {
+public class ListTypeHandler extends BaseTypeHandler<List<String>> {
 
     @Override
     public void setNonNullParameter(PreparedStatement preparedStatement, int i, List<String> list, JdbcType jdbcType) throws SQLException {

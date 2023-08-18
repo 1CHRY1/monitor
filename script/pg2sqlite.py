@@ -113,5 +113,23 @@ def execute6():
     cur_sqlite.close()
     conn_sqlite.close()
 
+def execute7():
+    conn = psycopg2.connect(user="postgres", password="123",
+                            dbname="dataset", host="localhost", port="5432")
+    cursor = conn.cursor()
+    cursor.execute("select * from analytic_parameter;")
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    arr = []
+    for row in rows:
+        arr.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
+    conn_sqlite = sqlite3.connect("E:/monitor/main.db")
+    cur_sqlite = conn_sqlite.cursor()
+    cur_sqlite.executemany("insert into analysis_parameter values(?,?,?,?,?,?,?,?)", arr)
+    conn_sqlite.commit()
+    cur_sqlite.close()
+    conn_sqlite.close()
 
-execute6()
+
+execute7()

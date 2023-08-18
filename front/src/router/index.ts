@@ -82,6 +82,25 @@ export const asyncRouters: Array<RouteRecordRaw> = [
     ],
   },
   {
+    path: "/analysis",
+    component: () => import("@/layout/Index.vue"),
+    children: [
+      {
+        path: "",
+        redirect: "/analysis/list",
+      },
+      {
+        path: "list",
+        name: "analysisList",
+        component: () => import("@/views/AnalysisListView.vue"),
+        meta: {
+          requiresAuth: "member",
+          keepAlive: true,
+        },
+      },
+    ],
+  },
+  {
     path: "/admin",
     component: () => import("@/layout/Index.vue"),
     children: [

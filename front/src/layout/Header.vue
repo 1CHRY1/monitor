@@ -25,7 +25,7 @@
           </div>
         </el-col>
         <el-col :span="2">
-          <div class="grid-content help">帮助</div>
+          <div class="grid-content help" @click="nav('analysis')">分析中心</div>
         </el-col>
         <el-col :span="2" :offset="4">
           <el-dropdown trigger="hover" @command="userNav" v-if="logined">
@@ -100,6 +100,8 @@ export default defineComponent({
         case "waterway":
           router.push({ path: "/waterway" });
           return;
+        case "analysis":
+          router.push({ path: "/analysis/list" });
       }
     };
 

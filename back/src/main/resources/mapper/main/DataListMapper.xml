@@ -4,9 +4,9 @@
     <resultMap id="DataListMap" type="nnu.edu.back.pojo.DataList">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
-        <result property="location" column="location" typeHandler="nnu.edu.back.common.utils.JsonArrayTypeHandler"/>
+        <result property="location" column="location" typeHandler="nnu.edu.back.common.utils.ListTypeHandler"/>
         <result property="description" column="description"/>
-        <result property="tags" column="tags" typeHandler="nnu.edu.back.common.utils.JsonArrayTypeHandler"/>
+        <result property="tags" column="tags" typeHandler="nnu.edu.back.common.utils.ListTypeHandler"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="download" column="download"/>
