@@ -143,7 +143,7 @@ div.header-main {
   font-family: "Microsoft YaHei";
 
   .el-row {
-    // margin-top: 3px;
+    margin-top: 1vh;
     height: 6vh;
   }
   .el-row:last-child {
@@ -344,4 +344,5 @@ ul.el-dropdown-menu {
 :deep().el-scrollbar__wrap {
   background-color: #39d6fd !important;
 }
+
 </style>
