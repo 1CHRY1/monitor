@@ -25,7 +25,8 @@ public class JsonObjectTypeHandler extends BaseTypeHandler<JSONObject> {
 
     @Override
     public JSONObject getNullableResult(ResultSet resultSet, String s) throws SQLException {
-        return handle(resultSet.getString(s));
+        JSONObject jsonObject = handle(resultSet.getString(s));
+        return jsonObject;
     }
 
     @Override

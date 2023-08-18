@@ -74,9 +74,9 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project createProject(String projectName, String avatar, String description, String institution, String location, String time, String type) {
+    public Project createProject(Project project) {
         String id = UUID.randomUUID().toString();
-        Project project = new Project(id, projectName, avatar, description, institution, location, time, type);
+        project.setId(id);
         projectMapper.insertProject(project);
         return project;
     }

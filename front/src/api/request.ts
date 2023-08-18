@@ -114,3 +114,105 @@ export const getCoordinates = async (visualId: string) => {
 export const getDataGroup = async (dataId: string, number: number) => {
   return await get(`/browseHistory/getDataGroup/${dataId}/${number}`, true);
 };
+
+export async function getWaterLevelByStationAndTime(
+  type: string,
+  station: string,
+  startTime: string,
+  endTime: string
+) {
+  return await get(
+    `/waterway/getWaterLevelByStationAndTime/${type}/${station}/${startTime}/${endTime}`,
+    true
+  );
+}
+
+export const pageList = async (jsonData: {
+  type: string;
+  keyword: string;
+  page: number;
+  size: number;
+}) => {
+  return await post(`/waterway/pageList`, true, jsonData);
+};
+
+export async function getBuoyByBox(
+  top: number,
+  right: number,
+  bottom: number,
+  left: number
+) {
+  return await get(
+    `/waterway/getBuoyByBox/${top}/${right}/${bottom}/${left}`,
+    false
+  );
+}
+
+export async function getShipInfoByBoxAndTime(
+  top: number,
+  right: number,
+  bottom: number,
+  left: number,
+  startTime: string,
+  endTime: string
+) {
+  return await get(
+    `/waterway/getShipInfoByBoxAndTime/${top}/${right}/${bottom}/${left}/${startTime}/${endTime}`,
+    false
+  );
+}
+
+export async function queryBoxShip(
+  top: number,
+  right: number,
+  bottom: number,
+  left: number
+) {
+  return await get(
+    `/waterway/queryBoxShip/${top}/${right}/${bottom}/${left}`,
+    false
+  );
+}
+
+export async function getAnchorInfoByBox(
+  top: number,
+  right: number,
+  bottom: number,
+  left: number
+) {
+  return await get(
+    `/waterway/getAnchorInfoByBox/${top}/${right}/${bottom}/${left}`,
+    false
+  );
+}
+
+export async function getParkInfoByBox(
+  top: number,
+  right: number,
+  bottom: number,
+  left: number
+) {
+  return await get(
+    `/waterway/getParkInfoByBox/${top}/${right}/${bottom}/${left}`,
+    false
+  );
+}
+export async function getAllBridgeInfo() {
+  return await get(`/waterway/getAllBridgeInfo`, true);
+}
+
+export async function getMeteorology() {
+  return await get(`/waterway/getMeteorology`, true);
+}
+
+export async function getStationByBox(
+  top: number,
+  right: number,
+  bottom: number,
+  left: number
+) {
+  return await get(
+    `/waterway/getStationByBox/${top}/${right}/${bottom}/${left}`,
+    false
+  );
+}

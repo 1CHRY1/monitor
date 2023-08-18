@@ -17,7 +17,7 @@
     </select>
 
     <insert id="insertProject">
-        insert into projects values(#{project.id}, #{project.projectName}, #{project.avatar}, #{project.description}, #{project.institution}, #{project.location}, #{project.time}, #{project.type})
+        insert into projects values(#{project.id}, #{project.projectName}, #{project.avatar}, #{project.description}, #{project.institution}, #{project.location}, #{project.time}, #{project.type}, datetime('now','localtime'))
     </insert>
 
     <select id="pageQuery" resultMap="ProjectMap">

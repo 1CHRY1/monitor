@@ -9,10 +9,10 @@ spring:
       username: postgres
       password: 123
     ship:
-      jdbc-url: jdbc:sqlite:E:/monitor/resource/ais.db
+      jdbc-url: jdbc:sqlite:E:/monitor/resources/ais.db
       driver-class-name: org.sqlite.JDBC
     waterway:
-      jdbc-url: jdbc:sqlite:E:/monitor/resource/waterway.db
+      jdbc-url: jdbc:sqlite:E:/monitor/resources/waterway.db
       driver-class-name: org.sqlite.JDBC
 
 
@@ -23,4 +23,17 @@ tempDir: E:/monitor/temp/
 visualDir: E:/monitor/resources/visual/
 pgPath: D:/App/postgresql/bin/
 mapDir: E:/monitor/resources/map/
+resourceDir: E:/monitor/resources/
+
+meteorologyUrl: https://weather.cma.cn/api/map/alarm
+meteorologyPngUrl:
+  http://data.cma.cn/dataGis/static/ultra/img/gis/disasterWarning/
+
+waterLevelAddress:
+  https://geomodeling.njnu.edu.cn/waterLevel
+
+AISUrl:
+  https://www.cjienc.cn/rest/es/getBoxShips?left={0}&bottom={1}&right={2}&top={3}
+AISListUrl:
+  https://www.cjienc.cn/rest/es/getBoxShips?from={0}&name={1}&size={2}
 

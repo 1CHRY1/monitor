@@ -24,7 +24,7 @@
 
     <insert id="addDataList">
         insert into data_list values(#{dataList.id}, #{dataList.name}, #{dataList.location}, #{dataList.description}, #{dataList.tags},
-                                     CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{dataList.download}, #{dataList.watch}, #{dataList.avatar}, #{dataList.provider}, #{dataList.range}, #{dataList.type}, #{dataList.providerPhone},
+                                     datetime('now','localtime'), datetime('now','localtime'), #{dataList.download}, #{dataList.watch}, #{dataList.avatar}, #{dataList.provider}, #{dataList.range}, #{dataList.type}, #{dataList.providerPhone},
                                      #{dataList.providerEmail}, #{dataList.providerAddress}, #{dataList.detail}, #{dataList.timeStamp})
 
     </insert>
@@ -32,7 +32,7 @@
     <update id="updateDataList">
         update data_list
         set name = #{dataList.name}, location = #{dataList.location}, description = #{dataList.description}, tags = #{dataList.tags},
-        update_time = CURRENT_TIMESTAMP, provider = #{dataList.provider}, range = #{dataList.range}, type = #{dataList.type}, provider_phone = #{dataList.providerPhone}, provider_email = #{dataList.providerEmail},
+        update_time = datetime('now','localtime'), provider = #{dataList.provider}, range = #{dataList.range}, type = #{dataList.type}, provider_phone = #{dataList.providerPhone}, provider_email = #{dataList.providerEmail},
         provider_address = #{dataList.providerAddress}, detail = #{dataList.detail}, time_stamp = #{dataList.timeStamp}, avatar = #{dataList.avatar}
         where id = #{dataList.id}
     </update>

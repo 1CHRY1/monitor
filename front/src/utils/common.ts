@@ -105,3 +105,11 @@ export function getLastOrNextFewDateBy(date: string, day: number) {
   }
   return timeList.reverse();
 }
+
+export function traverseDate(start: number, end: number) {
+  const result = [];
+  for (let d = start; d <= end; d = d + 86400000) {
+    result.push(dateFormat(new Date(d).toString(), "yyyy-MM-dd"));
+  }
+  return result;
+}

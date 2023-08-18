@@ -21,7 +21,7 @@ public interface ProjectService {
 
     void mergeMultipartFile(String key, int total);
 
-    Project createProject(String projectName, String avatar, String description, String institution, String location, String time, String type);
+    Project createProject(Project project);
 
     Map<String, Object> pageQueryProject(String keyword, String type, int page, int size);
 }

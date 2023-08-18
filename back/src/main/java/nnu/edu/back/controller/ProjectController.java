@@ -5,6 +5,7 @@ import nnu.edu.back.common.auth.AuthCheck;
 import nnu.edu.back.common.resolver.JwtTokenParser;
 import nnu.edu.back.common.result.JsonResult;
 import nnu.edu.back.common.result.ResultUtils;
+import nnu.edu.back.pojo.Project;
 import nnu.edu.back.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,15 +28,9 @@ public class ProjectController {
 
     @AuthCheck
     @RequestMapping(value = "/createProject", method = RequestMethod.POST)
-    public JsonResult createProject(@RequestBody JSONObject jsonObject) {
-        String projectName = jsonObject.getString("projectName");
-        String avatar = jsonObject.getString("avatar");
-        String description = jsonObject.getString("description");
-        String institution = jsonObject.getString("institution");
-        String location = jsonObject.getString("location");
-        String time = jsonObject.getString("time");
-        String type = jsonObject.getString("type");
-        return ResultUtils.success(projectService.createProject(projectName, avatar, description, institution, location, time, type));
+    public JsonResult createProject(@RequestBody Project project) {
+
+        return ResultUtils.success(projectService.createProject(project));
     }
 
     @RequestMapping(value = "/uploadAvatar", method = RequestMethod.POST)
