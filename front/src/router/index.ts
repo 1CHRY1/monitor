@@ -22,7 +22,7 @@ const constantRoutes: Array<RouteRecordRaw> = [
   },
   {
     path: "/dataViewer",
-    name: "dataViewer",
+    name: "dataViewer", 
     component: () => import("@/views/DataView.vue"),
   },
   {

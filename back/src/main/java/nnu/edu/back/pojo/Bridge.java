@@ -1,6 +1,6 @@
 package nnu.edu.back.pojo;
 
-import com.alibaba.fastjson2.JSONPObject;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,7 +40,7 @@ public class Bridge {
     String crossRiverFacilities;
     String waterNavMarksArrangement;
     String smallVesselNavSpanNumber;
-    JSONPObject polygon;
+    JSONObject polygon;
     String navMaintenanceUnit;
     String bridgeName;
     String name;

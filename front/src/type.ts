@@ -35,3 +35,196 @@ export interface DataListType {
   detail: string;
   timeStamp: string;
 }
+
+export interface BridgeType {
+  id: string;
+  bridgeAreaRange: string;
+  bridgeCulvertMarker: string;
+  navRulesWaterRoutes: string;
+  navAssessmentApproval: string;
+  maritimeAdminAgency: string;
+  bridgeAttributes: string;
+  designNavRepTypeFleet: string;
+  bridgePillarLights: string;
+  sectionNavRepTypeFleet: string;
+  bridgeActiveCollisionPrev: string;
+  bridgeOpMgmtUnit: string;
+  openingDate: string;
+  bridgePassiveCollisionPrev: string;
+  avgDailyCrossFlow: string;
+  bridgeAreaVideoFacilities: string;
+  waterTrafficSafetyMgmt: string;
+  riverFacilitiesInArea: string;
+  other: string;
+  mainNavSpanNumber: string;
+  anchorageBerthingArea: string;
+  crossRiverFacilities: string;
+  waterNavMarksArrangement: string;
+  smallVesselNavSpanNumber: string;
+  polygon: { coordinates: number[][][]; type: string };
+  navMaintenanceUnit: string;
+  bridgeName: string;
+  name: string;
+  mainNavPierCollisionPrev: string;
+}
+
+export type WaterLevelChartType = {
+  timeList: string[];
+  legend: string[];
+  yAxis: {
+    alignTicks: boolean;
+    type: string;
+    offset?: number;
+    axisLine: {
+      show: boolean;
+      lineStyle: {
+        color: string;
+      };
+    };
+  }[];
+  series: {
+    name: string;
+    data: number[];
+    type: string;
+    smooth: boolean;
+    yAxisIndex: number;
+    itemStyle: {
+      normal: {
+        color: string; //改变折线点的颜色
+        lineStyle: {
+          color: string; //改变折线颜色
+        };
+      };
+    };
+  }[];
+};
+
+export type WaterLevel =
+  | {
+      time: string;
+      waterLevel: number;
+      flow: number;
+    }
+  | {
+      upstreamWaterLevel: number;
+      downstreamWaterLevel: number;
+      flow: number;
+      time: string;
+    }
+  | {
+      rainfall: number;
+      waterLevel: number;
+      input: number;
+      output: number;
+      time: string;
+    };
+
+export type StationType = {
+  name: string;
+  nameEn: string;
+  keys: { key: string[] };
+  keysCn: { key: string[] };
+  longitude: number;
+  latitude: number;
+  type: string;
+  startTime: { key: number[] };
+  prediction: number;
+};
+
+export type SearchTable =
+  | {
+      mmsi: string;
+      name: string;
+    }
+  | { sshd: string; hbmc: string }
+  | { mc: string; yt: string }
+  | { mdmc: string; yt: string }
+  | { 桥梁属性: string; 桥梁名称: string }
+  | { name: string };
+
+export type BuoyType = {
+  id: string;
+  picture: string;
+  photo: string;
+  color: string;
+  des: string;
+  name: string;
+  shape: string;
+  longitude: number;
+  latitude: number;
+  waterway: string;
+  noMeaning: string;
+};
+
+export type AnchorType = {
+  id: string;
+  anchorName: string;
+  waterwayName: string;
+  type: string;
+  longitude: number;
+  latitude: number;
+  picture: string;
+  management: string;
+  hdHdlyName: string;
+  tyAnbName: string;
+  usage: string;
+  buildTime: string;
+  hdlc: number;
+  region: {
+    type: string;
+    points: number[][];
+  };
+  hdHdly: string;
+  tyAnb: string;
+  sdName: string;
+};
+
+export type ParkType = {
+  id: string;
+  name: string;
+  hdHdly: string;
+  hdHdlyName: string;
+  hdlc: number;
+  tyAnb: string;
+  tyAnbName: string;
+  type: string;
+  width: string;
+  usage: string;
+  longitude: number;
+  latitude: number;
+  picture: string;
+  waterwayId: string;
+  waterwayName: string;
+  management: string;
+  region: {
+    type: string;
+    point?: number[];
+    points?: number[][];
+  };
+  shipWay: string;
+};
+
+export type ShipType = {
+  mmsi: string;
+  name: string;
+  nameCn: string;
+  updateTime: string;
+  longitude: number;
+  latitude: number;
+  speed: string;
+  course: string;
+  draft: string;
+  length: string;
+  width: string;
+};
+
+export type Meteorology = {
+  description: string;
+  effective: string;
+  headline: string;
+  id: string;
+  longitude: number;
+  latitude: number;
+  title: string;
+  type: string;
+};
