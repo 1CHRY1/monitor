@@ -4,7 +4,9 @@ import com.alibaba.fastjson2.JSONObject;
 import nnu.edu.back.pojo.AnalysisCase;
 import nnu.edu.back.pojo.AnalysisResult;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -59,4 +61,8 @@ public interface AnalysisService {
     Map<String, Object> addFlushContour(String caseId, String benchmarkId, String referId, String email, String fileName);
 
     Map<String, Object> addSlope(String caseId, String demId, String email, String fileName);
+
+    SseEmitter subscribe(String id, String email) throws IOException;
+
+    void over(String id, String email) throws IOException;
 }

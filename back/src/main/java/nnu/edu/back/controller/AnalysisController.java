@@ -10,7 +10,9 @@ import nnu.edu.back.service.AnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -203,7 +205,18 @@ public class AnalysisController {
         return ResultUtils.success(analysisService.addSlope(projectId, demId, email, fileName));
     }
 
+    @AuthCheck
+    @RequestMapping(value = "/subscribe/{id}", method = RequestMethod.GET)
+    public SseEmitter subscribe(@PathVariable String id, @JwtTokenParser("email") String email) throws IOException {
+        return analysisService.subscribe(id, email);
+    }
 
+    @AuthCheck
+    @RequestMapping(value = "/over/{id}", method = RequestMethod.GET)
+    public JsonResult over(@PathVariable String id, @JwtTokenParser("email") String email) throws IOException {
+        analysisService.over(id, email);
+        return ResultUtils.success();
+    }
 
 
 }

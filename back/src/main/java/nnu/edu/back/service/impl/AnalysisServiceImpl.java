@@ -6,8 +6,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import nnu.edu.back.common.exception.MyException;
 import nnu.edu.back.common.result.ResultEnum;
+import nnu.edu.back.common.result.ResultUtils;
 import nnu.edu.back.common.utils.FileUtil;
 import nnu.edu.back.common.utils.ProcessUtil;
+import nnu.edu.back.common.utils.SSEUtil;
 import nnu.edu.back.dao.main.*;
 import nnu.edu.back.pojo.AnalysisCase;
 import nnu.edu.back.pojo.AnalysisResult;
@@ -17,6 +19,7 @@ import nnu.edu.back.service.AnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.*;
 import java.util.*;
@@ -189,7 +192,7 @@ public class AnalysisServiceImpl implements AnalysisService {
             fw.close();
             bw.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
         }
         String id = UUID.randomUUID().toString();
@@ -233,9 +236,9 @@ public class AnalysisServiceImpl implements AnalysisService {
                 if(code == 0) {
                     AnalysisResult analysisResult = new AnalysisResult(result, fileName, resultUUID + ".txt", null, email, "section", "", caseId);
                     analysisResultMapper.addAnalysisResult(analysisResult);
-
+                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.success(analysisResult)));
                 } else {
-
+                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.fail(-1, "计算错误")));
                 }
             }
         }.start();
@@ -270,9 +273,9 @@ public class AnalysisServiceImpl implements AnalysisService {
                 if(code == 0) {
                     AnalysisResult analysisResult = new AnalysisResult(result, fileName, resultUUID + ".txt", null, email, "sectionContrast", "", caseId);
                     analysisResultMapper.addAnalysisResult(analysisResult);
-
+                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.success(analysisResult)));
                 } else {
-
+                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.fail(-1, "计算错误")));
                 }
             }
         }.start();
@@ -305,9 +308,9 @@ public class AnalysisServiceImpl implements AnalysisService {
                 if(code == 0) {
                     AnalysisResult analysisResult = new AnalysisResult(result, fileName, resultUUID + ".txt", null, email, "sectionFlush", "", caseId);
                     analysisResultMapper.addAnalysisResult(analysisResult);
-
+                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.success(analysisResult)));
                 } else {
-
+                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.fail(-1, "计算错误")));
                 }
             }
         }.start();
@@ -342,9 +345,9 @@ public class AnalysisServiceImpl implements AnalysisService {
                     visualFileMapper.addVisualFile(new VisualFile(visualId, resultUUID + ".png", "png", content, ""));
                     AnalysisResult analysisResult = new AnalysisResult(result, fileName, resultUUID + ".tif", null, email, "regionFlush", visualId, caseId);
                     analysisResultMapper.addAnalysisResult(analysisResult);
-
+                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.success(analysisResult)));
                 } else {
-
+                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.fail(-1, "计算错误")));
                 }
             }
         }.start();
@@ -386,8 +389,9 @@ public class AnalysisServiceImpl implements AnalysisService {
                     visualFileMapper.addVisualFile(new VisualFile(visualId, visualId + ".png", "volume", content, ""));
                     AnalysisResult analysisResult = new AnalysisResult(result, fileName, resultId + ".json", null, email, "volume", visualId, caseId);
                     analysisResultMapper.addAnalysisResult(analysisResult);
+                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.success(analysisResult)));
                 } else {
-
+                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.fail(-1, "计算错误")));
                 }
             }
         }.start();
@@ -468,5 +472,21 @@ public class AnalysisServiceImpl implements AnalysisService {
         m.put("fileName", fileName);
         m.put("visualId", content);
         return m;
+    }
+
+    @Override
+    public SseEmitter subscribe(String id, String email) throws IOException {
+        AnalysisCase analysisCase = analysisCaseMapper.getAnalysisInfo(id);
+        if (analysisCase.getCreator().equals(email)) {
+            return SSEUtil.subscribe(id);
+        } else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
+    }
+
+    @Override
+    public void over(String id, String email) throws IOException {
+        AnalysisCase analysisCase = analysisCaseMapper.getAnalysisInfo(id);
+        if (analysisCase.getCreator().equals(email)) {
+            SSEUtil.over(id);
+        } else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
     }
 }

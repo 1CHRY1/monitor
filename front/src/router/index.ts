@@ -22,7 +22,7 @@ const constantRoutes: Array<RouteRecordRaw> = [
   },
   {
     path: "/dataViewer",
-    name: "dataViewer", 
+    name: "dataViewer",
     component: () => import("@/views/DataView.vue"),
   },
   {
@@ -96,6 +96,14 @@ export const asyncRouters: Array<RouteRecordRaw> = [
         meta: {
           requiresAuth: "member",
           keepAlive: true,
+        },
+      },
+      {
+        path: ":id",
+        name: "analysisDetail",
+        component: () => import("@/views/AnalysisDetailView.vue"),
+        meta: {
+          requiresAuth: "member",
         },
       },
     ],
