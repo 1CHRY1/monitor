@@ -13,6 +13,7 @@
     "@types/uuid": "^9.0.2",
     "axios": "^1.4.0",
     "core-js": "^3.8.3",
+    "echarts": "^5.4.3",
     "element-plus": "^2.3.8",
     "js-base64": "^3.7.5",
     "mapbox-gl": "^2.15.0",
