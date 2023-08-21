@@ -27,7 +27,10 @@
                     :key="item.id"
                     :label="item.name"
                     :value="item"
-                />
+                >
+                    <span style="float: left">{{ item.name }}</span>
+                    <span style="float: right; color: var(--el-text-color-secondary);" > {{ item.time }}</span>
+                </el-option>
             </el-select>
         </div>
         <div class="selector-icon-container">
@@ -37,14 +40,9 @@
     </div>
     <div class="content-container">
         <div class="content-container-wrapper">
-            <div class="chart-container"></div>
-            <div class="chart-container"></div>
-            <div class="chart-container"></div>
-            <centerMap :mapId="mapIndex"></centerMap>
-            <div class="chart-container under-map"></div>
-            <div class="chart-container"></div>
-            <div class="chart-container"></div>
-            <div class="chart-container"></div>
+            <chartContainer v-for="chart in chartObjects" :chartId="chart.chartId" :styleType="chart.styleType" :order="chart.order" :project-id="currentProject.id"/>
+            <doubleChartContainer v-for="chart in doubleChartObjects" :chartId="chart.chartId" :styleType="chart.styleType" :order="chart.order" :project-id="currentProject.id"/>
+            <centerMap :mapId="mapIndex" order="4"></centerMap>
         </div>
     </div>
 </template>
@@ -52,15 +50,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import centerMap from '@/components/dataViewer/centerMap.vue';
+import chartContainer from '@/components/dataViewer/chartContainer.vue';
+import doubleChartContainer from '@/components/dataViewer/doubleChartContainer.vue';
+import { type ProjectOption } from '@/utils/viewerData';
 
-type ProjectOption = {
-    id: number;
-    name: string;
-}
 
 let projectOptions = ref([
-    {id: 1, name: '苏通二通道工可阶段水沙观测'},
-])
+    {id: 1, name: '苏通二通道工可阶段水沙观测', time:'2023-07'},
+]);
 
 let currentProject = ref<ProjectOption>(projectOptions.value[0]);
 
@@ -76,6 +73,23 @@ const updataTime = (): void => {
 }
 
 let mapIndex = '0';
+
+let chartObjects = [
+    {chartId: '1', order:'1', styleType:"1"}, 
+    // {chartId: '2', order:'2', styleType:"2"}, 
+    // {chartId: '3', order:'3', styleType:"2"}, 
+    {chartId: '4', order:'3', styleType:"1"}, 
+    {chartId: '5', order:'5', styleType:"3"}, 
+    {chartId: '6', order:'6', styleType:"1"}, 
+    // {chartId: '7', order:'8', styleType:"2"}, 
+    // {chartId: '8', order:'9', styleType:"2"}, 
+    {chartId: '9', order:'8', styleType:"1"}, 
+]
+
+let doubleChartObjects = [
+    {chartId: '23', order:'2', styleType:"1"},
+    {chartId: '78', order:'7', styleType:"1"}
+]
 
 onMounted(() => {
     setInterval(updataTime, 1000);
@@ -338,22 +352,7 @@ div.content-container{
         flex-flow: column wrap;
         justify-content: space-around;
         align-content: space-around;
-
-        div.chart-container {
-            box-sizing: border-box;
-            width: 30%;
-            height: 32%;
-            border-radius: 3px;
-            background-color: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(4px);
-            flex-grow: 0;
-
-            &.under-map {
-                height: 32%;
-                width: 38%;
-            }
-        }
-        
+    
     }
 }
 </style>
