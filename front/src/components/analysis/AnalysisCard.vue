@@ -5,13 +5,13 @@
         info.projectName
       }}</el-avatar>
 
-      <img :src="prefix + 'visual/getAvatar/' + info.avatar" v-else />
+      <img :src="'/monitor/visual/getAvatar/' + info.avatar" v-else />
     </div>
     <div class="name">
-      <span v-html="replaceHandle(info.projectName)"></span>
+      <span>{{ unserName }}</span>
     </div>
     <div class="creator">
-      <span v-html="replaceHandle(info.userName)"></span>
+      <span></span>
     </div>
     <div class="time">{{ time }}</div>
     <div class="btn">
@@ -24,6 +24,7 @@
 import { computed, defineComponent } from "vue";
 import { dateFormat } from "@/utils/common";
 import router from "@/router";
+import { usePermissionStore } from "@/store/permission-store";
 export default defineComponent({
   props: {
     info: {
@@ -34,6 +35,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const store = usePermissionStore();
     const info = computed(() => {
       return props.info;
     });
@@ -42,12 +44,15 @@ export default defineComponent({
       return dateFormat((props.info as any).createTime, "yyyy-MM-dd hh:mm");
     });
 
+    const unserName = computed(() => {
+      return store.name;
+    });
+
     const clickHandle = () => {
       router.push({
-        name: "project",
+        name: "analysisDetail",
         params: {
           id: (info.value as any).id,
-          projectInfo: JSON.stringify(info.value),
         },
       });
     };
@@ -66,6 +71,7 @@ export default defineComponent({
       replaceHandle,
       time,
       clickHandle,
+      unserName,
     };
   },
 });
@@ -73,6 +79,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .analysis-card {
+  height: 20rem;
   padding: 20px;
   border: solid 1px #e4e7ed;
   border-radius: 4px;

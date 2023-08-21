@@ -47,6 +47,16 @@ public interface VisualService {
 
     JSONObject getGeoJson(String fileId);
 
+    JSONObject getAnalysisGeoJson(String fileId);
+
+    Map<String, Object> getSection(String fileId);
+
+    List<List<Double>> getSectionContrast(String fileId);
+
+    Map<String, Object> getSectionFlush(String fileId);
+
+    JSONObject getVolume(String fileId);
+
     JSONObject getTianDiTu();
 
     JSONObject getTianDiTuImage();

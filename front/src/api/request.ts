@@ -111,6 +111,26 @@ export const getCoordinates = async (visualId: string) => {
   return await get(`/visual/getCoordinates/${visualId}`, true);
 };
 
+export const getAnalysisGeoJson = async (id: string) => {
+  return await get(`/visual/getAnalysisGeoJson/${id}`, true);
+};
+
+export const getContent = async (visualId: string) => {
+  return await get(`/visual/getContent/${visualId}`, true);
+};
+
+export const getSection = async (fileId: string) => {
+  return await get(`/visual/getSection/${fileId}`, true);
+};
+
+export const getSectionContrast = async (fileId: string) => {
+  return await get(`/visual/getSectionContrast/${fileId}`, true);
+};
+
+export const getSectionFlush = async (fileId: string) => {
+  return await get(`/visual/getSectionFlush/${fileId}`, true);
+};
+
 export const getDataGroup = async (dataId: string, number: number) => {
   return await get(`/browseHistory/getDataGroup/${dataId}/${number}`, true);
 };
@@ -216,3 +236,137 @@ export async function getStationByBox(
     false
   );
 }
+
+export async function pageQueryAnalysis(jsonData: {
+  page: number;
+  size: number;
+  keyword: string;
+}) {
+  return await post(`/analysis/pageQuery`, true, jsonData);
+}
+
+export async function getAnalysisResult(caseId: string) {
+  return await get(`/analysis/getAnalysisResult/${caseId}`, true);
+}
+
+export async function addAnalysisData(jsonData: {
+  caseId: string;
+  list: { fileId: string; dataListId: string }[];
+}) {
+  return await post(`/analysis/addData`, true, jsonData);
+}
+
+export const getData = async (caseId: string) => {
+  return await get(`/analysis/getData/${caseId}`, true);
+};
+
+export const delData = async (
+  caseId: string,
+  dataListId: string,
+  fileId: string
+) => {
+  return await del(`/analysis/delData/${caseId}/${dataListId}/${fileId}`, true);
+};
+
+export async function addDraw(jsonData: {
+  geoJson: any;
+  caseId: string;
+  fileName: string;
+  visualType: string;
+}) {
+  return await post(`/analysis/addDraw`, true, jsonData);
+}
+
+export const delAnalysisResult = async (id: string) => {
+  return await del(`/analysis/delAnalysisResult/${id}`, true);
+};
+
+export async function addSection(jsonData: {
+  caseId: string;
+  sectionId: string;
+  demId: string;
+  fileName: string;
+}) {
+  return await post(`/analysis/addSection`, true, jsonData);
+}
+
+export async function addSectionCompare(jsonData: {
+  caseId: string;
+  sectionId: string;
+  demList: string[];
+  fileName: string;
+}) {
+  return await post(`/analysis/addSectionCompare`, true, jsonData);
+}
+
+export async function addSectionFlush(jsonData: {
+  caseId: string;
+  sectionId: string;
+  benchmarkId: string;
+  referId: string;
+  fileName: string;
+}) {
+  return await post(`/analysis/addSectionFlush`, true, jsonData);
+}
+
+export async function addRegionFlush(jsonData: {
+  caseId: string;
+  regionId: string;
+  benchmarkId: string;
+  referId: string;
+  fileName: string;
+}) {
+  return await post(`/analysis/addRegionFlush`, true, jsonData);
+}
+
+export async function addElevationFlush(jsonData: {
+  caseId: string;
+  benchmarkId: string;
+  referId: string;
+  fileName: string;
+}) {
+  return await post(`/analysis/addElevationFlush`, true, jsonData);
+}
+
+export async function addFlushContour(jsonData: {
+  caseId: string;
+  benchmarkId: string;
+  referId: string;
+  fileName: string;
+}) {
+  return await post(`/analysis/addFlushContour`, true, jsonData);
+}
+
+export async function addSlope(jsonData: {
+  caseId: string;
+  demId: string;
+  fileName: string;
+}) {
+  return await post(`/analysis/addSlope`, true, jsonData);
+}
+
+export async function computeVolume(jsonData: {
+  caseId: string;
+  regionId: string;
+  demId: string;
+  deep: number;
+  fileName: string;
+}) {
+  return await post(`/analysis/computeVolume`, true, jsonData);
+}
+
+export const rename = async (jsonData: { id: string; name: string }) => {
+  return await patch(`/analysis/rename`, true, jsonData);
+};
+
+export async function updateLayer(projectId: string, list: string[]) {
+  return await post(`/analysis/updateLayer/${projectId}`, true, list);
+}
+
+export const getLayersInfo = async (caseId: string) => {
+  return await get(`/analysis/getLayersInfo/${caseId}`, true);
+};
+
+export const findParameterByType = async (type: string) => {
+  return await get(`/analysis/findParameterByType/${type}`, true);
+};

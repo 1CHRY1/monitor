@@ -1,42 +1,46 @@
 <template>
   <div class="home">
-    <CarouselComponent @message-to-parent="handleChilMessage" :ImgIndexfromParent="targetImgIndex"></CarouselComponent>
-    <introduce-component :messagefromparent = "messageFromParent" @targetImgIndex="handletargetImgIndex"></introduce-component>
+    <CarouselComponent
+      @message-to-parent="handleChilMessage"
+      :ImgIndexfromParent="targetImgIndex"
+    ></CarouselComponent>
+    <introduce-component
+      :messagefromparent="messageFromParent"
+      @targetImgIndex="handletargetImgIndex"
+    ></introduce-component>
   </div>
 </template>
 
 <script lang="ts">
-import CarouselComponent from '@/components/home/CarouselComponent.vue'
-import { defineComponent } from "vue";
+import CarouselComponent from "@/components/home/CarouselComponent.vue";
+import { defineComponent, onMounted } from "vue";
 import IntroduceComponent from "@/components/home/IntroduceComponent.vue";
 export default defineComponent({
-  components: { IntroduceComponent,CarouselComponent },
+  components: { IntroduceComponent, CarouselComponent },
   setup() {
+    
   },
   data() {
     return {
-      CarouselIndex:-1,
-      messageFromParent:0,
-      targetImgIndex:-1,
-    }
+      CarouselIndex: -1,
+      messageFromParent: 0,
+      targetImgIndex: -1,
+    };
   },
   methods: {
-    handleChilMessage(msg:any){
+    handleChilMessage(msg: any) {
       this.CarouselIndex = msg;
     },
-    handletargetImgIndex(msg:any){
-
-      this.targetImgIndex=msg
-
-    }
+    handletargetImgIndex(msg: any) {
+      this.targetImgIndex = msg;
+    },
   },
-  watch:{
-    CarouselIndex(nowValue){
+  watch: {
+    CarouselIndex(nowValue) {
       //监视属性把轮播图索引传给Introduce组件
-      this.messageFromParent=nowValue;
-    }
-  }
-
+      this.messageFromParent = nowValue;
+    },
+  },
 });
 </script>
 

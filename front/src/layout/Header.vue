@@ -145,7 +145,7 @@ div.header-main {
   font-family: "Microsoft YaHei";
 
   .el-row {
-    margin-top: 1vh;
+    // margin-top: 1vh;
     height: 6vh;
   }
   .el-row:last-child {

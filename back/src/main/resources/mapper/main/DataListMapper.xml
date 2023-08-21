@@ -23,7 +23,7 @@
     </resultMap>
 
     <insert id="addDataList">
-        insert into data_list values(#{dataList.id}, #{dataList.name}, #{dataList.location}, #{dataList.description}, #{dataList.tags},
+        insert into data_list values(#{dataList.id}, #{dataList.name}, #{dataList.location, typeHandler=nnu.edu.back.common.utils.ListTypeHandler}, #{dataList.description}, #{dataList.tags, typeHandler=nnu.edu.back.common.utils.ListTypeHandler},
                                      datetime('now','localtime'), datetime('now','localtime'), #{dataList.download}, #{dataList.watch}, #{dataList.avatar}, #{dataList.provider}, #{dataList.range}, #{dataList.type}, #{dataList.providerPhone},
                                      #{dataList.providerEmail}, #{dataList.providerAddress}, #{dataList.detail}, #{dataList.timeStamp})
 
@@ -31,7 +31,7 @@
 
     <update id="updateDataList">
         update data_list
-        set name = #{dataList.name}, location = #{dataList.location}, description = #{dataList.description}, tags = #{dataList.tags},
+        set name = #{dataList.name}, location = #{dataList.location, typeHandler=nnu.edu.back.common.utils.ListTypeHandler}, description = #{dataList.description}, tags = #{dataList.tags, typeHandler=nnu.edu.back.common.utils.ListTypeHandler},
         update_time = datetime('now','localtime'), provider = #{dataList.provider}, range = #{dataList.range}, type = #{dataList.type}, provider_phone = #{dataList.providerPhone}, provider_email = #{dataList.providerEmail},
         provider_address = #{dataList.providerAddress}, detail = #{dataList.detail}, time_stamp = #{dataList.timeStamp}, avatar = #{dataList.avatar}
         where id = #{dataList.id}

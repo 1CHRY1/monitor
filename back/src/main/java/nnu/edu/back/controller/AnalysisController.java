@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -43,17 +44,17 @@ public class AnalysisController {
     }
 
     @AuthCheck
-    @RequestMapping(value = "/getAnalysisInfo/{projectId}", method = RequestMethod.GET)
-    public JsonResult getAnalysisInfo(@PathVariable String projectId, @JwtTokenParser("email") String email) {
-        return ResultUtils.success(analysisService.getAnalysisInfo(projectId, email));
+    @RequestMapping(value = "/getAnalysisInfo/{caseId}", method = RequestMethod.GET)
+    public JsonResult getAnalysisInfo(@PathVariable String caseId, @JwtTokenParser("email") String email) {
+        return ResultUtils.success(analysisService.getAnalysisInfo(caseId, email));
     }
 
     @AuthCheck
     @RequestMapping(value = "/addData", method = RequestMethod.POST)
     public JsonResult addData(@RequestBody JSONObject jsonObject) {
-        String projectId = jsonObject.getString("projectId");
+        String caseId = jsonObject.getString("caseId");
         List<Map<String, String>> list = jsonObject.getObject("list", List.class);
-        analysisService.addData(projectId, list);
+        analysisService.addData(caseId, list);
         return ResultUtils.success();
     }
 
@@ -78,9 +79,9 @@ public class AnalysisController {
     }
 
     @AuthCheck
-    @RequestMapping(value = "/getLayersInfo/{projectId}", method = RequestMethod.GET)
-    public JsonResult getLayersInfo(@PathVariable String projectId) {
-        return ResultUtils.success(analysisService.getLayersInfo(projectId));
+    @RequestMapping(value = "/getLayersInfo/{caseId}", method = RequestMethod.GET)
+    public JsonResult getLayersInfo(@PathVariable String caseId) {
+        return ResultUtils.success(analysisService.getLayersInfo(caseId));
     }
 
 
@@ -117,92 +118,104 @@ public class AnalysisController {
     }
 
     @AuthCheck
-    @RequestMapping(value = "/delAnalyticData/{id}", method = RequestMethod.DELETE)
-    public JsonResult delAnalyticData(@PathVariable String id, @JwtTokenParser("email") String email) {
-        analysisService.delAnalyticData(id, email);
+    @RequestMapping(value = "/delAnalysisResult/{id}", method = RequestMethod.DELETE)
+    public JsonResult delAnalysisResult(@PathVariable String id, @JwtTokenParser("email") String email) {
+        analysisService.delAnalysisResult(id, email);
         return ResultUtils.success();
     }
 
     @AuthCheck
     @RequestMapping(value = "/addSection", method = RequestMethod.POST)
     public JsonResult addSection(@RequestBody JSONObject jsonObject, @JwtTokenParser("email") String email) {
-        String projectId = jsonObject.getString("projectId");
+        String caseId = jsonObject.getString("caseId");
         String sectionId = jsonObject.getString("sectionId");
         String demId = jsonObject.getString("demId");
         String fileName = jsonObject.getString("fileName");
-        return ResultUtils.success(analysisService.addSection(projectId, sectionId, demId, email, fileName));
+        return ResultUtils.success(analysisService.addSection(caseId, sectionId, demId, email, fileName));
     }
 
     @AuthCheck
     @RequestMapping(value = "/addSectionCompare", method = RequestMethod.POST)
     public JsonResult addSectionCompare(@RequestBody JSONObject jsonObject, @JwtTokenParser("email") String email) {
-        String projectId = jsonObject.getString("projectId");
+        String caseId = jsonObject.getString("caseId");
         String sectionId = jsonObject.getString("sectionId");
         String fileName = jsonObject.getString("fileName");
         List<String> demList = jsonObject.getObject("demList", List.class);
-        return ResultUtils.success(analysisService.addSectionCompare(projectId, sectionId, email, demList, fileName));
+        return ResultUtils.success(analysisService.addSectionCompare(caseId, sectionId, email, demList, fileName));
     }
 
     @AuthCheck
     @RequestMapping(value = "/addSectionFlush", method = RequestMethod.POST)
     public JsonResult addSectionFlush(@RequestBody JSONObject jsonObject, @JwtTokenParser("email") String email) {
-        String projectId = jsonObject.getString("projectId");
+        String caseId = jsonObject.getString("caseId");
         String sectionId = jsonObject.getString("sectionId");
         String benchmarkId = jsonObject.getString("benchmarkId");
         String referId = jsonObject.getString("referId");
         String fileName = jsonObject.getString("fileName");
-        return ResultUtils.success(analysisService.addSectionFlush(projectId, sectionId, benchmarkId, referId, email, fileName));
+        return ResultUtils.success(analysisService.addSectionFlush(caseId, sectionId, benchmarkId, referId, email, fileName));
     }
 
     @AuthCheck
     @RequestMapping(value = "/addRegionFlush", method = RequestMethod.POST)
     public JsonResult addRegionFlush(@RequestBody JSONObject jsonObject, @JwtTokenParser("email") String email) {
-        String projectId = jsonObject.getString("projectId");
+        String caseId = jsonObject.getString("caseId");
         String regionId = jsonObject.getString("regionId");
         String benchmarkId = jsonObject.getString("benchmarkId");
         String referId = jsonObject.getString("referId");
         String fileName = jsonObject.getString("fileName");
-        return ResultUtils.success(analysisService.addRegionFlush(projectId, regionId, benchmarkId, referId, email, fileName));
+        return ResultUtils.success(analysisService.addRegionFlush(caseId, regionId, benchmarkId, referId, email, fileName));
     }
 
     @AuthCheck
     @RequestMapping(value = "/computeVolume", method = RequestMethod.POST)
     public JsonResult computeVolume(@RequestBody JSONObject jsonObject, @JwtTokenParser("email") String email) {
         Double deep = jsonObject.getDouble("deep");
-        String projectId = jsonObject.getString("projectId");
+        String caseId = jsonObject.getString("caseId");
         String regionId = jsonObject.getString("regionId");
         String demId = jsonObject.getString("demId");
         String fileName = jsonObject.getString("fileName");
-        return ResultUtils.success(analysisService.computeVolume(deep, projectId, regionId, demId, email, fileName));
+        return ResultUtils.success(analysisService.computeVolume(deep, caseId, regionId, demId, email, fileName));
     }
 
     @AuthCheck
     @RequestMapping(value = "/addElevationFlush", method = RequestMethod.POST)
     public JsonResult addElevationFlush(@RequestBody JSONObject jsonObject, @JwtTokenParser("email") String email) {
-        String projectId = jsonObject.getString("projectId");
+        String caseId = jsonObject.getString("caseId");
         String benchmarkId = jsonObject.getString("benchmarkId");
         String referId = jsonObject.getString("referId");
         String fileName = jsonObject.getString("fileName");
-        return ResultUtils.success(analysisService.addElevationFlush(projectId, benchmarkId, referId, email, fileName));
+        return ResultUtils.success(analysisService.addElevationFlush(caseId, benchmarkId, referId, email, fileName));
     }
 
     @AuthCheck
     @RequestMapping(value = "/addFlushContour", method = RequestMethod.POST)
     public JsonResult addFlushContour(@RequestBody JSONObject jsonObject, @JwtTokenParser("email") String email) {
-        String projectId = jsonObject.getString("projectId");
+        String caseId = jsonObject.getString("caseId");
         String benchmarkId = jsonObject.getString("benchmarkId");
         String referId = jsonObject.getString("referId");
         String fileName = jsonObject.getString("fileName");
-        return ResultUtils.success(analysisService.addFlushContour(projectId, benchmarkId, referId, email, fileName));
+        return ResultUtils.success(analysisService.addFlushContour(caseId, benchmarkId, referId, email, fileName));
     }
 
     @AuthCheck
     @RequestMapping(value = "/addSlope", method = RequestMethod.POST)
     public JsonResult addSlope(@RequestBody JSONObject jsonObject, @JwtTokenParser("email") String email) {
-        String projectId = jsonObject.getString("projectId");
+        String caseId = jsonObject.getString("caseId");
         String demId = jsonObject.getString("demId");
         String fileName = jsonObject.getString("fileName");
-        return ResultUtils.success(analysisService.addSlope(projectId, demId, email, fileName));
+        return ResultUtils.success(analysisService.addSlope(caseId, demId, email, fileName));
+    }
+
+    @AuthCheck
+    @RequestMapping(value = "/rename", method = RequestMethod.PATCH)
+    public JsonResult rename(@RequestBody JSONObject jsonObject) {
+        analysisService.rename(jsonObject.getString("id"), jsonObject.getString("name"));
+        return ResultUtils.success();
+    }
+
+    @RequestMapping(value = "/downloadAnalysisResult/{id}", method = RequestMethod.GET)
+    public void downloadAnalysisResult(@PathVariable String id, HttpServletResponse response) {
+        analysisService.downloadAnalysisResult(id, response);
     }
 
     @AuthCheck

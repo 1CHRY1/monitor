@@ -15,24 +15,24 @@
     <select id="findByType" resultType="java.util.Map">
         <if test="type == 'dem'">
             select file_id as "fileId", data_list_id as "dataListId", file_name as "fileName", name as "dataListName", f.visual_id as "visualId", f.visual_type as "visualType"
-            from analytic_parameter a, files f, data_list d
+            from analysis_parameter a, files f, data_list d
             where a.type = #{type} and f.id = a.file_id and d.id = a.data_list_id
         </if>
     </select>
 
     <select id="findAddressByBenchmarkIdAndReferId" resultType="java.lang.String">
-        select address from analytic_parameter where benchmark_id = #{benchmarkId} and refer_id = #{referId} and type = #{type}
+        select address from analysis_parameter where benchmark_id = #{benchmarkId} and refer_id = #{referId} and type = #{type}
     </select>
 
     <select id="findByBenchmarkIdAndReferId" resultMap="AnalysisParameterMap">
-        select * from analytic_parameter where benchmark_id = #{benchmarkId} and refer_id = #{referId} and type = #{type}
+        select * from analysis_parameter where benchmark_id = #{benchmarkId} and refer_id = #{referId} and type = #{type}
     </select>
 
     <select id="findSlope" resultMap="AnalysisParameterMap">
-        select * from analytic_parameter where file_id = #{demId} and type = 'slope'
+        select * from analysis_parameter where file_id = #{demId} and type = 'slope'
     </select>
 
-    <select id="findInfoById" resultType="java.util.Map">
-        select * from analytic_parameter where id = #{id}
+    <select id="findInfoById" resultMap="AnalysisParameterMap">
+        select * from analysis_parameter where id = #{id}
     </select>
 </mapper>

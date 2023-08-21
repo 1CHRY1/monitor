@@ -6,6 +6,7 @@ import nnu.edu.back.pojo.AnalysisResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public interface AnalysisService {
 
     String addDraw(JSONObject jsonObject, String email);
 
-    void delAnalyticData(String id, String email);
+    void delAnalysisResult(String id, String email);
 
     String addSection(String caseId, String sectionId, String demId, String email, String fileName);
 
@@ -62,7 +63,13 @@ public interface AnalysisService {
 
     Map<String, Object> addSlope(String caseId, String demId, String email, String fileName);
 
+    void rename(String id, String name);
+
+    void downloadAnalysisResult(String id, HttpServletResponse response);
+
     SseEmitter subscribe(String id, String email) throws IOException;
+
+
 
     void over(String id, String email) throws IOException;
 }

@@ -228,3 +228,36 @@ export type Meteorology = {
   title: string;
   type: string;
 };
+
+export type Section = {
+  id: string;
+  name: string;
+};
+
+export type AnalysisDataset = {
+  id: string;
+  fileName: string;
+  visualId: string;
+  visualType: string;
+};
+
+export type AnalysisParameter = {
+  fileId: string;
+  fileName: string;
+  dataListId: string;
+  dataListName: string;
+  visualId: string;
+  visualType: string;
+};
+
+export type TreeData = {
+  label: string;
+  flag: boolean;
+  children: TreeData[];
+  id: string;
+  checkFlag?: boolean;
+  visualId?: string;
+  visualType?: string;
+  parentId?: string;
+  parentName?: string;
+};

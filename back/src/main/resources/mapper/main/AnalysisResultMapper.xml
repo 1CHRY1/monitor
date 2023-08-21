@@ -17,7 +17,7 @@
     </select>
 
     <insert id="addAnalysisResult">
-        insert into analysis_result values (#{analysisResult.id}, #{analysisResult.fileName}, #{analysisResult.address}, datetime('now','localtime'), #{analysisResult.email}, #{analysisResult.visualType}, #{analysisResult.visualId}, #{analysisResult.caseId})
+        insert into analysis_result values (#{analysisResult.id}, #{analysisResult.fileName}, #{analysisResult.address}, datetime('now','localtime'), #{analysisResult.creator}, #{analysisResult.visualType}, #{analysisResult.visualId}, #{analysisResult.caseId})
     </insert>
 
     <delete id="delAnalysisResult">

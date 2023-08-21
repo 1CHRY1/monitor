@@ -1,5 +1,6 @@
 package nnu.edu.back.dao.main;
 
+import nnu.edu.back.pojo.AnalysisParameter;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -19,9 +20,9 @@ public interface AnalysisParameterMapper {
 
     String findAddressByBenchmarkIdAndReferId(@Param("benchmarkId") String benchmarkId, @Param("referId") String referId, @Param("type") String type);
 
-    Map<String, Object> findByBenchmarkIdAndReferId(@Param("benchmarkId") String benchmarkId, @Param("referId") String referId, @Param("type") String type);
+    AnalysisParameter findByBenchmarkIdAndReferId(@Param("benchmarkId") String benchmarkId, @Param("referId") String referId, @Param("type") String type);
 
-    Map<String, Object> findSlope(@Param("demId") String demId);
+    AnalysisParameter findSlope(@Param("demId") String demId);
 
-    Map<String, Object> findInfoById(@Param("id") String id);
+    AnalysisParameter findInfoById(@Param("id") String id);
 }

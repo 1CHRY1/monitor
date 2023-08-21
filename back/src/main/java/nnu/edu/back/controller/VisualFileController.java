@@ -164,10 +164,34 @@ public class VisualFileController {
      * @Author: Yiming
      * @Date: 2022/10/14
      */
-    @CrossOrigin
     @RequestMapping(value = "/getGeoJson/{fileId}", method = RequestMethod.GET)
     public JsonResult getGeoJson(@PathVariable String fileId) {
         return ResultUtils.success(visualService.getGeoJson(fileId));
+    }
+
+    @RequestMapping(value = "/getAnalysisGeoJson/{fileId}", method = RequestMethod.GET)
+    public JsonResult getAnalysisGeoJson(@PathVariable String fileId) {
+        return ResultUtils.success(visualService.getAnalysisGeoJson(fileId));
+    }
+
+    @RequestMapping(value = "/getSection/{fileId}", method = RequestMethod.GET)
+    public JsonResult getSection(@PathVariable String fileId) {
+        return ResultUtils.success(visualService.getSection(fileId));
+    }
+
+    @RequestMapping(value = "/getSectionContrast/{fileId}", method = RequestMethod.GET)
+    public JsonResult getSectionContrast(@PathVariable String fileId) {
+        return ResultUtils.success(visualService.getSectionContrast(fileId));
+    }
+
+    @RequestMapping(value = "/getSectionFlush/{fileId}", method = RequestMethod.GET)
+    public JsonResult getSectionFlush(@PathVariable String fileId) {
+        return ResultUtils.success(visualService.getSectionFlush(fileId));
+    }
+
+    @RequestMapping(value = "/getVolume/{fileId}", method = RequestMethod.GET)
+    public JsonResult getVolume(@PathVariable String fileId) {
+        return ResultUtils.success(visualService.getVolume(fileId));
     }
 
 

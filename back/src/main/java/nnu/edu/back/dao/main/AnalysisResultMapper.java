@@ -22,7 +22,7 @@ public interface AnalysisResultMapper {
 
     void delAnalysisResult(@Param("id") String id);
 
-    void delAnalysisResultByCaseId(@Param("projectId") String projectId);
+    void delAnalysisResultByCaseId(@Param("caseId") String caseId);
 
     AnalysisResult getInfoById(@Param("id") String id);
 

@@ -11,17 +11,17 @@ import nnu.edu.back.common.utils.FileUtil;
 import nnu.edu.back.common.utils.ProcessUtil;
 import nnu.edu.back.common.utils.SSEUtil;
 import nnu.edu.back.dao.main.*;
-import nnu.edu.back.pojo.AnalysisCase;
-import nnu.edu.back.pojo.AnalysisResult;
-import nnu.edu.back.pojo.Files;
-import nnu.edu.back.pojo.VisualFile;
+import nnu.edu.back.pojo.*;
 import nnu.edu.back.service.AnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -80,12 +80,12 @@ public class AnalysisServiceImpl implements AnalysisService {
         if(!keyword.equals("")) {
             keyword = "%" + keyword + "%";
         }
-        List<AnalysisCase> list = analysisCaseMapper.fuzzyQuery(email, keyword, page, size * page);
+        List<AnalysisCase> list = analysisCaseMapper.fuzzyQuery(email, keyword, size, size * page);
         int total = analysisCaseMapper.count(email, keyword);
         Map<String, Object> map = new HashMap<>();
         map.put("list", list);
         map.put("total", total);
-        return null;
+        return map;
     }
 
     @Override
@@ -196,13 +196,13 @@ public class AnalysisServiceImpl implements AnalysisService {
             throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
         }
         String id = UUID.randomUUID().toString();
-        AnalysisResult analysisResult = new AnalysisResult(id, fileName, id + ".json", null, email, visualType, "", caseId);
+        AnalysisResult analysisResult = new AnalysisResult(id, fileName, uuid + ".json", null, email, visualType, "", caseId);
         analysisResultMapper.addAnalysisResult(analysisResult);
         return id;
     }
 
     @Override
-    public void delAnalyticData(String id, String email) {
+    public void delAnalysisResult(String id, String email) {
         AnalysisResult analysisResult = analysisResultMapper.getInfoById(id);
         String creator = analysisResult.getCreator();
         String caseId = analysisResult.getCaseId();
@@ -431,9 +431,9 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     public Map<String, Object> addElevationFlush(String caseId, String benchmarkId, String referId, String email, String fileName) {
-        Map<String, Object> map = analysisParameterMapper.findByBenchmarkIdAndReferId(benchmarkId, referId, "flush");
-        String id = map.get("id").toString();
-        String content = map.get("content").toString();
+        AnalysisParameter analysisParameter = analysisParameterMapper.findByBenchmarkIdAndReferId(benchmarkId, referId, "flush");
+        String id = analysisParameter.getId();
+        String content = analysisParameter.getContent();
         String resultId = UUID.randomUUID().toString();
         AnalysisResult analysisResult = new AnalysisResult(resultId, fileName, id, null, email, "elevationFlush", content, caseId);
         analysisResultMapper.addAnalysisResult(analysisResult);
@@ -446,9 +446,9 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     public Map<String, Object> addFlushContour(String caseId, String benchmarkId, String referId, String email, String fileName) {
-        Map<String, Object> map = analysisParameterMapper.findByBenchmarkIdAndReferId(benchmarkId, referId, "flushContour");
-        String id = map.get("id").toString();
-        String content = map.get("content").toString();
+        AnalysisParameter analysisParameter = analysisParameterMapper.findByBenchmarkIdAndReferId(benchmarkId, referId, "flushContour");
+        String id = analysisParameter.getId();
+        String content = analysisParameter.getContent();
         String resultId = UUID.randomUUID().toString();
         AnalysisResult analysisResult = new AnalysisResult(resultId, fileName, id, null, email, "flushContour", content, caseId);
         analysisResultMapper.addAnalysisResult(analysisResult);
@@ -461,9 +461,9 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     public Map<String, Object> addSlope(String caseId, String demId, String email, String fileName) {
-        Map<String, Object> map = analysisParameterMapper.findSlope(demId);
-        String id = map.get("id").toString();
-        String content = map.get("content").toString();
+        AnalysisParameter analysisParameter = analysisParameterMapper.findSlope(demId);
+        String id = analysisParameter.getId();
+        String content = analysisParameter.getContent();
         String resultId = UUID.randomUUID().toString();
         AnalysisResult analysisResult = new AnalysisResult(resultId, fileName, id, null, email, "slope", content, caseId);
         analysisResultMapper.addAnalysisResult(analysisResult);
@@ -472,6 +472,48 @@ public class AnalysisServiceImpl implements AnalysisService {
         m.put("fileName", fileName);
         m.put("visualId", content);
         return m;
+    }
+
+    @Override
+    public void rename(String id, String name) {
+        analysisResultMapper.rename(id, name);
+    }
+
+    @Override
+    public void downloadAnalysisResult(String id, HttpServletResponse response) {
+        AnalysisResult analysisResult = analysisResultMapper.getInfoById(id);
+        String address = baseDir + analysisResult.getAddress();
+        File file = new File(address);
+        if (!file.exists()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        InputStream in = null;
+        ServletOutputStream sos = null;
+        try {
+            response.setContentType("application/octet-stream");
+            response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(analysisResult.getFileName(), "UTF-8"));
+            response.addHeader("Content-Length", "" + file.length());
+            in = new FileInputStream(file);
+            sos = response.getOutputStream();
+            byte[] b = new byte[1024];
+            int len;
+            while((len = in.read(b)) > 0) {
+                sos.write(b, 0, len);
+            }
+            sos.flush();
+            sos.close();
+            in.close();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            try {
+                if (in != null) in.close();
+                if (sos != null) sos.close();
+            } catch (Exception exception) {
+                log.error(exception.getMessage());
+                throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+            }
+            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+        }
     }
 
     @Override

@@ -8,9 +8,11 @@ import nnu.edu.back.common.exception.MyException;
 import nnu.edu.back.common.result.ResultEnum;
 import nnu.edu.back.common.utils.FileUtil;
 import nnu.edu.back.common.utils.TileUtil;
+import nnu.edu.back.dao.main.AnalysisResultMapper;
 import nnu.edu.back.dao.main.FilesMapper;
 import nnu.edu.back.dao.main.VisualFileMapper;
 import nnu.edu.back.dao.shp.VectorTileMapper;
+import nnu.edu.back.pojo.AnalysisResult;
 import nnu.edu.back.pojo.Files;
 import nnu.edu.back.pojo.TileBox;
 import nnu.edu.back.pojo.VisualFile;
@@ -52,6 +54,9 @@ public class VisualServiceImpl implements VisualService {
     @Value("${tempDir}")
     String tempDir;
 
+    @Value("${analysisDir}")
+    String analysisDir;
+
     @Autowired
     VisualFileMapper visualFileMapper;
 
@@ -60,6 +65,9 @@ public class VisualServiceImpl implements VisualService {
 
     @Autowired
     FilesMapper filesMapper;
+
+    @Autowired
+    AnalysisResultMapper analysisResultMapper;
 
 
 
@@ -304,6 +312,140 @@ public class VisualServiceImpl implements VisualService {
         return FileUtil.readJson(path);
     }
 
+    @Override
+    public JSONObject getAnalysisGeoJson(String fileId) {
+        AnalysisResult analysisResult = analysisResultMapper.getInfoById(fileId);
+        String path = analysisDir + analysisResult.getCaseId() + "/" + analysisResult.getAddress();
+        return FileUtil.readJson(path);
+    }
+
+    @Override
+    public Map<String, Object> getSection(String fileId) {
+        AnalysisResult analysisResult = analysisResultMapper.getInfoById(fileId);
+        String address = analysisResult.getAddress();
+        String path = analysisDir + analysisResult.getCaseId() + "/" + address;
+        File file = new File(path);
+        if (!file.exists()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        BufferedReader br = null;
+        List<Double> list = new ArrayList<>();
+        try {
+            br = new BufferedReader(new FileReader(path));
+
+            String value = "";
+            while ((value = br.readLine()) != null) {
+                if (!value.equals("-3.4028235e+38")) {
+                    list.add(Double.valueOf(value));
+                }
+            }
+            br.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+            }
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", list);
+        return map;
+    }
+
+    @Override
+    public List<List<Double>> getSectionContrast(String fileId) {
+        AnalysisResult analysisResult = analysisResultMapper.getInfoById(fileId);
+        String address = analysisResult.getAddress();
+        String path = analysisDir + analysisResult.getCaseId() + "/" + address;
+        File file = new File(path);
+        List<List<Double>> result = new ArrayList<>();
+        if (!file.exists()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(path));
+            int number = Integer.parseInt(br.readLine());
+            for (int i = 0; i < number; i++) {
+                List<Double> list = new ArrayList<>();
+                String value = "";
+                while ((value = br.readLine()) != null) {
+                    if (value.equals("")) {
+                        break;
+                    }
+                    if (!value.equals("-3.4028235e+38")) {
+                        list.add(Double.valueOf(value));
+                    } else {
+                        list.add(0.0);
+                    }
+                }
+                result.add(list);
+            }
+            br.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+        }
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> getSectionFlush(String fileId) {
+        AnalysisResult analysisResult = analysisResultMapper.getInfoById(fileId);
+        String address = analysisResult.getAddress();
+        String path = analysisDir + analysisResult.getCaseId() + "/" + address;
+        File file = new File(path);
+        Map<String, Object> result = new HashMap<>();
+        if (!file.exists()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(path));
+
+            List<List<Double>> list = new ArrayList<>();
+            for (int i = 0; i < 3; i++) {
+                List<Double> temp = new ArrayList<>();
+                String value = "";
+                while ((value = br.readLine()) != null) {
+                    if (value.equals("")) {
+                        break;
+                    }
+                    if (!value.equals("-3.4028235e+38")) {
+                        temp.add(Double.valueOf(value));
+                    } else {
+                        temp.add(0.0);
+                    }
+                }
+                list.add(temp);
+            }
+            br.close();
+            result.put("benchmark", list.get(0));
+            result.put("refer", list.get(1));
+            result.put("flush", list.get(2));
+            return result;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+        }
+    }
+
+    @Override
+    public JSONObject getVolume(String fileId) {
+        AnalysisResult analysisResult = analysisResultMapper.getInfoById(fileId);
+        String visualId = analysisResult.getVisualId();
+        VisualFile visualFile = visualFileMapper.findById(visualId);
+        String address = visualFile.getContent();
+        String path = visualDir + address;
+        return FileUtil.readJson(path);
+    }
 
     @Override
     public JSONObject getTianDiTu() {

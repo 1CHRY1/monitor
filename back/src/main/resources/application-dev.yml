@@ -25,7 +25,7 @@ pgPath: D:/App/postgresql/bin/
 mapDir: E:/monitor/resources/map/
 resourceDir: E:/monitor/resources/
 analysisDir: E:/monitor/resources/analysis/
-analysisParameterDir: E:/monitor/resources/analysisParameterDir/
+analysisParameterDir: E:/monitor/resources/analysisParameter/
 
 meteorologyUrl: https://weather.cma.cn/api/map/alarm
 meteorologyPngUrl:

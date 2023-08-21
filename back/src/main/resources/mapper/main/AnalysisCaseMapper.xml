@@ -45,7 +45,7 @@
     </select>
 
     <update id="updateLayer">
-        update analysis_case set layer_manage = #{layers} where id = #{id}
+        update analysis_case set layer_manage = #{layers, typeHandler=nnu.edu.back.common.utils.ListTypeHandler} where id = #{id}
     </update>
 
     <select id="getLayersInfo" resultMap="FilesMap">
