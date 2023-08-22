@@ -4,16 +4,24 @@
       <img :src="'/monitor/visual/getAvatar/' + projectInfo.avatar" />
     </div>
     <div class="text-info">
-      <div class="title">{{ projectInfo.projectName }}</div>
+      <div class="title">
+        <span v-html="replaceHandle(projectInfo.projectName)"></span>
+      </div>
       <div class="institution">
-        <strong>施工单位：</strong>{{ projectInfo.institution }}
+        <strong>施工单位：</strong
+        ><span v-html="replaceHandle(projectInfo.institution)"></span>
       </div>
       <div class="location">
-        <strong>施工地点：</strong>{{ projectInfo.location }}
+        <strong>施工地点：</strong
+        ><span v-html="replaceHandle(projectInfo.location)"></span>
       </div>
-      <div class="time"><strong>施工时间：</strong>{{ projectInfo.time }}</div>
+      <div class="time">
+        <strong>施工时间：</strong
+        ><span v-html="replaceHandle(projectInfo.time)"></span>
+      </div>
       <div class="des">
-        <strong>简介：</strong>{{ projectInfo.description }}
+        <strong>简介：</strong
+        ><span v-html="replaceHandle(projectInfo.description)"></span>
       </div>
     </div>
   </div>
@@ -27,13 +35,25 @@ export default defineComponent({
     projectInfo: {
       type: Object as PropType<ProjectType>,
     },
+    keyword: {
+      type: String,
+    },
   },
   setup(props) {
     const projectInfo = computed(() => {
       return props.projectInfo;
     });
 
-    return { projectInfo };
+    const replaceHandle = (currentStr: string) => {
+      const res = new RegExp("(" + props.keyword + ")", "g");
+      currentStr = currentStr.replace(
+        res,
+        "<span style='color:red;'>" + props.keyword + "</span>"
+      );
+      return currentStr;
+    };
+
+    return { projectInfo, replaceHandle };
   },
 });
 </script>

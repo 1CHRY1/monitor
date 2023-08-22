@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +39,32 @@ public class InternetUtil {
             HttpsURLConnection connection = (HttpsURLConnection) obj.openConnection();
             connection.setRequestMethod("GET");
 
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+        }
+
+        return JSONObject.parseObject(response.toString());
+    }
+
+    public static JSONObject doGet(String url, Map<String, String> map) {
+        StringBuilder response = new StringBuilder();
+
+        try {
+            URL obj = new URL(url);
+            HttpsURLConnection connection = (HttpsURLConnection) obj.openConnection();
+            connection.setRequestMethod("GET");
+            for (String key : map.keySet()) {
+                connection.setRequestProperty(key, map.get(key));
+            }
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String inputLine;
 

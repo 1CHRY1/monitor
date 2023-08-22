@@ -248,6 +248,7 @@
         </div>
       </div>
     </div>
+    <page-copyright />
   </div>
 </template>
 
@@ -274,7 +275,7 @@ import PhotoVisual from "@/components/visual/PhotoVisual.vue";
 import ExcelVisual from "@/components/visual/ExcelVisual.vue";
 import VideoVisual from "@/components/visual/VideoVisual.vue";
 import Statistics from "@/components/visual/Statistics.vue";
-
+import PageCopyright from "@/layout/PageCopyright.vue";
 import { DataListType } from "@/type";
 export default defineComponent({
   components: {
@@ -286,6 +287,7 @@ export default defineComponent({
     ExcelVisual,
     VideoVisual,
     Statistics,
+    PageCopyright,
   },
   props: {
     fileInfo: {
