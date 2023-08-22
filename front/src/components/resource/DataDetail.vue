@@ -135,7 +135,7 @@
               <el-empty description="暂无数据" />
             </div>
             <div v-else>
-              <el-table :data="fileList" max-height="500" stripe>
+              <el-table :data="fileList" height="500" stripe>
                 <el-table-column prop="fileName" label="文件名称" width="650" />
                 <el-table-column prop="size" label="文件大小" width="150" />
 
