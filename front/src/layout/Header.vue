@@ -108,7 +108,7 @@ export default defineComponent({
     const userNav = (param: string) => {
       switch (param) {
         case "1":
-          router.push({ name: "project" });
+          router.push({ name: "resourceAdmin" });
           return;
         case "2":
           router.push({ name: "project" });
@@ -346,5 +346,4 @@ ul.el-dropdown-menu {
 :deep().el-scrollbar__wrap {
   background-color: #39d6fd !important;
 }
-
 </style>

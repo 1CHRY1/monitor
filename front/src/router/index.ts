@@ -125,6 +125,15 @@ export const asyncRouters: Array<RouteRecordRaw> = [
           // keepAlive: true,
         },
       },
+      {
+        path: "resource",
+        name: "resourceAdmin",
+        component: () => import("@/views/ResourceAdminView.vue"),
+        meta: {
+          requiresAuth: "admin",
+          keepAlive: true,
+        },
+      },
     ],
   },
   {

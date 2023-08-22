@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch, onBeforeUnmount, onMounted } from "vue";
 import { getLayersInfo } from "@/api/request";
 import TopTool from "@/components/analysis/TopTool.vue";
 import DataManage from "@/components/analysis/DataManage.vue";
@@ -56,54 +56,7 @@ export default defineComponent({
     const dataManage = ref();
     const layerManage = ref();
 
-    // const dropSize = () => {
-    //   const bodyHeight = document.body.scrollHeight;
-    //   const bodyWidth = document.body.scrollWidth;
-    //   (leftResize.value as HTMLElement).onmousedown = function () {
-    //     document.onmousemove = function (e: any) {
-    //       let clientX = e.clientX;
-    //       if (clientX > bodyWidth * 0.4) {
-    //         clientX = bodyWidth * 0.4;
-    //       }
-    //       if (clientX < bodyWidth * 0.2) {
-    //         clientX = bodyWidth * 0.2;
-    //       }
-    //       (left.value as HTMLElement).style.width = clientX + "px";
-    //       rightMap.value.mapResize();
-    //     };
-    //     document.onmouseup = function () {
-    //       document.onmousemove = null;
-    //       document.onmouseup = null;
-    //     };
-    //   };
-
-    //   const bottomResize: HTMLElement = document.querySelector(
-    //     ".bottom-resize"
-    //   ) as HTMLElement;
-    //   const bottom: HTMLElement = document.querySelector(
-    //     ".layer-manage"
-    //   ) as HTMLElement;
-    //   const top: HTMLElement = document.querySelector(
-    //     ".data-manage"
-    //   ) as HTMLElement;
-    //   bottomResize.onmousedown = function () {
-    //     document.onmousemove = function (e: any) {
-    //       let clientY = e.clientY;
-    //       if (clientY > (bodyHeight - 50) * 0.7 + 50) {
-    //         clientY = (bodyHeight - 50) * 0.7 + 50;
-    //       }
-    //       if (clientY < (bodyHeight - 50) * 0.5 + 50) {
-    //         clientY = (bodyHeight - 50) * 0.5 + 50;
-    //       }
-    //       bottom.style.height = bodyHeight - clientY - 11 + "px";
-    //       top.style.height = clientY - 133 + "px";
-    //     };
-    //     document.onmouseup = function () {
-    //       document.onmousemove = null;
-    //       document.onmouseup = null;
-    //     };
-    //   };
-    // };
+    let eventSource: EventSource;
 
     const returnFileList = (
       val: {
@@ -169,12 +122,9 @@ export default defineComponent({
       await dataManage.value.addAnalyse(val);
     };
 
-    // onUpdated(() => {
-    //   dropSize();
-    // });
     watch(
       () => router.currentRoute.value.params.id,
-      async (newVal) => {
+      async (newVal, oldVal) => {
         if (newVal !== undefined) {
           skeletonFlag.value = true;
           const res = await getLayersInfo(newVal as string);
