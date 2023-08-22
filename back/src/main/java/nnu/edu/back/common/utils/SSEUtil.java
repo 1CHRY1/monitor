@@ -4,6 +4,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -18,7 +19,9 @@ public class SSEUtil {
 
     public static SseEmitter subscribe(String id) throws IOException {
         SseEmitter sseEmitter = new SseEmitter(1000 * 60 * 60l);
-        sseEmitter.send(SseEmitter.event().name("start").data("start..."));
+        if (sseCache.get(id) != null) {
+            return sseCache.get(id);
+        }
         sseCache.put(id, sseEmitter);
         sseEmitter.onTimeout(() -> {
             sseEmitter.complete();
@@ -41,5 +44,9 @@ public class SSEUtil {
         if (sseEmitter != null) {
             sseEmitter.send(SseEmitter.event().name("msg").data(content));
         }
+    }
+
+    public static Set<String> test() {
+        return sseCache.keySet();
     }
 }

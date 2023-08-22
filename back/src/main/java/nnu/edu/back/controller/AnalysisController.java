@@ -207,6 +207,12 @@ public class AnalysisController {
     }
 
     @AuthCheck
+    @RequestMapping(value = "/checkState/{key}", method = RequestMethod.GET)
+    public JsonResult checkState(@PathVariable String key) {
+        return ResultUtils.success(analysisService.checkState(key));
+    }
+
+    @AuthCheck
     @RequestMapping(value = "/rename", method = RequestMethod.PATCH)
     public JsonResult rename(@RequestBody JSONObject jsonObject) {
         analysisService.rename(jsonObject.getString("id"), jsonObject.getString("name"));
@@ -218,10 +224,10 @@ public class AnalysisController {
         analysisService.downloadAnalysisResult(id, response);
     }
 
-    @AuthCheck
+
     @RequestMapping(value = "/subscribe/{id}", method = RequestMethod.GET)
-    public SseEmitter subscribe(@PathVariable String id, @JwtTokenParser("email") String email) throws IOException {
-        return analysisService.subscribe(id, email);
+    public SseEmitter subscribe(@PathVariable String id) throws IOException {
+        return analysisService.subscribe(id);
     }
 
     @AuthCheck
@@ -231,5 +237,9 @@ public class AnalysisController {
         return ResultUtils.success();
     }
 
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public JsonResult test() {
+        return ResultUtils.success(analysisService.test());
+    }
 
 }

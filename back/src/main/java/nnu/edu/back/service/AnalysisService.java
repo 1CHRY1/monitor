@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -63,13 +64,17 @@ public interface AnalysisService {
 
     Map<String, Object> addSlope(String caseId, String demId, String email, String fileName);
 
+    AnalysisResult checkState(String key);
+
     void rename(String id, String name);
 
     void downloadAnalysisResult(String id, HttpServletResponse response);
 
-    SseEmitter subscribe(String id, String email) throws IOException;
+    SseEmitter subscribe(String id) throws IOException;
 
 
 
     void over(String id, String email) throws IOException;
+
+    Set<String> test();
 }

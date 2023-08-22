@@ -1,11 +1,10 @@
 <template>
   <div class="data-manage">
     <div class="data-manage-body">
-      <div class="input">
-        <!-- <strong>测试</strong> -->
-      </div>
+      <div class="input"></div>
       <div class="content">
-        <div class="scroll">
+        <el-skeleton :rows="5" animated v-if="skeletonFlag" />
+        <div class="scroll" v-else>
           <el-scrollbar>
             <el-tree
               :data="treeData"
@@ -96,6 +95,7 @@ import {
   ref,
   onMounted,
   computed,
+  watch,
   onBeforeUnmount,
 } from "vue";
 import { Search } from "@element-plus/icons-vue";
@@ -115,19 +115,20 @@ import {
   addSlope,
   computeVolume,
   rename,
+  checkState,
 } from "@/api/request";
 import { notice } from "@/utils/common";
 export default defineComponent({
   emits: ["operateLayer"],
   setup(_, context) {
     let sectionTimeout: any;
-
     const defaultProps = {
       children: "children",
       label: "label",
     };
     const treeData = ref<Tree[]>([]);
     const showRightMenu = ref(false);
+    const skeletonFlag = ref(true);
     const menu = ref<HTMLElement>();
     const selectedData = ref<Tree>();
     const parentId = ref("");
@@ -301,6 +302,9 @@ export default defineComponent({
           demId: param.value.dem.fileId,
           fileName: param.value.fileName,
         });
+        if (data !== null && data.code === 0) {
+          await checkStateHandle(data.data, "断面形态");
+        }
       } else if (param.type === "sectionCompare") {
         addData(param.value.demList);
         const demList: string[] = [];
@@ -322,6 +326,9 @@ export default defineComponent({
           fileName: param.value.fileName,
           demList: demList,
         });
+        if (data != null && data.code === 0) {
+          await checkStateHandle(data.data, "断面比较");
+        }
       } else if (
         param.type === "sectionFlush" ||
         param.type === "regionFlush" ||
@@ -356,6 +363,9 @@ export default defineComponent({
             referId: param.value.referDem.fileId,
             fileName: param.value.fileName,
           });
+          if (data != null && data.code === 0) {
+            await checkStateHandle(data.data, "断面冲淤");
+          }
         } else if (param.type === "regionFlush") {
           const data = await addRegionFlush({
             caseId: router.currentRoute.value.params.id as string,
@@ -364,6 +374,9 @@ export default defineComponent({
             referId: param.value.referDem.fileId,
             fileName: param.value.fileName,
           });
+          if (data != null && data.code === 0) {
+            await checkStateHandle(data.data, "区域冲淤");
+          }
         } else if (param.type === "elevationFlush") {
           const data = await addElevationFlush({
             caseId: router.currentRoute.value.params.id as string,
@@ -441,6 +454,9 @@ export default defineComponent({
           deep: param.value.deep,
           fileName: param.value.fileName,
         });
+        if (data != null && data.code === 0) {
+          await checkStateHandle(data.data, "容积计算");
+        }
       }
     };
 
@@ -502,6 +518,35 @@ export default defineComponent({
             "analysis/downloadAnalysisResult/" +
             selectedData.value?.id;
         }
+      }
+    };
+
+    const checkStateHandle = async (key: string, text: string) => {
+      const res = await checkState(key);
+      if (res !== null && res.code === 0) {
+        if (treeData.value[treeData.value.length - 1].id !== "") {
+          treeData.value.push({
+            id: "",
+            label: "分析结果集",
+            children: [],
+            flag: true,
+          });
+        }
+        treeData.value[treeData.value.length - 1].children.push({
+          id: res.data.id,
+          label: res.data.fileName,
+          flag: false,
+          children: [],
+          visualType: res.data.visualType,
+          visualId: res.data.visualId,
+        });
+        notice("success", "成功", text + "计算成功！");
+      } else if (res !== null && res.code === -1) {
+        sectionTimeout = setTimeout(async () => {
+          await checkStateHandle(key, text);
+        }, 2000);
+      } else {
+        notice("error", "错误", text + "计算失败！");
       }
     };
 
@@ -582,8 +627,9 @@ export default defineComponent({
       await rename({ id: selectedData.value?.id as string, name: input.value });
     };
 
-    onMounted(async () => {
-      const data = await getData(router.currentRoute.value.params.id as string);
+    const initData = async (id: string) => {
+      treeData.value = [];
+      const data = await getData(id);
       if (data != null && (data as any).code === 0) {
         (data.data as any[]).forEach((item) => {
           let flag = true;
@@ -618,9 +664,7 @@ export default defineComponent({
           }
         });
       }
-      const analyticData = await getAnalysisResult(
-        router.currentRoute.value.params.id as string
-      );
+      const analyticData = await getAnalysisResult(id);
       if (analyticData != null && (data as any).code === 0) {
         if (analyticData.data.length > 0) {
           treeData.value.push({
@@ -641,15 +685,29 @@ export default defineComponent({
           });
         }
       }
-    });
+    };
 
     onBeforeUnmount(() => {
       clearTimeout(sectionTimeout);
     });
 
+    watch(
+      () => router.currentRoute.value.params.id,
+      async (newVal) => {
+        skeletonFlag.value = true;
+        if (sectionTimeout !== undefined) clearTimeout(sectionTimeout);
+        await initData(newVal as string);
+        skeletonFlag.value = false;
+      },
+      {
+        immediate: true,
+      }
+    );
+
     return {
       Search,
       addData,
+      skeletonFlag,
       operateLayer,
       defaultProps,
       rightClick,

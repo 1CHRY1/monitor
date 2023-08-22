@@ -370,3 +370,7 @@ export const getLayersInfo = async (caseId: string) => {
 export const findParameterByType = async (type: string) => {
   return await get(`/analysis/findParameterByType/${type}`, true);
 };
+
+export const checkState = async (key: string) => {
+  return await get(`/analysis/checkState/${key}`, true);
+};

@@ -4,6 +4,8 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.jodah.expiringmap.ExpiringMap;
+import net.lingala.zip4j.ZipFile;
 import nnu.edu.back.common.exception.MyException;
 import nnu.edu.back.common.result.ResultEnum;
 import nnu.edu.back.common.result.ResultUtils;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,6 +37,8 @@ import java.util.*;
 @Service
 @Slf4j
 public class AnalysisServiceImpl implements AnalysisService {
+
+    private final Map<String, Integer> cache = ExpiringMap.builder().expiration(30 * 60, TimeUnit.SECONDS).build();
 
     @Autowired
     AnalysisCaseMapper analysisCaseMapper;
@@ -225,6 +230,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         String resultUUID = UUID.randomUUID().toString();
         String resultPath =  analysisDir + caseId + "/" + resultUUID + ".txt";
         String result = UUID.randomUUID().toString();
+        cache.put(result, 0);
         new Thread() {
             @Override
             @SneakyThrows
@@ -236,9 +242,9 @@ public class AnalysisServiceImpl implements AnalysisService {
                 if(code == 0) {
                     AnalysisResult analysisResult = new AnalysisResult(result, fileName, resultUUID + ".txt", null, email, "section", "", caseId);
                     analysisResultMapper.addAnalysisResult(analysisResult);
-                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.success(analysisResult)));
+                    cache.put(result, 1);
                 } else {
-                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.fail(-1, "计算错误")));
+                    cache.put(result, -1);
                 }
             }
         }.start();
@@ -261,7 +267,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         String resultUUID = UUID.randomUUID().toString();
         String resultPath =  analysisDir + caseId + "/" + resultUUID + ".txt";
         String result = UUID.randomUUID().toString();
-
+        cache.put(result, 0);
         new Thread() {
             @Override
             @SneakyThrows
@@ -273,9 +279,9 @@ public class AnalysisServiceImpl implements AnalysisService {
                 if(code == 0) {
                     AnalysisResult analysisResult = new AnalysisResult(result, fileName, resultUUID + ".txt", null, email, "sectionContrast", "", caseId);
                     analysisResultMapper.addAnalysisResult(analysisResult);
-                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.success(analysisResult)));
+                    cache.put(result, 1);
                 } else {
-                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.fail(-1, "计算错误")));
+                    cache.put(result, -1);
                 }
             }
         }.start();
@@ -297,6 +303,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         String resultUUID = UUID.randomUUID().toString();
         String resultPath =  analysisDir + caseId + "/" + resultUUID + ".txt";
         String result = UUID.randomUUID().toString();
+        cache.put(result, 0);
         new Thread() {
             @Override
             @SneakyThrows
@@ -308,9 +315,9 @@ public class AnalysisServiceImpl implements AnalysisService {
                 if(code == 0) {
                     AnalysisResult analysisResult = new AnalysisResult(result, fileName, resultUUID + ".txt", null, email, "sectionFlush", "", caseId);
                     analysisResultMapper.addAnalysisResult(analysisResult);
-                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.success(analysisResult)));
+                    cache.put(result, 1);
                 } else {
-                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.fail(-1, "计算错误")));
+                    cache.put(result, -1);
                 }
             }
         }.start();
@@ -330,7 +337,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         String pngPath = visualDir + "png/" + resultUUID + ".png";
         String coordinatePath = tempPath + resultUUID + ".json";
         String result = UUID.randomUUID().toString();
-
+        cache.put(result, 0);
         new Thread() {
             @Override
             @SneakyThrows
@@ -345,9 +352,9 @@ public class AnalysisServiceImpl implements AnalysisService {
                     visualFileMapper.addVisualFile(new VisualFile(visualId, resultUUID + ".png", "png", content, ""));
                     AnalysisResult analysisResult = new AnalysisResult(result, fileName, resultUUID + ".tif", null, email, "regionFlush", visualId, caseId);
                     analysisResultMapper.addAnalysisResult(analysisResult);
-                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.success(analysisResult)));
+                    cache.put(result, 1);
                 } else {
-                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.fail(-1, "计算错误")));
+                    cache.put(result, -1);
                 }
             }
         }.start();
@@ -370,7 +377,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         String visualPath = visualDir + "volume/" + visualId + ".png";
         String volumePath = visualDir + "volume/" + visualId + ".txt";
         String coordinatePath = visualDir + "volume/" + visualId + ".json";
-
+        cache.put(result, 0);
         new Thread() {
             @Override
             @SneakyThrows
@@ -387,11 +394,11 @@ public class AnalysisServiceImpl implements AnalysisService {
                     content = json.toJSONString();
                     String visualId = UUID.randomUUID().toString();
                     visualFileMapper.addVisualFile(new VisualFile(visualId, visualId + ".png", "volume", content, ""));
-                    AnalysisResult analysisResult = new AnalysisResult(result, fileName, resultId + ".json", null, email, "volume", visualId, caseId);
+                    AnalysisResult analysisResult = new AnalysisResult(result, fileName, resultId + ".tif", null, email, "volume", visualId, caseId);
                     analysisResultMapper.addAnalysisResult(analysisResult);
-                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.success(analysisResult)));
+                    cache.put(result, 1);
                 } else {
-                    SSEUtil.message(caseId, JSONObject.toJSONString(ResultUtils.fail(-1, "计算错误")));
+                    cache.put(result, -1);
                 }
             }
         }.start();
@@ -475,6 +482,24 @@ public class AnalysisServiceImpl implements AnalysisService {
     }
 
     @Override
+    public AnalysisResult checkState(String key) {
+        Integer result = cache.get(key);
+        if (result == null) {
+            throw new MyException(-2, "计算错误");
+        } else {
+            if(result == 0) {
+                throw new MyException(-1, "正在计算");
+            } else if(result == 1) {
+                cache.remove(key);
+                return analysisResultMapper.getInfoById(key);
+            } else {
+                cache.remove(key);
+                throw new MyException(-2, "计算错误");
+            }
+        }
+    }
+
+    @Override
     public void rename(String id, String name) {
         analysisResultMapper.rename(id, name);
     }
@@ -482,46 +507,74 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     public void downloadAnalysisResult(String id, HttpServletResponse response) {
         AnalysisResult analysisResult = analysisResultMapper.getInfoById(id);
-        String address = baseDir + analysisResult.getAddress();
-        File file = new File(address);
-        if (!file.exists()) {
-            throw new MyException(ResultEnum.NO_OBJECT);
-        }
-        InputStream in = null;
-        ServletOutputStream sos = null;
-        try {
-            response.setContentType("application/octet-stream");
-            response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(analysisResult.getFileName(), "UTF-8"));
-            response.addHeader("Content-Length", "" + file.length());
-            in = new FileInputStream(file);
-            sos = response.getOutputStream();
-            byte[] b = new byte[1024];
-            int len;
-            while((len = in.read(b)) > 0) {
-                sos.write(b, 0, len);
-            }
-            sos.flush();
-            sos.close();
-            in.close();
-        } catch (Exception e) {
-            log.error(e.getMessage());
+
+        if(analysisResult.getVisualType().equals("elevationFlush") || analysisResult.getVisualType().equals("flushContour") || analysisResult.getVisualType().equals("slope")) {
+            AnalysisParameter analysisParameter = analysisParameterMapper.findInfoById(analysisResult.getAddress());
+            String path = analysisParameterDir + analysisParameter.getAddress();
+            File file = new File(path);
+            File[] filesArray = file.listFiles();
+            ZipFile zipFile = new ZipFile(tempDir + analysisParameter.getAddress() + ".zip");
+            InputStream in = null;
+            ServletOutputStream sos = null;
             try {
-                if (in != null) in.close();
-                if (sos != null) sos.close();
-            } catch (Exception exception) {
-                log.error(exception.getMessage());
+                List<File> files = Arrays.asList(filesArray);
+                zipFile.addFiles(files);
+                in = new FileInputStream(tempDir + analysisParameter.getAddress() + ".zip");
+                sos = response.getOutputStream();
+                response.setContentType("application/octet-stream");
+                response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(analysisParameter.getAddress() + ".zip", "UTF-8"));
+                byte[] b = new byte[1024];
+                int len;
+                while((len = in.read(b)) > 0) {
+                    sos.write(b, 0, len);
+                }
+                sos.flush();
+                sos.close();
+                in.close();
+            } catch (Exception e) {
+                e.printStackTrace();
                 throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
             }
-            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+        } else {
+            String address = analysisDir + analysisResult.getCaseId() + "/" + analysisResult.getAddress();
+            File file = new File(address);
+            if (!file.exists()) {
+                throw new MyException(ResultEnum.NO_OBJECT);
+            }
+            InputStream in = null;
+            ServletOutputStream sos = null;
+            try {
+                response.setContentType("application/octet-stream");
+                response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(analysisResult.getAddress(), "UTF-8"));
+                response.addHeader("Content-Length", "" + file.length());
+                in = new FileInputStream(file);
+                sos = response.getOutputStream();
+                byte[] b = new byte[1024];
+                int len;
+                while((len = in.read(b)) > 0) {
+                    sos.write(b, 0, len);
+                }
+                sos.flush();
+                sos.close();
+                in.close();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                try {
+                    if (in != null) in.close();
+                    if (sos != null) sos.close();
+                } catch (Exception exception) {
+                    log.error(exception.getMessage());
+                    throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+                }
+                throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+            }
         }
+
     }
 
     @Override
-    public SseEmitter subscribe(String id, String email) throws IOException {
-        AnalysisCase analysisCase = analysisCaseMapper.getAnalysisInfo(id);
-        if (analysisCase.getCreator().equals(email)) {
-            return SSEUtil.subscribe(id);
-        } else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
+    public SseEmitter subscribe(String id) throws IOException {
+        return SSEUtil.subscribe(id);
     }
 
     @Override
@@ -530,5 +583,10 @@ public class AnalysisServiceImpl implements AnalysisService {
         if (analysisCase.getCreator().equals(email)) {
             SSEUtil.over(id);
         } else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
+    }
+
+    @Override
+    public Set<String> test() {
+        return SSEUtil.test();
     }
 }

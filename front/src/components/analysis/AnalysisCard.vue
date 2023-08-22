@@ -8,10 +8,10 @@
       <img :src="'/monitor/visual/getAvatar/' + info.avatar" v-else />
     </div>
     <div class="name">
-      <span>{{ unserName }}</span>
+      <span>{{ info.projectName }}</span>
     </div>
     <div class="creator">
-      <span></span>
+      <span>{{ unserName }}</span>
     </div>
     <div class="time">{{ time }}</div>
     <div class="btn">
