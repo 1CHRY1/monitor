@@ -83,6 +83,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Map<String, Object> pageQueryProject(String keyword, String type, int page, int size) {
+        if (!keyword.equals("")) keyword = "%" + keyword + "%";
         int total = projectMapper.getPageCount(keyword, type);
         List<Project> list = projectMapper.pageQuery(keyword, type, size, size * page);
         Map<String, Object> map = new HashMap<>();

@@ -181,6 +181,7 @@
       </div>
     </div>
     <el-backtop :right="100" :bottom="100" />
+    <page-copyright />
   </div>
 </template>
 
@@ -195,12 +196,13 @@ import {
 import router from "@/router";
 import NProgress from "nprogress";
 import { Search } from "@element-plus/icons-vue";
-
+import PageCopyright from "@/layout/PageCopyright.vue";
 // NProgress.configure({ showSpinner: false });
 
 export default defineComponent({
   components: {
     DataCard,
+    PageCopyright,
   },
 
   setup() {
@@ -356,8 +358,6 @@ export default defineComponent({
         },
       });
     };
-
-
 
     const changeSpecialData = async () => {
       specialLoading.value = true;

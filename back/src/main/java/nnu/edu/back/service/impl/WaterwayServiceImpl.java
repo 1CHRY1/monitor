@@ -290,7 +290,24 @@ public class WaterwayServiceImpl implements WaterwayService {
         if (!keyword.equals("")) keyword = "%" + keyword + "%";
         if (type.equals("ship")) {
             map.put("total", shipMapper.count(keyword));
-            map.put("list", shipMapper.pageQuery(size, size * page, keyword));
+            List<Map<String, Object>> list = shipMapper.pageQuery(size, size * page, keyword);
+            List<Ship> result = new ArrayList<>();
+            for (Map<String, Object> m : list) {
+                String mmsi = m.get("mmsi").toString();
+                String name = m.get("cbmc") == null ? "" : m.get("cbmc").toString();
+                String nameCn = m.get("zwmc") == null ? "" : m.get("zwmc").toString();
+                String updateTime = "";
+                Double longitude = null;
+                Double latitude = null;
+                String speed = "";
+                String course = "";
+                String draft = m.get("cbcs") == null ? "" : m.get("cbcs").toString();
+                String length = m.get("cd") == null ? "" : m.get("cd").toString();
+                String width = m.get("kd") == null ? "" : m.get("kd").toString();
+                Ship ship = new Ship(mmsi, name, nameCn, updateTime, longitude, latitude, speed, course, draft, length, width);
+                result.add(ship);
+            }
+            map.put("list", result);
         } else if (type.equals("buoy")) {
             map.put("total", waterwayMapper.countBuoy(keyword));
             map.put("list", waterwayMapper.pageQueryBuoy(size, size * page, keyword));
@@ -307,10 +324,12 @@ public class WaterwayServiceImpl implements WaterwayService {
             map.put("total", waterwayMapper.countStation(keyword));
             map.put("list", waterwayMapper.pageQueryStation(size, size * page, keyword));
         } else if (type.equals("realShip")) {
+            Map<String, String> headerMap = new HashMap<>();
+            headerMap.put("Accesstoken", "v7_q1SUWcRpfm2zVhAbjIkmtC6PpcaclC3k");
             String url = MessageFormat.format(AISListUrl, page + 1, keyword, size);
             JSONObject jsonObject;
             try {
-                jsonObject = InternetUtil.doGet(url);
+                jsonObject = InternetUtil.doGet(url, headerMap);
                 JSONArray jsonArray = jsonObject.getJSONArray("data");
                 map.put("total", jsonObject.getIntValue("totalSize"));
                 List<Ship> list = new ArrayList<>();
@@ -318,16 +337,16 @@ public class WaterwayServiceImpl implements WaterwayService {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     JSONObject json = jsonArray.getJSONObject(i);
                     String mmsi = json.getString("mmsi");
-                    String name = json.getString("shipName");
-                    String nameCn = json.getString("chName");
-                    String updateTime = sdf.format(new Date(json.getLongValue("utc")));
+                    String name = json.getString("shipName") == null ? "" : json.getString("shipName");
+                    String nameCn = json.getString("chName") == null ? "" : json.getString("chName");
+                    String updateTime = json.getLong("utc") == null ? "" : sdf.format(new Date(json.getLongValue("utc")));
                     Double longitude = json.getDouble("nLongitude");
                     Double latitude = json.getDouble("nLatitude");
-                    String speed = json.getString("speed");
-                    String course = json.getString("course");
-                    String draft = json.getDouble("draft").toString();
-                    String length = json.getDouble("length").toString();
-                    String width = json.getDouble("width").toString();
+                    String speed = json.getString("speed") == null ? "" : json.getString("speed");
+                    String course = json.getString("course") == null ? "" : json.getString("course");
+                    String draft = json.getDouble("draft") == null ? "" : json.getDouble("draft").toString();
+                    String length = json.getDouble("length") == null ? "" : json.getDouble("length").toString();
+                    String width = json.getDouble("width") == null ? "" : json.getDouble("width").toString();
                     Ship ship = new Ship(mmsi, name, nameCn, updateTime, longitude, latitude, speed, course, draft, length, width);
                     list.add(ship);
                 }
@@ -389,16 +408,16 @@ public class WaterwayServiceImpl implements WaterwayService {
         List<Ship> result = new ArrayList<>();
         for (Map<String, Object> map : list) {
             String mmsi = map.get("mmsi").toString();
-            String name = map.get("name").toString();
-            String nameCn = map.get("name_cn").toString();
-            String updateTime = map.get("update_time").toString();
+            String name = map.get("name") == null ? "" : map.get("name").toString();
+            String nameCn = map.get("name_cn") == null ? "" : map.get("name_cn").toString();
+            String updateTime = map.get("update_time") == null ? "" : map.get("update_time").toString();
             Double longitude = (Double) map.get("lon");
             Double latitude = (Double) map.get("lat");
-            String speed = map.get("velocity").toString();
-            String course = map.get("direction").toString();
-            String draft = map.get("cbcs").toString();
-            String length = map.get("length").toString();
-            String width = map.get("width").toString();
+            String speed = map.get("velocity") == null ? "" : map.get("velocity").toString();
+            String course = map.get("direction") == null ? "" : map.get("direction").toString();
+            String draft = map.get("cbcs") == null ? "" : map.get("cbcs").toString();
+            String length = map.get("length") == null ? "" : map.get("length").toString();
+            String width = map.get("width") == null ? "" : map.get("width").toString();
             Ship ship = new Ship(mmsi, name, nameCn, updateTime, longitude, latitude, speed, course, draft, length, width);
             result.add(ship);
         }
@@ -409,8 +428,10 @@ public class WaterwayServiceImpl implements WaterwayService {
     public List<Ship> queryBoxShip(double top, double right, double bottom, double left) {
         List<Ship> list = new ArrayList<>();
         JSONObject jsonObject;
+        Map<String, String> headerMap = new HashMap<>();
+        headerMap.put("Accesstoken", "v7_q1SUWcRpfm2zVhAbjIkmtC6PpcaclC3k");
         String url = MessageFormat.format(AISUrl, left, bottom, right, top);
-        jsonObject = InternetUtil.doGet(url);
+        jsonObject = InternetUtil.doGet(url, headerMap);
 //        try {
 //
 //        } catch (Exception e) {
@@ -424,16 +445,16 @@ public class WaterwayServiceImpl implements WaterwayService {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 JSONObject json = jsonArray.getJSONObject(i);
                 String mmsi = json.getString("mmsi");
-                String name = json.getString("shipName");
-                String nameCn = json.getString("chName");
-                String updateTime = sdf.format(new Date(json.getLongValue("utc")));
+                String name = json.getString("shipName") == null ? "" : json.getString("shipName");
+                String nameCn = json.getString("chName") == null ? "" : json.getString("chName");
+                String updateTime = json.getLong("utc") == null ? "" : sdf.format(new Date(json.getLongValue("utc")));
                 Double longitude = json.getDouble("nLongitude");
                 Double latitude = json.getDouble("nLatitude");
-                String speed = json.getString("speed");
-                String course = json.getString("course");
-                String draft = json.getDouble("draft").toString();
-                String length = json.getDouble("length").toString();
-                String width = json.getDouble("width").toString();
+                String speed = json.getString("speed") == null ? "" : json.getString("speed");
+                String course = json.getString("course") == null ? "" : json.getString("course");
+                String draft = json.getDouble("draft") == null ? "" : json.getDouble("draft").toString();
+                String length = json.getDouble("length") == null ? "" : json.getDouble("length").toString();
+                String width = json.getDouble("width") == null ? "" : json.getDouble("width").toString();
                 Ship ship = new Ship(mmsi, name, nameCn, updateTime, longitude, latitude, speed, course, draft, length, width);
                 list.add(ship);
             }

@@ -1,17 +1,20 @@
 <template>
   <div class="admin-view" ref="adminView">
     <div class="top">
-      <el-input v-model="input" placeholder="输入要检索的内容" size="large" />
+      <el-input
+        v-model="input"
+        placeholder="输入要检索的内容"
+        size="large"
+        @keydown.enter="searchHandle"
+      />
     </div>
     <div class="content">
-      <el-affix :offset="80">
-        <project-class @changeType="changeType"></project-class>
-      </el-affix>
+      <project-class @changeType="changeType"></project-class>
       <el-skeleton :rows="5" animated v-if="skeletonFlag" />
       <div class="cards" v-else>
         <div v-if="projectList.length">
           <div v-for="(item, index) in projectList" :key="index">
-            <project-card :projectInfo="item"></project-card>
+            <project-card :projectInfo="item" :keyword="keyword"></project-card>
           </div>
           <div class="page">
             <el-pagination
@@ -19,6 +22,7 @@
               layout="total, prev, pager, next"
               :total="total"
               @current-change="pageChange"
+              v-model:current-page="currentPage"
             />
           </div>
         </div>
@@ -31,6 +35,8 @@
       </el-button>
     </el-affix>
   </div>
+  <el-backtop :right="100" :bottom="100" />
+  <page-copyright />
   <el-dialog v-model="addProjectDialog" title="添加新的监测项目" width="30%">
     <add-project
       @cancel="addProjectDialog = false"
@@ -47,18 +53,22 @@ import { pageQueryProject, createProject } from "@/api/request";
 import { ProjectType } from "@/type";
 import AddProject from "@/components/admin/AddProject.vue";
 import { notice } from "@/utils/common";
+import PageCopyright from "@/layout/PageCopyright.vue";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 export default defineComponent({
-  components: { ProjectClass, ProjectCard, AddProject },
+  components: { ProjectClass, ProjectCard, AddProject, PageCopyright },
   setup() {
     const skeletonFlag = ref(true);
     const input = ref("");
     const total = ref(0);
     const projectList = ref<ProjectType[]>([]);
+    const currentPage = ref(1);
 
     const addProjectDialog = ref(false);
 
     let type = "history";
-    let keyword = "";
+    let keyword = ref("");
 
     const pageQuery = async (
       keyword: string,
@@ -66,6 +76,7 @@ export default defineComponent({
       page: number,
       size: number
     ) => {
+      NProgress.start();
       const jsonData = {
         keyword: keyword,
         type: type,
@@ -77,10 +88,12 @@ export default defineComponent({
         projectList.value = res.data.list;
         total.value = res.data.total;
       }
+      NProgress.done();
     };
 
     const pageChange = async (val: number) => {
-      await pageQuery(keyword, type, val - 1, 10);
+      await pageQuery(keyword.value, type, val - 1, 10);
+      input.value = keyword.value;
       window.scrollTo({
         top: 0,
         behavior: "smooth",
@@ -90,7 +103,9 @@ export default defineComponent({
     const changeType = async (val: number) => {
       if (val === 0) type = "history";
       else type = "realTime";
-      await pageQuery(keyword, type, val - 1, 10);
+      currentPage.value = 1;
+      await pageQuery(keyword.value, type, currentPage.value - 1, 10);
+      input.value = keyword.value;
       window.scrollTo({
         top: 0,
         behavior: "smooth",
@@ -110,7 +125,19 @@ export default defineComponent({
       if (res && res.code === 0) {
         notice("success", "成功", "新项目添加成功!");
         addProjectDialog.value = false;
+        // currentPage.value = 1;
+        // await pageQuery(keyword, type, currentPage.value - 1, 10);
+        // window.scrollTo({
+        //   top: 0,
+        //   behavior: "smooth",
+        // });
       }
+    };
+
+    const searchHandle = async () => {
+      keyword.value = input.value;
+      currentPage.value = 1;
+      await pageQuery(keyword.value, type, currentPage.value - 1, 10);
     };
 
     onMounted(async () => {
@@ -120,13 +147,16 @@ export default defineComponent({
 
     return {
       skeletonFlag,
+      keyword,
       input,
       total,
       projectList,
+      currentPage,
+      addProjectDialog,
       pageChange,
       changeType,
       commitHandle,
-      addProjectDialog,
+      searchHandle,
     };
   },
 });
@@ -152,12 +182,11 @@ export default defineComponent({
     // align-items: flex-start;
     min-height: calc(100vh - 17rem);
 
-    :deep() .el-affix > div {
-      height: 100%;
-    }
+    // :deep() .el-affix > div {
+    //   height: 100%;
+    // }
     .project-class {
       padding: 1rem 2rem;
-      height: calc(100% - 2rem);
       width: 14rem;
     }
     .cards {
