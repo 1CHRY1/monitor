@@ -40,7 +40,7 @@
     </div>
     <div class="content-container">
         <div class="content-container-wrapper">
-            <chartContainer v-for="chart in chartObjects" :chartId="chart.chartId" :styleType="chart.styleType" :order="chart.order" :project-id="currentProject.id"/>
+            <chartContainer v-for="chart in chartObjects" :chartId="chart.chartId" :styleType="chart.styleType" :order="chart.order" :project-id="currentProject.id" ref="chartConatinerRefs"/>
             <doubleChartContainer v-for="chart in doubleChartObjects" :chartId="chart.chartId" :styleType="chart.styleType" :order="chart.order" :project-id="currentProject.id"/>
             <centerMap :mapId="mapIndex" order="4"></centerMap>
         </div>
@@ -59,6 +59,8 @@ let projectOptions = ref([
     {id: 1, name: '苏通二通道工可阶段水沙观测', time:'2023-07'},
 ]);
 
+const chartConatinerRefs = ref<InstanceType<typeof chartContainer>[]>([]);
+
 let currentProject = ref<ProjectOption>(projectOptions.value[0]);
 
 let expanded = ref(false);
@@ -70,13 +72,15 @@ let expandSelector = () => {
 const curTime = ref(new Date());
 const updataTime = (): void => {
     curTime.value = new Date();
+    // currentProject.value.id += 1;
+    // chartConatinerRefs.value[0].changeData();
 }
 
 let mapIndex = '0';
 
 let chartObjects = [
     {chartId: '1', order:'1', styleType:"1"}, 
-    // {chartId: '2', order:'2', styleType:"2"}, 
+    {chartId: '2', order:'2', styleType:"1"}, 
     // {chartId: '3', order:'3', styleType:"2"}, 
     {chartId: '4', order:'3', styleType:"1"}, 
     {chartId: '5', order:'5', styleType:"3"}, 
@@ -87,12 +91,13 @@ let chartObjects = [
 ]
 
 let doubleChartObjects = [
-    {chartId: '23', order:'2', styleType:"1"},
+    // {chartId: '23', order:'2', styleType:"1"},
     {chartId: '78', order:'7', styleType:"1"}
 ]
 
 onMounted(() => {
     setInterval(updataTime, 1000);
+    console.log(chartConatinerRefs.value[0].changeData());
 });
 
 </script>
@@ -102,6 +107,7 @@ $header-height: 10vh;
 $content-height: calc(100vh - $header-height);
 $title-text-height: calc($header-height/2);
 $main-background-color: rgb(6, 60, 112);
+$color-test: #c0dde2c1;
 
 div.viewer-header {
     height: $header-height;

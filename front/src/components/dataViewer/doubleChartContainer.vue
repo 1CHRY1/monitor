@@ -1,6 +1,6 @@
 <template>
     <div :index='chartOptId' class="double-chart-container" :styleId="styleId" :order="order">
-        <div class="chart left"></div>
+        <div class="chart left" ref="chartLeft"></div>
         <div class="chart right"></div>
     </div>
 </template>
@@ -14,7 +14,7 @@ export default {
 <script setup lang='ts'>
 import * as echarts from 'echarts';
 import { onMounted, ref, watch } from 'vue';
-// import { frontData } from '../../frontData';
+import { chartOptionTest, ChartDataPreparer } from '@/utils/viewerData';
 
 type EChartsOption = echarts.EChartsOption;
 
@@ -29,9 +29,10 @@ const props = defineProps<Props>();
 
 const chartOptId = ref(props.chartId);
 const styleId = ref(props.styleType);
-// const chartDom = ref<HTMLElement>();
 const order = ref(props.order);
 let projectId = ref(props.projectId);
+
+const chartLeft = ref<HTMLElement>();
 
 //   let noShown = ref(props.notShown);
 
@@ -42,16 +43,10 @@ let projectId = ref(props.projectId);
 
 onMounted(() => {
     // console.log(chartDom.value);
-    // let chart = echarts.init(chartDom.value as HTMLElement)
-    // let chartConfig = frontData['charts'][+(chartOptId.value as string)];
-    // chart.setOption(chartConfig['chartOpt'] as EChartsOption)
-    // if (chartConfig['dynamicFunc'] !== undefined) {
-    //     setInterval(
-    //         function () {
-    //             (chartConfig['dynamicFunc'] as ((chart: echarts.ECharts) => void))(chart)
-    //         }, 3000
-    //     );
-    // }
+    let echartLeft = echarts.init(chartLeft.value as HTMLElement)
+
+    let chartConfig = chartOptionTest[+(chartOptId.value.substring(0, 1))-1];
+    echartLeft.setOption(chartConfig)
     // TODO: window.onsize doesn't work on components
     // window.onresize = function () {
     //     chart.resize();
@@ -105,7 +100,7 @@ div.double-chart-container {
     div.chart {
         width: 49%;
         height: 100%;
-        background-color: rgba(253, 189, 189, 0.2);
+        background-color: rgba(0, 1, 67, 0.5);
         border-radius: 3px;
 
         div {

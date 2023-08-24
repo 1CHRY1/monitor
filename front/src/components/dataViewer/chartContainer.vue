@@ -14,8 +14,9 @@ import * as echarts from 'echarts';
 // import { BarChart, LineChart, PictorialBarChart } from 'echarts/charts';
 // import { TitleComponent, TooltipComponent, GridComponent } from 'echarts/components';
 // import { CanvasRenderer } from 'echarts/renderers';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, toRef } from 'vue';
 import { chartOptionTest, ChartDataPreparer } from '@/utils/viewerData';
+import * as themeJson from '../../utils/dark.json';
 
 // echarts.use([BarChart, LineChart, PictorialBarChart, TitleComponent, TooltipComponent, GridComponent, CanvasRenderer]);
 
@@ -25,8 +26,11 @@ interface Props {
     styleType: string,
     projectId: number
 }
+echarts.registerTheme('darkNew', themeJson);
 
 const props = defineProps<Props>();
+
+let curProjectId = toRef(props, 'projectId')
 
 const chartOptId = ref(props.chartId);
 const styleId = ref(props.styleType);
@@ -35,6 +39,10 @@ const order = ref(props.order);
 let projectId = ref(props.projectId);
 
 const chartDatapreparer = new ChartDataPreparer(+chartOptId.value, projectId.value);
+
+const changeData = () => {
+    console.log(curProjectId.value);
+}
 
 //   let noShown = ref(props.notShown);
 
@@ -46,15 +54,15 @@ const chartDatapreparer = new ChartDataPreparer(+chartOptId.value, projectId.val
 onMounted(() => {
     // console.log(chartDom.value);
     let chart = echarts.init(chartDom.value as HTMLElement);
-    chartDatapreparer.requestChartData()
-        .then((res) => {
-            chartDatapreparer.buildData2ChartOption(res.data);
-            chartDatapreparer.getClean();
-        })
-        .catch((err) => {
-            console.log(`request chart ${chartOptId.value} data error`, err);
-            chartDatapreparer.getDirty();
-        })
+    // chartDatapreparer.requestChartData()
+    //     .then((res) => {
+    //         chartDatapreparer.buildData2ChartOption(res.data);
+    //         chartDatapreparer.getClean();
+    //     })
+    //     .catch((err) => {
+    //         console.log(`request chart ${chartOptId.value} data error`, err);
+    //         chartDatapreparer.getDirty();
+    //     })
     let chartConfig = chartOptionTest[+(chartOptId.value)-1];
     chart.setOption(chartConfig)
     // TODO: window.onsize doesn't work on components
@@ -62,6 +70,8 @@ onMounted(() => {
     //     chart.resize();
     // };
 });
+
+defineExpose({changeData});
 </script>
   
 <style lang='scss' scoped>
@@ -72,7 +82,7 @@ div.chart-container {
     width: 30%;
     height: 32%;
     border-radius: 3px;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 1, 67, 0.5);
     backdrop-filter: blur(4px);
     flex-grow: 0;
 
