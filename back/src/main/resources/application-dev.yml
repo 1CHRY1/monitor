@@ -1,18 +1,18 @@
 spring:
   datasource:
     default:
-      jdbc-url: jdbc:sqlite:E:/monitor/main.db
+      jdbc-url: jdbc:sqlite:D:/desktop/桌面/Assignments/data/monitor/monitor/main.db
       driver-class-name: org.sqlite.JDBC
     shp:
       jdbc-url: jdbc:postgresql://localhost:5432/shp_dataset?stringtype=unspecified
       driver-class-name: org.postgresql.Driver
       username: postgres
-      password: 123
+      password: QWERBOOM123
     ship:
-      jdbc-url: jdbc:sqlite:E:/monitor/resources/ais.db
+      jdbc-url: jdbc:sqlite:D:/desktop/桌面/Assignments/data/monitor/monitor/resources/ais.db
       driver-class-name: org.sqlite.JDBC
     waterway:
-      jdbc-url: jdbc:sqlite:E:/monitor/resources/waterway.db
+      jdbc-url: jdbc:sqlite:D:/desktop/桌面/Assignments/data/monitor/monitor/resources/waterway.db
       driver-class-name: org.sqlite.JDBC
 
 

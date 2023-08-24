@@ -2,26 +2,58 @@
   <div class="main">
     <el-skeleton :rows="5" animated v-if="skeletonFlag" />
     <div class="body" v-else>
+      <div class="backTitle">分析中心</div>
+      <!-- <div class="backIcon"><DataLine class="iconn"/></div> -->
       <el-empty description="暂无数据" v-if="analysisList.length === 0" />
       <el-row v-else :gutter="20">
-        <el-col :span="6" v-for="(item, index) in analysisList" :key="index">
+        <!-- OG -->
+        <!-- <el-col :span="6" v-for="(item, index) in analysisList" :key="index">
           <analysis-card :info="item" :keyword="keyword"></analysis-card>
+        </el-col> -->
+
+        <!-- test data -->
+        <el-col :span="6">
+          <analysis-card :info="analysisList[0]" :keyword="keyword"></analysis-card>
+          <analysis-card :info="analysisList[0]" :keyword="keyword"></analysis-card>
+          <!-- <analysis-card :info="analysisList[0]" :keyword="keyword"></analysis-card> -->
+        
         </el-col>
+
+        <el-col :span="6">
+          <analysis-card :info="analysisList[1]" :keyword="keyword"></analysis-card>
+          <analysis-card :info="analysisList[1]" :keyword="keyword"></analysis-card>
+        
+        </el-col>
+        <el-col :span="6">
+          <analysis-card :info="analysisList[0]" :keyword="keyword"></analysis-card>
+          <analysis-card :info="analysisList[0]" :keyword="keyword"></analysis-card>
+          
+        </el-col>
+        <el-col :span="6">
+          <analysis-card :info="analysisList[1]" :keyword="keyword"></analysis-card>
+          <analysis-card :info="analysisList[1]" :keyword="keyword"></analysis-card>
+        </el-col>
+
+
       </el-row>
-    </div>
-    <div class="page">
-      <el-pagination
-        layout="total, prev, pager, next, jumper"
-        :total="total"
-        @current-change="currentChange"
-        v-model:current-page="currentPage"
-        :page-size="16"
-        :pager-count="5"
-        :background="true"
-      >
-      </el-pagination>
+      <!-- 分页 -->
+      <div class="page">
+        <el-pagination
+          layout="total, prev, pager, next, jumper"
+          :total="total"
+          @current-change="currentChange"
+          v-model:current-page="currentPage"
+          :page-size="16"
+          :pager-count="5"
+          :background="false"
+        >
+        </el-pagination>
+      </div>
     </div>
     <el-backtop :right="100" :bottom="100" />
+
+    <!-- 版权 -->
+    <copyright/>
   </div>
 </template>
 
@@ -29,11 +61,12 @@
 import { defineComponent, ref, onMounted } from "vue";
 import NProgress from "nprogress";
 import router from "@/router";
-import AnalysisCard from "@/components/analysis/AnalysisCard.vue";
+import AnalysisCard from "@/components/analysis/AAnalysisCard.vue";
+import copyright from "@/layout/PageCopyright.vue";
 import { pageQueryAnalysis } from "@/api/request";
 NProgress.configure({ showSpinner: false });
 export default defineComponent({
-  components: { AnalysisCard },
+  components: { AnalysisCard, copyright },
   setup() {
     const analysisList = ref<any[]>([]);
     const search = ref("");
@@ -139,74 +172,58 @@ export default defineComponent({
 }
 .main {
   height: calc(100% - 5rem);
-  // .head {
-  //   height: 93vh;
-  //   overflow: hidden;
-  //   position: relative;
-  //   .input {
-  //     position: absolute;
-  //     width: 40%;
-  //     left: 30%;
-  //     top: 15%;
-  //     font-family: "Microsoft YaHei";
-  //     .name {
-  //       color: #ffc200;
-  //       font-weight: 900;
-  //       font-size: 200px;
-  //       text-align: center;
-  //     }
-
-  //     .el-button {
-  //       height: 50px;
-  //       font-size: 20px;
-  //       background: rgba($color: white, $alpha: 0.3);
-  //       margin-top: 10px;
-  //       color: white;
-  //     }
-  //     .text {
-  //       margin-top: 20px;
-  //       color: #dad5c4;
-  //       font-size: 23px;
-  //       line-height: 40px;
-  //     }
-  //   }
-  //   .bg {
-  //     height: 100%;
-  //     background: url("/resource/resource6.jfif");
-  //     background-size: cover;
-  //     animation: ibannerbg 60s linear infinite;
-  //   }
-  // }
-
-  // .search {
-  //   height: 80px;
-  //   background: white;
-  //   position: relative;
-  //   padding: 0px 150px;
-  //   .el-input {
-  //     margin-top: 20px;
-  //     float: right;
-  //     width: 600px;
-  //   }
-  //   .el-button {
-  //     margin-top: 20px;
-  //     float: right;
-  //     margin-left: 10px;
-  //   }
-  // }
-
+  
   .body {
     padding: 0 150px;
     // height: 100%;
+    background-color: black;
+    // background-color: #29a3a36e;
+    background-image: url("../assets/turquoiseBackImg1.jpg");
+    background-size: cover;
+    background-position: center center;
   }
 
   .page {
     width: 100%;
     display: flex;
     justify-content: space-around;
-    margin-bottom: 30px;
+    // margin-bottom: 30px;
+    padding-bottom: 30px;
+
+    :deep().el-pagination__jump{
+      color:#ffffff
+    };
+    :deep().el-pagination__total{
+      color:#ffffff
+    }
   }
 }
+
+
+
+.backTitle {
+  position: absolute;
+  right: 1vw;
+  top:15vh;
+  writing-mode: vertical-rl;
+  text-orientation:upright;
+  font-size: 8vh;
+  font-family: "Microsoft YaHei";
+  color: rgba(255, 255, 255, 0.671);
+  font-weight: 900;
+}
+
+// .backIcon{
+//   position:absolute;
+//   left: 1vw;
+//   bottom: 15vh;
+//   color: rgba(194, 194, 194, 0.671);
+//   .iconn{
+//     width: 7vw;
+//     height: 7vw;
+//   }
+// }
+
 :deep().el-dialog {
   .el-dialog__header {
     padding: 10px;
