@@ -18,14 +18,14 @@ spring:
 
 
 baseDir: D:/desktop/桌面/Assignments/data/monitor/monitor/
-avatarDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/avatar
-tempDir: D:/desktop/桌面/Assignments/data/monitor/monitor/temp
+avatarDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/avatar/
+tempDir: D:/desktop/桌面/Assignments/data/monitor/monitor/temp/
 visualDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/visual/
 pgPath: D:/Program Files (x86)/postgresql/15/bin
 mapDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/map/
 resourceDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/
-analysisDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/analysis
-analysisParameterDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/analysisParameter
+analysisDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/analysis/
+analysisParameterDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/analysisParameter/
 
 meteorologyUrl: https://weather.cma.cn/api/map/alarm
 meteorologyPngUrl:

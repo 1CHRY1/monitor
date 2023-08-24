@@ -1,5 +1,5 @@
 <template>
-  <div></div>
+  <div>THREE IS RESOURCE ADMIN VIEW</div>
 </template>
 
 <script lang="ts">
