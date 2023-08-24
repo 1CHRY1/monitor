@@ -21,15 +21,15 @@ public class Other {
     String management;
     String hdHdly;
     String hdHdlyName;
-    Float hdlc;
+    Double hdlc;
     String type;
     String picture;
     String waterwayId;
     String waterwayName;
-    Float hxbz;
-    Float zyb;
-    Float longitude;
-    Float latitude;
+    Double hxbz;
+    Double zyb;
+    Double longitude;
+    Double latitude;
     JSONObject region;
     String shipWay;
 }

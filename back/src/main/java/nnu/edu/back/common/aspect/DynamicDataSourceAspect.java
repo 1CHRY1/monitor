@@ -32,8 +32,8 @@ import java.io.File;
 @Slf4j
 public class DynamicDataSourceAspect {
 
-    @Value("${baseDir}")
-    String baseDir;
+    @Value("${projectDir}")
+    String projectDir;
 
     @Autowired
     @Qualifier("dynamicDataSource")
@@ -44,17 +44,16 @@ public class DynamicDataSourceAspect {
      */
     @Before("execution(* nnu.edu.back.dao.dynamic.*.*(..))")
     public void switchDataSource(JoinPoint joinPoint) {
-        System.out.println("切换数据源");
         Object[] args = joinPoint.getArgs();
         String datasourceId = (String) args[0];
         if (!DataSourceContextHolder.containDataSourceKey(datasourceId)) {
-            String datasourceAddress = baseDir + datasourceId + "/dataset.db";
+            String datasourceAddress = projectDir + datasourceId + "/dataset.db";
             File file = new File(datasourceAddress);
             if (!file.exists()) {
                 throw new MyException(ResultEnum.DATASOURCE_ERROR);
             }
             DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-            dataSourceBuilder.url(datasourceAddress);
+            dataSourceBuilder.url("jdbc:sqlite:" + datasourceAddress);
             dataSourceBuilder.driverClassName(JDBC.class.getName());
             DataSource source = dataSourceBuilder.build();
             dynamicDataSource.addDataSource(datasourceId, source);

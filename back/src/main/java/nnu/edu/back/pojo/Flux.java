@@ -1,6 +1,5 @@
 package nnu.edu.back.pojo;
 
-import com.alibaba.fastjson2.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,21 +8,15 @@ import lombok.NoArgsConstructor;
  * Created with IntelliJ IDEA.
  *
  * @Author: Yiming
- * @Date: 2023/08/17/9:52
+ * @Date: 2023/08/23/21:18
  * @Description:
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Station {
-    String id;
+public class Flux {
+    String time;
     String name;
-    String nameEn;
-    JSONObject keys;
-    JSONObject keysCn;
-    Double longitude;
-    Double latitude;
     String type;
-    JSONObject startTime;
-    Integer prediction;
+    Double value;
 }

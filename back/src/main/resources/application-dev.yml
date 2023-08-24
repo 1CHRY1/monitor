@@ -26,6 +26,7 @@ mapDir: E:/monitor/resources/map/
 resourceDir: E:/monitor/resources/
 analysisDir: E:/monitor/resources/analysis/
 analysisParameterDir: E:/monitor/resources/analysisParameter/
+projectDir: E:/monitor/project/
 
 meteorologyUrl: https://weather.cma.cn/api/map/alarm
 meteorologyPngUrl:

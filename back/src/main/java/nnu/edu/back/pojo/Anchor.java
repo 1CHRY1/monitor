@@ -20,15 +20,15 @@ public class Anchor {
     String anchorName;
     String waterwayName;
     String type;
-    Float longitude;
-    Float latitude;
+    Double longitude;
+    Double latitude;
     String picture;
     String management;
     String hdHdlyName;
     String tyAnbName;
     String usage;
     String buildTime;
-    Float hdlc;
+    Double hdlc;
     JSONObject region;
     String hdHdly;
     String tyAnb;
