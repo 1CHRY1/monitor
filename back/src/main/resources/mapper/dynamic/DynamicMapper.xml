@@ -59,12 +59,36 @@
         select * from sand_transport_result where name = #{name} and type = #{type} order by time ASC
     </select>
 
+    <select id="getSectionSegment" resultType="java.lang.String">
+        select distance from v_d_result where name = #{name} group by distance order by cast(replace(distance, "S", "") as integer) ASC
+    </select>
+
     <select id="getSpeedOrientationNameAndType" resultType="java.util.HashMap">
         select name, type from v_d_result group by name, type
     </select>
 
-    <select id="getSpeedByNameAndType" resultType="java.util.HashMap">
-        select ave_v as "speed" from v_d_result where name = #{name} and type = #{type} order by distance ASC, time ASC
+    <select id="getTime" resultType="java.lang.String">
+        select distinct time from v_d_result where name = #{name} and type = #{type} order by time ASC
+    </select>
+
+    <select id="getSpeedByNameAndType" resultType="java.lang.Double">
+        select ifnull(ave_v, 0) as "speed" from v_d_result where name = #{name} and type = #{type} order by cast(replace(distance, "S", "") as integer) ASC, time ASC
+    </select>
+
+    <select id="getOrientationByNameAndType" resultType="java.lang.Double">
+        select ifnull(ave_d, 0) from v_d_result where name = #{name} and type = #{type} order by cast(replace(distance, "S", "") as integer) ASC, time ASC
+    </select>
+
+    <select id="getSandContentClass" resultType="java.lang.String">
+        select name from sand_content_result group by name
+    </select>
+
+    <select id="getSandContentTime" resultType="java.lang.String">
+        select time from sand_content_result where name = #{name} order by time ASC
+    </select>
+
+    <select id="getSandContentValue" resultType="java.lang.Double">
+        select ave_value from sand_content_result where name = #{name} order by time ASC
     </select>
 
     <select id="test" resultType="java.util.HashMap">

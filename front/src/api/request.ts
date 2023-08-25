@@ -374,3 +374,85 @@ export const findParameterByType = async (type: string) => {
 export const checkState = async (key: string) => {
   return await get(`/analysis/checkState/${key}`, true);
 };
+
+export const getAllSection = async (projectId: string) => {
+  return await get(`/monitorVisual/getAllSection/${projectId}`, true);
+};
+
+export const getSectionElevation = async (projectId: string) => {
+  return await get(`/monitorVisual/getSectionElevation/${projectId}`, true);
+};
+
+export const getFluxNameAndType = async (projectId: string) => {
+  return await get(`/monitorVisual/getFluxNameAndType/${projectId}`, true);
+};
+
+export const getFluxByNameAndType = async (
+  projectId: string,
+  name: string,
+  type: string
+) => {
+  return await get(
+    `/monitorVisual/getFluxByNameAndType/${projectId}/${name}/${type}`,
+    true
+  );
+};
+
+export const getSubstrate = async (projectId: string) => {
+  return await get(`/monitorVisual/getSubstrate/${projectId}`, true);
+};
+
+export const getSandTransportNameAndType = async (projectId: string) => {
+  return await get(
+    `/monitorVisual/getSandTransportNameAndType/${projectId}`,
+    true
+  );
+};
+
+export const getSandTransportByNameAndType = async (
+  projectId: string,
+  name: string,
+  type: string
+) => {
+  return await get(
+    `/monitorVisual/getSandTransportByNameAndType/${projectId}/${name}/${type}`,
+    true
+  );
+};
+
+export const getSpeedOrientationNameAndType = async (projectId: string) => {
+  return await get(
+    `/monitorVisual/getSpeedOrientationNameAndType/${projectId}`,
+    true
+  );
+};
+
+export const getSpee = async (
+  projectId: string,
+  name: string,
+  type: string
+) => {
+  return await get(`/monitorVisual/getSpee/${projectId}/${name}/${type}`, true);
+};
+
+export const getOrientation = async (
+  projectId: string,
+  name: string,
+  type: string
+) => {
+  return await get(
+    `/monitorVisual/getOrientation/${projectId}/${name}/${type}`,
+    true
+  );
+};
+
+export const getSandContentClass = async (projectId: string) => {
+  return await get(`/monitorVisual/getSandContentClass/${projectId}`, true);
+};
+
+export const getSandContentValue = async (projectId: string, name: string) => {
+  return await get(
+    `/monitorVisual/getSandContentValue/${projectId}/${name}`,
+    true
+  );
+};
