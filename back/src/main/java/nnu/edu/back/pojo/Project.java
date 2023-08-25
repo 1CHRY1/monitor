@@ -23,5 +23,6 @@ public class Project {
     String location;
     String time;
     String type;
-    String createTime;
+    String uploadTime;
+    Integer visual;
 }

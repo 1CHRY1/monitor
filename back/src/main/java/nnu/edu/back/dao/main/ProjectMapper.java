@@ -22,4 +22,6 @@ public interface ProjectMapper {
     List<Project> pageQuery(@Param("keyword") String keyword, @Param("type") String type, @Param("size") int size, @Param("start") int start);
 
     int getPageCount(@Param("keyword") String keyword, @Param("type") String type);
+
+    List<Project> getAllVisualProject();
 }

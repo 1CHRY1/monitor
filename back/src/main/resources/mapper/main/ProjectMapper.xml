@@ -10,6 +10,8 @@
         <result column="location" property="location" />
         <result column="time" property="time" />
         <result column="type" property="type" />
+        <result column="upload_time" property="uploadTime"/>
+        <result column="visual" property="visual"/>
     </resultMap>
 
     <select id="queryById" resultMap="ProjectMap">
@@ -17,7 +19,7 @@
     </select>
 
     <insert id="insertProject">
-        insert into projects values(#{project.id}, #{project.projectName}, #{project.avatar}, #{project.description}, #{project.institution}, #{project.location}, #{project.time}, #{project.type}, datetime('now','localtime'))
+        insert into projects values(#{project.id}, #{project.projectName}, #{project.avatar}, #{project.description}, #{project.institution}, #{project.location}, #{project.time}, #{project.type}, datetime('now','localtime'), #{project.visual})
     </insert>
 
     <select id="pageQuery" resultMap="ProjectMap">
@@ -33,5 +35,9 @@
         <if test="keyword != ''">
             and project_name like #{keyword} or description like #{keyword} or institution like #{keyword} or location like #{keyword} or time like #{keyword}
         </if>
+    </select>
+
+    <select id="getAllVisualProject" resultMap="ProjectMap">
+        select * from projects where visual = 1
     </select>
 </mapper>
