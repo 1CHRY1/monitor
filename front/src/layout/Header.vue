@@ -42,6 +42,9 @@
                 <el-dropdown-item command="1" v-if="adminFlag"
                   >资源条目管理</el-dropdown-item
                 >
+                <el-dropdown-item command="4" v-if="adminFlag"
+                  >资源文件管理</el-dropdown-item
+                >
                 <el-dropdown-item v-if="adminFlag" command="2"
                   >监测项目管理</el-dropdown-item
                 >
@@ -116,6 +119,8 @@ export default defineComponent({
         case "3":
           store.logout();
           return;
+        case "4":
+          router.push({ name: "folderAdmin" });
       }
     };
 
