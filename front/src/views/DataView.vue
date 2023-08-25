@@ -53,11 +53,14 @@ import centerMap from '@/components/dataViewer/centerMap.vue';
 import chartContainer from '@/components/dataViewer/chartContainer.vue';
 import doubleChartContainer from '@/components/dataViewer/doubleChartContainer.vue';
 import { type ProjectOption } from '@/utils/viewerData';
-
+import { 
+    getAllSection,  getSectionElevation
+} from '@/api/request';
 
 let projectOptions = ref([
     {id: 1, name: '苏通二通道工可阶段水沙观测', time:'2023-07'},
 ]);
+
 
 const chartConatinerRefs = ref<InstanceType<typeof chartContainer>[]>([]);
 

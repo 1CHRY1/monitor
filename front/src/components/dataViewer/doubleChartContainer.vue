@@ -1,7 +1,7 @@
 <template>
     <div :index='chartOptId' class="double-chart-container" :styleId="styleId" :order="order">
         <div class="table-container left" ref="chartLeft">
-            <!-- <dataTable /> -->
+            <dataTable />
         </div>
         <div class="chart right"  ref="chartLeft"></div>
     </div>

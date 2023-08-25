@@ -427,12 +427,12 @@ export const getSpeedOrientationNameAndType = async (projectId: string) => {
   );
 };
 
-export const getSpee = async (
+export const getSpeed = async (
   projectId: string,
   name: string,
   type: string
 ) => {
-  return await get(`/monitorVisual/getSpee/${projectId}/${name}/${type}`, true);
+  return await get(`/monitorVisual/getSpeed/${projectId}/${name}/${type}`, true);
 };
 
 export const getOrientation = async (

@@ -9,11 +9,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in tableData.tBody" :key="row.index">
-          <td>{{ row.time }}</td>
-          <td>{{ row.datA }}</td>
-          <td>{{ row.datB }}</td>
-          <td>{{ row.datC }}</td>
+        <tr v-for="row in tableData.tBody">
+          <td v-for="cell in row">{{ cell }}</td>
           <!-- <td>{{ row.datD }}</td> -->
         </tr>
       </tbody>
@@ -30,10 +27,8 @@ const tableData = ref({
       '时间', 'X', 'Y', '流速'
     ],
     'tBody': [
-        { time: 'GNSS基准站', datA: '549738', datB: '3546288', datC: '5', datD: '1.72', index: '0' },
-        { time: 'GNSS测量站', datA: '549288', datB: '3546214', datC: '1', datD: '1.51', index: '1' },
-        { time: '孔隙水压力和测斜管', datA: '549774', datB: '3545941', datC: '0', datD: '1.28', index: '2' },
-        { time: '应变桩', datA: '550530', datB: '0.37', datC: '3545543', datD: '0', index: '3' },
+        ['18:05:25', '578797.43', '3529961.32', '0.4'],
+        ['18:05:49',	'578798.37','3529951.74',	'0.42' ]
     ]
 })
 
@@ -55,26 +50,33 @@ div.data-table-wrapper {
     // margin: -0.1em -0.3em -0.1em -0.1em;
     display: table;
     h1 {
-      font-size: 1.2em;
+      font-size: 0.8vw;
       line-height: 0.5em;
       text-align: center;
-      color: rgba(255, 255, 255, 1);
+      color: rgba(255, 255, 255, 0.8);
     }
     td {
       font-weight: normal;
-      font-size: 1em;
+      font-size: 0.7vw;
       box-shadow: 0 2px 2px -2px #0e1119;
+      width: 28%;
     }
     td:first-child {
       color: #b7dfff;
-      font-weight: 10em;
+      font-weight: 600;
+      width: 6%;
+    }
+    td:last-child {
+      color: #aafff1;
+      font-weight: 600;
+      width: 16%;
     }
     td,
     th {
       padding-bottom: 1.2%;
       padding-top: 1.2%;
-      padding-left: 2%;
-      padding-right: 2%;
+      padding-left: 0%;
+      padding-right: 0%;
       text-align: center;
       color: rgba(255, 255, 255, 1);
     }
@@ -114,6 +116,7 @@ div.data-table-wrapper {
       box-shadow: 0 4px 4px -4px #0e1119;
     }
     td:hover {
+      cursor: pointer;
       background-color: #42aaff;
       color: #dceaff;
       font-weight: bold;
