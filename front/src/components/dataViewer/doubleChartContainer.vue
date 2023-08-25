@@ -1,7 +1,9 @@
 <template>
     <div :index='chartOptId' class="double-chart-container" :styleId="styleId" :order="order">
-        <div class="chart left" ref="chartLeft"></div>
-        <div class="chart right"></div>
+        <div class="table-container left" ref="chartLeft">
+            <!-- <dataTable /> -->
+        </div>
+        <div class="chart right"  ref="chartLeft"></div>
     </div>
 </template>
   
@@ -15,6 +17,7 @@ export default {
 import * as echarts from 'echarts';
 import { onMounted, ref, watch } from 'vue';
 import { chartOptionTest, ChartDataPreparer } from '@/utils/viewerData';
+import dataTable from './dataTable.vue';
 
 type EChartsOption = echarts.EChartsOption;
 
@@ -33,6 +36,7 @@ const order = ref(props.order);
 let projectId = ref(props.projectId);
 
 const chartLeft = ref<HTMLElement>();
+const chartRight = ref<HTMLElement>();
 
 //   let noShown = ref(props.notShown);
 
@@ -43,10 +47,11 @@ const chartLeft = ref<HTMLElement>();
 
 onMounted(() => {
     // console.log(chartDom.value);
-    let echartLeft = echarts.init(chartLeft.value as HTMLElement)
+    // let echartLeft = echarts.init(chartLeft.value as HTMLElement);
+    let chartRight = echarts.init(chartLeft.value as HTMLElement);
 
     let chartConfig = chartOptionTest[+(chartOptId.value.substring(0, 1))-1];
-    echartLeft.setOption(chartConfig)
+    chartRight.setOption(chartConfig)
     // TODO: window.onsize doesn't work on components
     // window.onresize = function () {
     //     chart.resize();
@@ -63,6 +68,7 @@ div.double-chart-container {
     height: 32%;
     border-radius: 3px;
     background-color: transparent;
+    overflow: hidden;
     // backdrop-filter: blur(4px);
     flex-grow: 0;
 
@@ -71,7 +77,7 @@ div.double-chart-container {
     justify-content: space-around;
 
     &[styleId='1'] {
-        width: 30%;
+        width: 28%;
         height: 32%;
     }
 
@@ -98,6 +104,19 @@ div.double-chart-container {
     }
 
     div.chart {
+        width: 49%;
+        height: 100%;
+        background-color: rgba(0, 1, 67, 0.5);
+        border-radius: 3px;
+
+        div {
+            canvas {
+                border-radius: 3px;
+            }
+        }
+    }
+
+    div.table-container {
         width: 49%;
         height: 100%;
         background-color: rgba(0, 1, 67, 0.5);
