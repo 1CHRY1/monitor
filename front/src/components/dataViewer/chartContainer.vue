@@ -87,7 +87,7 @@ div.chart-container {
     flex-grow: 0;
 
     &[styleId='1'] {
-        width: 30%;
+        width: 28%;
         height: 32%;
     }
 
@@ -98,7 +98,7 @@ div.chart-container {
 
     &[styleId='3'] {
         height: 32%;
-        width: 38%;
+        width: 42%;
     }
 
     @each $order in $orders {

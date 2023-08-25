@@ -11,7 +11,7 @@
                 </svg>
             </div>
             <div class="title-text">
-                <div class="title-text-up">水沙观测一张图</div>
+                <div class="title-text-up">工程监测可视化</div>
                 <div class="title-text-bot">{{ currentProject?.name }}</div>
             </div>
             <div class="title-wrap-right">
