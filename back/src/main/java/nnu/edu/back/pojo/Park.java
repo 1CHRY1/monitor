@@ -20,14 +20,14 @@ public class Park {
     String name;
     String hdHdly;
     String hdHdlyName;
-    Float hdlc;
+    Double hdlc;
     String tyAnb;
     String tyAnbName;
     String type;
     String width;
     String usage;
-    Float longitude;
-    Float latitude;
+    Double longitude;
+    Double latitude;
     String picture;
     String waterwayId;
     String waterwayName;

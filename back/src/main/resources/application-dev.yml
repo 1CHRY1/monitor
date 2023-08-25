@@ -1,31 +1,32 @@
 spring:
   datasource:
     default:
-      jdbc-url: jdbc:sqlite:D:/desktop/桌面/Assignments/data/monitor/monitor/main.db
+      jdbc-url: jdbc:sqlite:E:/monitor/main.db
       driver-class-name: org.sqlite.JDBC
     shp:
       jdbc-url: jdbc:postgresql://localhost:5432/shp_dataset?stringtype=unspecified
       driver-class-name: org.postgresql.Driver
       username: postgres
-      password: QWERBOOM123
+      password: 123
     ship:
-      jdbc-url: jdbc:sqlite:D:/desktop/桌面/Assignments/data/monitor/monitor/resources/ais.db
+      jdbc-url: jdbc:sqlite:E:/monitor/resources/ais.db
       driver-class-name: org.sqlite.JDBC
     waterway:
-      jdbc-url: jdbc:sqlite:D:/desktop/桌面/Assignments/data/monitor/monitor/resources/waterway.db
+      jdbc-url: jdbc:sqlite:E:/monitor/resources/waterway.db
       driver-class-name: org.sqlite.JDBC
 
 
 
-baseDir: D:/desktop/桌面/Assignments/data/monitor/monitor/
-avatarDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/avatar/
-tempDir: D:/desktop/桌面/Assignments/data/monitor/monitor/temp/
-visualDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/visual/
-pgPath: D:/Program Files (x86)/postgresql/15/bin
-mapDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/map/
-resourceDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/
-analysisDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/analysis/
-analysisParameterDir: D:/desktop/桌面/Assignments/data/monitor/monitor/resources/analysisParameter/
+baseDir: E:/monitor/resources/raw/
+avatarDir: E:/monitor/resources/avatar/
+tempDir: E:/monitor/temp/
+visualDir: E:/monitor/resources/visual/
+pgPath: D:/App/postgresql/bin/
+mapDir: E:/monitor/resources/map/
+resourceDir: E:/monitor/resources/
+analysisDir: E:/monitor/resources/analysis/
+analysisParameterDir: E:/monitor/resources/analysisParameter/
+projectDir: E:/monitor/project/
 
 meteorologyUrl: https://weather.cma.cn/api/map/alarm
 meteorologyPngUrl:

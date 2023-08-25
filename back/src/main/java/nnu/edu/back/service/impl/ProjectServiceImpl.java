@@ -91,4 +91,9 @@ public class ProjectServiceImpl implements ProjectService {
         map.put("list", list);
         return map;
     }
+
+    @Override
+    public List<Project> getAllVisualProject() {
+        return projectMapper.getAllVisualProject();
+    }
 }

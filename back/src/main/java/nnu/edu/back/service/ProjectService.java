@@ -24,4 +24,6 @@ public interface ProjectService {
     Project createProject(Project project);
 
     Map<String, Object> pageQueryProject(String keyword, String type, int page, int size);
+
+    List<Project> getAllVisualProject();
 }

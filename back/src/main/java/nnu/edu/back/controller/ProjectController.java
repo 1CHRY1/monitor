@@ -64,4 +64,9 @@ public class ProjectController {
         return ResultUtils.success(projectService.pageQueryProject(keyword, type, page, size));
     }
 
+    @RequestMapping(value = "/getAllVisualProject", method = RequestMethod.GET)
+    public JsonResult getAllVisualProject() {
+        return ResultUtils.success(projectService.getAllVisualProject());
+    }
+
 }

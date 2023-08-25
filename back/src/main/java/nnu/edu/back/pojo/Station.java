@@ -21,8 +21,8 @@ public class Station {
     String nameEn;
     JSONObject keys;
     JSONObject keysCn;
-    Float longitude;
-    Float latitude;
+    Double longitude;
+    Double latitude;
     String type;
     JSONObject startTime;
     Integer prediction;

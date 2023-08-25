@@ -1,5 +1,6 @@
 package nnu.edu.back.pojo;
 
+import com.alibaba.fastjson2.JSONArray;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,21 +9,16 @@ import lombok.NoArgsConstructor;
  * Created with IntelliJ IDEA.
  *
  * @Author: Yiming
- * @Date: 2023/07/28/21:42
+ * @Date: 2023/08/24/9:47
  * @Description:
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Project {
-    String id;
-    String projectName;
-    String avatar;
-    String description;
-    String institution;
-    String location;
+public class Substrate {
     String time;
+    String location;
     String type;
-    String uploadTime;
-    Integer visual;
+    String soil;
+    JSONArray level;
 }

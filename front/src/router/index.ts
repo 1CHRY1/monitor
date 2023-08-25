@@ -126,9 +126,36 @@ export const asyncRouters: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: "folder",
+        name: "folderAdmin",
+        component: () => import("@/views/FolderAdminView.vue"),
+        meta: {
+          requiresAuth: "admin",
+          keepAlive: true,
+        },
+      },
+      {
         path: "resource",
         name: " ",
         component: () => import("@/views/ResourceAdminView.vue"),
+        meta: {
+          requiresAuth: "admin",
+          keepAlive: true,
+        },
+      },
+      {
+        path: "createResource",
+        name: "createResource", 
+        component: () => import("@/views/CreateResourceView.vue"),
+        meta: {
+          requiresAuth: "admin",
+          keepAlive: true,
+        },
+      },
+      {
+        path: "updateResource",
+        name: "updateResource",
+        component: () => import("@/views/UpdateResourceView.vue"),
         meta: {
           requiresAuth: "admin",
           keepAlive: true,

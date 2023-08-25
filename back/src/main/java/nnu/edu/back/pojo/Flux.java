@@ -8,21 +8,15 @@ import lombok.NoArgsConstructor;
  * Created with IntelliJ IDEA.
  *
  * @Author: Yiming
- * @Date: 2023/07/28/21:42
+ * @Date: 2023/08/23/21:18
  * @Description:
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Project {
-    String id;
-    String projectName;
-    String avatar;
-    String description;
-    String institution;
-    String location;
+@AllArgsConstructor
+public class Flux {
     String time;
+    String name;
     String type;
-    String uploadTime;
-    Integer visual;
+    Double value;
 }
