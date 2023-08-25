@@ -44,6 +44,10 @@ export const pageQueryProject = async (jsonData: {
   return await post(`/project/pageQueryProject`, true, jsonData);
 };
 
+export const getAllVisualProject = async () => {
+  return await get(`/project/getAllVisualProject`, true);
+};
+
 export const fuzzyQueryDataList = async (jsonData: {
   page: number;
   size: number;
@@ -427,12 +431,15 @@ export const getSpeedOrientationNameAndType = async (projectId: string) => {
   );
 };
 
-export const getSpee = async (
+export const getSpeed = async (
   projectId: string,
   name: string,
   type: string
 ) => {
-  return await get(`/monitorVisual/getSpee/${projectId}/${name}/${type}`, true);
+  return await get(
+    `/monitorVisual/getSpeed/${projectId}/${name}/${type}`,
+    true
+  );
 };
 
 export const getOrientation = async (
