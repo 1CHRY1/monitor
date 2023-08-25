@@ -7,7 +7,7 @@ import nnu.edu.back.pojo.Flux;
 import nnu.edu.back.pojo.SandTransport;
 import nnu.edu.back.pojo.Section;
 import nnu.edu.back.pojo.Substrate;
-import nnu.edu.back.service.MonitorProjectService;
+import nnu.edu.back.service.MonitorVisualService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ import java.util.Map;
  * @Description:
  */
 @Service
-public class MonitorProjectServiceImpl implements MonitorProjectService {
+public class MonitorVisualServiceImpl implements MonitorVisualService {
     @Autowired
     DynamicMapper dynamicMapper;
 
@@ -106,9 +106,73 @@ public class MonitorProjectServiceImpl implements MonitorProjectService {
     }
 
     @Override
-    public Map<String, Object> getSpeed(String projectId, String name) {
+    public List<Map<String, Object>> getSpeedOrientationNameAndType(String projectId) {
+        return dynamicMapper.getSpeedOrientationNameAndType(projectId);
+    }
 
-        return null;
+    @Override
+    public Map<String, Object> getSpeed(String projectId, String name, String type) {
+        if (type.equals("small")) type = "小潮";
+        else if (type.equals("large")) type = "大潮";
+        else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
+        List<String> times = dynamicMapper.getTime(projectId, name, type);
+        List<String> nameList = dynamicMapper.getSectionSegment(projectId, name);
+        List<Double> valueList = dynamicMapper.getSpeedByNameAndType(projectId, name, type);
+        List<List<Double>> value = new ArrayList<>();
+        Map<String, Object> res = new HashMap<>();
+        res.put("name", name);
+        res.put("time", times);
+        res.put("nameList", nameList);
+        int index = 0;
+        for (int i = 0; i < nameList.size(); i++) {
+            List<Double> list = new ArrayList<>();
+            for (int j = 0; j < times.size(); j++) {
+                list.add(valueList.get(index++));
+            }
+            value.add(list);
+        }
+        res.put("value", value);
+        return res;
+    }
+
+    @Override
+    public Map<String, Object> getOrientation(String projectId, String name, String type) {
+        if (type.equals("small")) type = "小潮";
+        else if (type.equals("large")) type = "大潮";
+        else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
+        List<String> times = dynamicMapper.getTime(projectId, name, type);
+        List<String> nameList = dynamicMapper.getSectionSegment(projectId, name);
+        List<Double> valueList = dynamicMapper.getOrientationByNameAndType(projectId, name, type);
+        List<List<Double>> value = new ArrayList<>();
+        Map<String, Object> res = new HashMap<>();
+        res.put("name", name);
+        res.put("time", times);
+        res.put("nameList", nameList);
+        int index = 0;
+        for (int i = 0; i < nameList.size(); i++) {
+            List<Double> list = new ArrayList<>();
+            for (int j = 0; j < times.size(); j++) {
+                list.add(valueList.get(index++));
+            }
+            value.add(list);
+        }
+        res.put("value", value);
+        return res;
+    }
+
+    @Override
+    public List<String> getSandContentClass(String projectId) {
+        return dynamicMapper.getSandContentClass(projectId);
+    }
+
+    @Override
+    public Map<String, Object> getSandContentValue(String projectId, String name) {
+        List<String> timeList = dynamicMapper.getSandContentTime(projectId, name);
+        List<Double> valueList = dynamicMapper.getSandContentValue(projectId, name);
+        Map<String, Object> res = new HashMap<>();
+        res.put("time", timeList);
+        res.put("value", valueList);
+        return res;
     }
 
     @Override
