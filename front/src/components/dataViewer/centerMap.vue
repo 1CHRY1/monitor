@@ -47,7 +47,7 @@ div.scene-map-wrapper {
     background-color: transparent;
     backdrop-filter: blur(8px);
     border-radius: 4px;
-    width: 38%;
+    width: 42%;
     height: 66%;
 
     div#map {
