@@ -28,7 +28,7 @@
       >
         <div class="card-header">
           <Monitor class="iconclass"></Monitor>
-          <h2 class="part-title">监测大屏</h2>
+          <h2 class="part-title">工程监测可视化</h2>
         </div>
         <div class="text item part-desc">
           数据图表、指标与信息在大屏上实时呈现，提供全局数据洞察
@@ -65,7 +65,7 @@
         @click="jumpToimg"
       >
         <div class="card-header">
-          <DocumentCopy class="iconclass"></DocumentCopy>
+          <DataAnalysis class="iconclass"></DataAnalysis>
           <h2 class="part-title">分析中心</h2>
         </div>
         <div class="text item part-desc">
@@ -84,8 +84,8 @@
         @click="jumpToimg"
       >
         <div class="card-header">
-          <DocumentCopy class="iconclass"></DocumentCopy>
-          <h2 class="part-title">潮位预报</h2>
+          <Camera class="iconclass"></Camera>
+          <h2 class="part-title">日常监测</h2>
         </div>
         <div class="text item part-desc">
           根据历史和实时数据，预测未来一段时间内海洋或沿海地区的潮汐水位变化情况

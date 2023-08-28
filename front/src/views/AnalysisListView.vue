@@ -15,7 +15,6 @@
         <el-col :span="6">
           <analysis-card :info="analysisList[0]" :keyword="keyword"></analysis-card>
           <analysis-card :info="analysisList[0]" :keyword="keyword"></analysis-card>
-          <!-- <analysis-card :info="analysisList[0]" :keyword="keyword"></analysis-card> -->
         
         </el-col>
 
@@ -30,7 +29,6 @@
           
         </el-col>
         <el-col :span="6">
-          <analysis-card :info="analysisList[1]" :keyword="keyword"></analysis-card>
           <analysis-card :info="analysisList[1]" :keyword="keyword"></analysis-card>
         </el-col>
 

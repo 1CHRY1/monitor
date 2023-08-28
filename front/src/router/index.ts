@@ -136,7 +136,7 @@ export const asyncRouters: Array<RouteRecordRaw> = [
       },
       {
         path: "resource",
-        name: " ",
+        name: "resourceAdmin",
         component: () => import("@/views/ResourceAdminView.vue"),
         meta: {
           requiresAuth: "admin",
