@@ -391,15 +391,8 @@ export const getSectionElevation = async (projectId: string) => {
   return await get(`/monitorVisual/getSectionElevation/${projectId}`, true);
 };
 
-export const getFlux = async (
-  projectId: string,
-  name: string,
-  type: string
-) => {
-  return await get(
-    `/monitorVisual/getFlux/${projectId}/${name}/${type}`,
-    true
-  );
+export const getFlux = async (projectId: string) => {
+  return await get(`/monitorVisual/getFlux/${projectId}`, true);
 };
 
 export const getSubstrate = async (projectId: string) => {
