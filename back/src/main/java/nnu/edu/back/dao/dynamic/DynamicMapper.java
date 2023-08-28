@@ -23,9 +23,16 @@ public interface DynamicMapper {
 
     List<Map<String, Object>> getDistanceAndElevationByName(String id, @Param("sectionName") String sectionName);
 
-    List<Map<String, Object>> getFluxNameAndType(String id);
+    List<String> getTableIdList(String id);
 
-    List<Flux> getFluxByNameAndType(String id, @Param("name") String name, @Param("type") String type);
+    String getTypeByTableId(String id, @Param("tableId") String tableId);
+
+    List<String> getTimeListByTableId(String id, @Param("tableId") String tableId);
+
+    List<String> getNameListByTableId(String id, @Param("tableId") String tableId);
+
+    List<Double> getFluxValueByTableIdAndName(String id, @Param("tableId") String tableId, @Param("name") String name);
+
 
     List<Substrate> getAllSubstrate(String id);
 

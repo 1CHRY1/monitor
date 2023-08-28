@@ -48,6 +48,10 @@ export const getAllVisualProject = async () => {
   return await get(`/project/getAllVisualProject`, true);
 };
 
+export const deleteProject = async (id: string) => {
+  return await del(`/project/deleteProject/${id}`, true);
+};
+
 export const fuzzyQueryDataList = async (jsonData: {
   page: number;
   size: number;
@@ -387,17 +391,13 @@ export const getSectionElevation = async (projectId: string) => {
   return await get(`/monitorVisual/getSectionElevation/${projectId}`, true);
 };
 
-export const getFluxNameAndType = async (projectId: string) => {
-  return await get(`/monitorVisual/getFluxNameAndType/${projectId}`, true);
-};
-
-export const getFluxByNameAndType = async (
+export const getFlux = async (
   projectId: string,
   name: string,
   type: string
 ) => {
   return await get(
-    `/monitorVisual/getFluxByNameAndType/${projectId}/${name}/${type}`,
+    `/monitorVisual/getFlux/${projectId}/${name}/${type}`,
     true
   );
 };

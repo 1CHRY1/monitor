@@ -96,4 +96,11 @@ public class ProjectServiceImpl implements ProjectService {
     public List<Project> getAllVisualProject() {
         return projectMapper.getAllVisualProject();
     }
+
+    @Override
+    public void deleteProject(String id, String role) {
+        if (role.equals("admin")) {
+            projectMapper.deleteProject(id);
+        }
+    }
 }

@@ -14,7 +14,12 @@
       <div class="cards" v-else>
         <div v-if="projectList.length">
           <div v-for="(item, index) in projectList" :key="index">
-            <project-card :projectInfo="item" :keyword="keyword"></project-card>
+            <project-card
+              :projectInfo="item"
+              :keyword="keyword"
+              @clickHandle="clickHandle"
+              @deleteHandle="deleteHandle"
+            ></project-card>
           </div>
           <div class="page">
             <el-pagination
@@ -49,13 +54,14 @@
 import { defineComponent, onMounted, reactive, ref } from "vue";
 import ProjectClass from "@/components/admin/ProjectClass.vue";
 import ProjectCard from "@/components/admin/ProjectCard.vue";
-import { pageQueryProject, createProject } from "@/api/request";
+import { pageQueryProject, createProject, deleteProject } from "@/api/request";
 import { ProjectType } from "@/type";
 import AddProject from "@/components/admin/AddProject.vue";
 import { notice } from "@/utils/common";
 import PageCopyright from "@/layout/PageCopyright.vue";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
+import router from "@/router";
 export default defineComponent({
   components: { ProjectClass, ProjectCard, AddProject, PageCopyright },
   setup() {
@@ -140,6 +146,19 @@ export default defineComponent({
       await pageQuery(keyword.value, type, currentPage.value - 1, 10);
     };
 
+    const deleteHandle = async (id: string) => {
+      console.log(id);
+      const res = await deleteProject(id);
+      if (res && res.code === 0) {
+        notice("success", "成功", "删除成功");
+      }
+    };
+
+    const clickHandle = (id: string) => {
+      console.log(id);
+      router.push({ name: "projectDetail", params: { id: id } });
+    };
+
     onMounted(async () => {
       await pageQuery("", "history", 0, 10);
       skeletonFlag.value = false;
@@ -157,6 +176,8 @@ export default defineComponent({
       changeType,
       commitHandle,
       searchHandle,
+      deleteHandle,
+      clickHandle,
     };
   },
 });
