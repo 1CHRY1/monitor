@@ -51,28 +51,29 @@ public class MonitorVisualServiceImpl implements MonitorVisualService {
         return map;
     }
 
-    @Override
-    public List<Map<String, Object>> getFluxNameAndType(String projectId) {
-        return dynamicMapper.getFluxNameAndType(projectId);
-    }
 
     @Override
-    public Map<String, Object> getFluxByNameAndType(String projectId, String name, String type) {
-        if (type.equals("small")) type = "小潮";
-        else if (type.equals("large")) type = "大潮";
-        else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
-        List<Flux> fluxList = dynamicMapper.getFluxByNameAndType(projectId, name, type);
-        Map<String, Object> res = new HashMap<>();
-        List<String> time = new ArrayList<>();
-        List<Double> value = new ArrayList<>();
-        res.put("name", name);
-        for (Flux flux : fluxList) {
-            time.add(flux.getTime());
-            value.add(flux.getValue() == null ? 0 : flux.getValue());
+    public List<Map<String, Object>> getFlux(String projectId) {
+        List<Map<String, Object>> res = new ArrayList<>();
+        List<String> tableIdList = dynamicMapper.getTableIdList(projectId);
+        for (String tableId : tableIdList) {
+            Map<String, Object> map = new HashMap<>();
+            List<String> timeList = dynamicMapper.getTimeListByTableId(projectId, tableId);
+            List<String> nameList = dynamicMapper.getNameListByTableId(projectId, tableId);
+            List<List<Double>> value = new ArrayList<>();
+            for (String name : nameList) {
+                List<Double> valueList = dynamicMapper.getFluxValueByTableIdAndName(projectId, tableId, name);
+                value.add(valueList);
+            }
+            map.put("type", dynamicMapper.getTypeByTableId(projectId, tableId));
+            map.put("time", timeList);
+            map.put("name", nameList);
+            map.put("value", value);
+            res.add(map);
         }
-        res.put("time", time);
-        res.put("value", value);
         return res;
+
+
     }
 
     @Override

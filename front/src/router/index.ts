@@ -114,7 +114,7 @@ export const asyncRouters: Array<RouteRecordRaw> = [
     children: [
       {
         path: "",
-        redirect: "/admin/project",
+        redirect: "/admin/folder",
       },
       {
         path: "project",
@@ -123,6 +123,15 @@ export const asyncRouters: Array<RouteRecordRaw> = [
         meta: {
           requiresAuth: "admin",
           // keepAlive: true,
+        },
+      },
+      {
+        path: "projectDetail/:id",
+        name: "projectDetail",
+        component: () => import("@/views/ProjectDetailView.vue"),
+        meta: {
+          requiresAuth: "admin",
+          keepAlive: true,
         },
       },
       {
@@ -145,7 +154,7 @@ export const asyncRouters: Array<RouteRecordRaw> = [
       },
       {
         path: "createResource",
-        name: "createResource", 
+        name: "createResource",
         component: () => import("@/views/CreateResourceView.vue"),
         meta: {
           requiresAuth: "admin",

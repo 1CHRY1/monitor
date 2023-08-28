@@ -15,10 +15,13 @@
 import CarouselComponent from "@/components/home/CarouselComponent.vue";
 import { defineComponent, onMounted } from "vue";
 import IntroduceComponent from "@/components/home/IntroduceComponent.vue";
+import { getAllVisualProject } from "@/api/request";
 export default defineComponent({
   components: { IntroduceComponent, CarouselComponent },
   setup() {
-    
+    onMounted(() => {
+      getAllVisualProject();
+    });
   },
   data() {
     return {
