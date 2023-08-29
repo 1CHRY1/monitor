@@ -23,7 +23,7 @@ router.beforeEach(async (to, form, next) => {
       } else next();
     }
   } else {
-    if (to.path === "/login" || to.path === "/register" || to.path === "/" || to.path === "/dataViewer") {
+    if (to.path === "/login" || to.path === "/register" || to.path === "/" || to.path === "/dataViewer" || to.path==='/test') {
       next();
     } else {
       next("/login");
