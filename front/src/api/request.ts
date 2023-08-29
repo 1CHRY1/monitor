@@ -1,4 +1,7 @@
+
+import { returnOrUpdate } from "ol/extent";
 import { get, post, del, patch } from "./axios-config";
+import { File,Folder } from "@/type";
 
 export const login = async (jsonData: { email: string; password: string }) => {
   return await post(`/user/login`, true, jsonData);
@@ -456,3 +459,150 @@ export const getSandContentValue = async (projectId: string, name: string) => {
     true
   );
 };
+
+
+
+// ----------------管理员界面相关------------------------------
+export async function findByFolderId(folderId: string) {
+  const res:(Folder|File)[] = [];
+  
+  if(folderId === '-1'){
+    //root的假数据
+    let i = 0;
+    while (i < 4) {
+      res.push({
+        id: 'string' + i,
+        folderName: '测试文件夹'+i,
+        parentId: "string"+i ,
+        flag: false,
+      });
+      i++;
+    }
+    while (i<7){
+      res.push({
+        id: 'string'+i,
+        fileName: "测试文件"+i,
+        visualType: '',
+        size: 300+i+'MB',
+        uploader: '管理员',
+        folderId: 'string'+i,
+        visualId: 'string'+i,
+        flag: false,
+        view: "",
+      })
+      i++;
+    }
+  }
+  else{
+    let i=0;
+    while (i<3){
+      res.push({
+        id: 'substring' + i,
+        folderName: '子测试文件夹'+i,
+        parentId: "substring"+i ,
+        flag: false,
+      });
+      i++;
+    }
+    while (i<6){
+      res.push({
+        id: 'substring'+i,
+        fileName: "子测试文件"+i,
+        visualType: '',
+        size: 100+i+'MB',
+        uploader: '管理员',
+        folderId: 'substring'+i,
+        visualId: 'substring'+i,
+        flag: false,
+        view: "",
+      })
+      i++;
+    }
+  }
+
+
+  return {
+    code:0,
+    data:res
+  }
+
+}
+
+export async function deleteFilesOrFolders(jsonData:{
+  files:string [],folders:string []
+}) {
+
+  return findByFolderId('-1');
+}
+
+export async function uploadParts(
+  uid: string,
+  number: number,
+  formData: FormData
+) {
+  // return await post(`/visual/uploadParts/${uid}/${number}`, formData);
+  return {
+    data:'123'
+  }
+}
+
+export async function mergeParts(
+  uid: string,
+  total: number,
+  type: string,
+  name: string
+) {
+  // return await post(`/visual/mergeParts/${uid}/${total}/${type}/${name}`);
+  return {
+    data:'123'
+  }
+}
+
+export async function bindVisualData(jsonData: {
+  id: string;
+  fileName: string;
+  type: string;
+  srid: string;
+  coordinates: number[][];
+  view: {
+    zoom: number;
+    center: number[];
+  } | null;
+}) {
+  // return await post(`/file/bindVisualData`, jsonData);
+  return {
+    data:'123'
+  }
+}
+
+export async function cancelVisualBind(id: string) {
+  // return await del(`/file/cancelVisualBind/${id}`);
+  return {
+    data:'123'
+  }
+}
+
+
+export async function getDownloadURL(id:string)
+{
+    return "downloadURL";
+}
+
+export async function addFolder(jsonData: {
+  folderName: string;
+  parentId: string;
+}) {
+  // return await post(`/folder/addFolder`, jsonData);
+
+  const newFile = {
+    id: 'NEWADDstring',
+    folderName:jsonData.folderName,
+    parentId: jsonData.parentId ,
+    flag: false,
+  }
+
+  return{
+    data:newFile,
+    code:0
+  }
+}
