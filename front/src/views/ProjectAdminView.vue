@@ -52,8 +52,8 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref } from "vue";
-import ProjectClass from "@/components/admin/ProjectClass.vue";
-import ProjectCard from "@/components/admin/ProjectCard.vue";
+import ProjectClass from "@/components/admin/ResourceClass.vue";
+import ProjectCard from "@/components/admin/ResourceCard.vue";
 import { pageQueryProject, createProject, deleteProject } from "@/api/request";
 import { ProjectType } from "@/type";
 import AddProject from "@/components/admin/AddProject.vue";
