@@ -6,7 +6,8 @@
         <result property="startLon" column="start_lon"/>
         <result property="startLat" column="start_lat"/>
         <result property="endLon" column="end_lon"/>
-        <result property="endLat" column="emd_lat"/>
+        <result property="endLat" column="end_lat"/>
+        <result property="angle" column="angle"/>
     </resultMap>
 
     <resultMap id="FluxMap" type="nnu.edu.back.pojo.Flux">
@@ -14,6 +15,7 @@
         <result property="name" column="name"/>
         <result property="type" column="type"/>
         <result property="value" column="value"/>
+        <result property="tableId" column="table_id"/>
     </resultMap>
 
     <resultMap id="SubstrateMap" type="nnu.edu.back.pojo.Substrate">
@@ -39,12 +41,24 @@
         select distance, elevation from section_elevation_result where section_name = #{sectionName} order by number ASC
     </select>
 
-    <select id="getFluxNameAndType" resultType="java.util.HashMap">
-        select name, type from flux_result group by name, type
+    <select id="getTableIdList" resultType="java.lang.String">
+        select table_id from flux_result group by table_id
     </select>
 
-    <select id="getFluxByNameAndType" resultMap="FluxMap">
-        select * from flux_result where name = #{name} and type = #{type} order by time ASC
+    <select id="getTypeByTableId" resultType="java.lang.String">
+        select distinct type from flux_result where table_id = #{tableId}
+    </select>
+
+    <select id="getTimeListByTableId" resultType="java.lang.String">
+        select distinct time from flux_result where table_id = #{tableId} order by time ASC
+    </select>
+
+    <select id="getNameListByTableId" resultType="java.lang.String">
+        select distinct name from flux_result where table_id = #{tableId}
+    </select>
+
+    <select id="getFluxValueByTableIdAndName" resultType="java.lang.Double">
+        select ifnull(value, 0) from flux_result where table_id = #{tableId} and name = #{name} order by time ASC
     </select>
 
     <select id="getAllSubstrate" resultMap="SubstrateMap">

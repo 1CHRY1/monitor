@@ -32,14 +32,9 @@ public class MonitorVisualController {
         return ResultUtils.success(monitorVisualService.getSectionElevation(projectId));
     }
 
-    @RequestMapping(value = "/getFluxNameAndType/{projectId}", method = RequestMethod.GET)
-    public JsonResult getFluxNameAndType(@PathVariable String projectId) {
-        return ResultUtils.success(monitorVisualService.getFluxNameAndType(projectId));
-    }
-
-    @RequestMapping(value = "/getFluxByNameAndType/{projectId}/{name}/{type}", method = RequestMethod.GET)
-    public JsonResult getFluxByNameAndType(@PathVariable String projectId, @PathVariable String name, @PathVariable String type) {
-        return ResultUtils.success(monitorVisualService.getFluxByNameAndType(projectId, name, type));
+    @RequestMapping(value = "/getFlux/{projectId}", method = RequestMethod.GET)
+    public JsonResult getFlux(@PathVariable String projectId) {
+        return ResultUtils.success(monitorVisualService.getFlux(projectId));
     }
 
     @RequestMapping(value = "/getSubstrate/{projectId}", method = RequestMethod.GET)

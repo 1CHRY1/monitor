@@ -1,5 +1,5 @@
 <template>
-  <div class="project-card">
+  <div class="project-card" @click="clickHandle">
     <div>
       <img :src="'/monitor/visual/getAvatar/' + projectInfo.avatar" />
     </div>
@@ -23,6 +23,13 @@
         <strong>简介：</strong
         ><span v-html="replaceHandle(projectInfo.description)"></span>
       </div>
+      <el-popconfirm title="确定删除该项目?" @confirm="deleteHandle">
+        <template #reference>
+          <el-button type="danger" link class="delete">
+            <el-icon size="large"><DeleteFilled /></el-icon>
+          </el-button>
+        </template>
+      </el-popconfirm>
     </div>
   </div>
 </template>
@@ -39,7 +46,8 @@ export default defineComponent({
       type: String,
     },
   },
-  setup(props) {
+  emits: ["deleteHandle", "clickHandle"],
+  setup(props, context) {
     const projectInfo = computed(() => {
       return props.projectInfo;
     });
@@ -53,7 +61,15 @@ export default defineComponent({
       return currentStr;
     };
 
-    return { projectInfo, replaceHandle };
+    const deleteHandle = () => {
+      context.emit("deleteHandle", projectInfo.value!.id);
+    };
+
+    const clickHandle = () => {
+      context.emit("clickHandle", projectInfo.value!.id);
+    };
+
+    return { projectInfo, replaceHandle, deleteHandle, clickHandle };
   },
 });
 </script>
@@ -67,6 +83,13 @@ export default defineComponent({
   margin-top: 2rem;
   display: flex;
   cursor: pointer;
+  &:hover {
+    .text-info {
+      .title {
+        color: #ff7049;
+      }
+    }
+  }
   img {
     width: 18rem;
     height: 12rem;
@@ -75,6 +98,12 @@ export default defineComponent({
   }
   .text-info {
     padding: 1rem 2rem 1rem 0;
+    position: relative;
+    .delete {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
     .title {
       font-size: 1.6rem;
     }
