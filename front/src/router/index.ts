@@ -117,24 +117,6 @@ export const asyncRouters: Array<RouteRecordRaw> = [
         redirect: "/admin/folder",
       },
       {
-        path: "project",
-        name: "project",
-        component: () => import("@/views/ProjectAdminView.vue"),
-        meta: {
-          requiresAuth: "admin",
-          // keepAlive: true,
-        },
-      },
-      {
-        path: "projectDetail/:id",
-        name: "projectDetail",
-        component: () => import("@/views/ProjectDetailView.vue"),
-        meta: {
-          requiresAuth: "admin",
-          keepAlive: true,
-        },
-      },
-      {
         path: "folder",
         name: "folderAdmin",
         component: () => import("@/views/FolderAdminView.vue"),
@@ -149,7 +131,7 @@ export const asyncRouters: Array<RouteRecordRaw> = [
         component: () => import("@/views/ResourceAdminView.vue"),
         meta: {
           requiresAuth: "admin",
-          keepAlive: true,
+          // keepAlive: true,
         },
       },
       {

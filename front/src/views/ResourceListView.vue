@@ -197,6 +197,8 @@ import router from "@/router";
 import NProgress from "nprogress";
 import { Search } from "@element-plus/icons-vue";
 import PageCopyright from "@/layout/PageCopyright.vue";
+import { DataListType } from "@/type";
+import { classList } from "@/common-config";
 // NProgress.configure({ showSpinner: false });
 
 export default defineComponent({
@@ -206,44 +208,6 @@ export default defineComponent({
   },
 
   setup() {
-    const classList = [
-      {
-        label: "地形数据",
-        value: [
-          "DEM",
-          "边界",
-          "等高线",
-          "DWG",
-          "高程点",
-          "固定断面线",
-          "深泓线",
-        ],
-      },
-      {
-        label: "工程数据",
-        value: [
-          "航标",
-          "护岸工程",
-          "码头工程",
-          "水利工程",
-          "整治工程",
-          "桥梁工程",
-        ],
-      },
-      {
-        label: "物理模型",
-        value: ["浓度场", "照片", "视频"],
-      },
-      {
-        label: "水文数据",
-        value: ["潮位", "断面输沙率", "含沙量", "含盐度", "流速流向", "悬移质"],
-      },
-      {
-        label: "遥感影像",
-        value: ["遥感影像"],
-      },
-    ];
-
     const hotDataList = ref<{ dataListName: string; id: string }[]>([]);
     const specialList = ref<{ dataListName: string; id: string }[]>([]);
     const sortWord = ref("update_time");
@@ -254,7 +218,7 @@ export default defineComponent({
 
     const titleKeyword = ref("");
 
-    const fileList = ref<any[]>([]);
+    const fileList = ref<DataListType[]>([]);
     const total = ref(0);
     const currentPage = ref(1);
 

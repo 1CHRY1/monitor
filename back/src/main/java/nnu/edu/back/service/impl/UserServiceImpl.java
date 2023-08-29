@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
     public String login(User user) {
         if (user.getEmail() == null) throw new MyException(ResultEnum.NO_OBJECT);
         User resultUser = userMapper.queryUserByEmail(user.getEmail());
+        if (resultUser == null) throw new MyException(ResultEnum.NO_OBJECT);
         if (resultUser.getPassword().equals(Encrypt.md5(user.getPassword()))) {
             return JwtTokenUtil.generateTokenByUser(resultUser);
         } else throw new MyException(ResultEnum.USER_PASSWORD_NOT_MATCH);
