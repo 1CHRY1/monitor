@@ -19,4 +19,5 @@ public class Flux {
     String name;
     String type;
     Double value;
+    String tableId;
 }

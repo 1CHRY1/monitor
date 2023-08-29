@@ -40,8 +40,4 @@
     <select id="getAllVisualProject" resultMap="ProjectMap">
         select * from projects where visual = 1
     </select>
-
-    <delete id="deleteProject">
-        delete from projects where id = #{id}
-    </delete>
 </mapper>

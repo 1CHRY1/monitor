@@ -26,4 +26,6 @@ public interface ProjectService {
     Map<String, Object> pageQueryProject(String keyword, String type, int page, int size);
 
     List<Project> getAllVisualProject();
+
+    void deleteProject(String id, String role);
 }

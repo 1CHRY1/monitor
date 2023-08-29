@@ -1,7 +1,7 @@
 <template>
     <div :index='chartOptId' class="double-chart-container" :styleId="styleId" :order="order">
         <div class="table-container left" ref="chartLeft">
-            <!-- <dataTable /> -->
+            <dataTable />
         </div>
         <div class="chart right"  ref="chartLeft"></div>
     </div>
@@ -25,7 +25,7 @@ interface Props {
     chartId: string,
     order: string,
     styleType: string,
-    projectId: number
+    projectId: string
 }
 
 const props = defineProps<Props>();
@@ -38,6 +38,8 @@ let projectId = ref(props.projectId);
 const chartLeft = ref<HTMLElement>();
 const chartRight = ref<HTMLElement>();
 
+const chartPreparer = new ChartDataPreparer(+chartOptId.value.substring(0, 1));
+
 //   let noShown = ref(props.notShown);
 
 //   watch(()=>props.notShown, (oldShown, newShown)=> {
@@ -45,13 +47,27 @@ const chartRight = ref<HTMLElement>();
 //       console.log(noShown.value);
 //   });
 
-onMounted(() => {
+let optionIndex = 1;
+
+onMounted(async () => {
     // console.log(chartDom.value);
     // let echartLeft = echarts.init(chartLeft.value as HTMLElement);
     let chartRight = echarts.init(chartLeft.value as HTMLElement);
 
-    let chartConfig = chartOptionTest[+(chartOptId.value.substring(0, 1))-1];
-    chartRight.setOption(chartConfig)
+    const chartOption = await chartPreparer.buildChartOption(projectId.value);
+    console.log(chartOption);
+    if (Array.isArray(chartOption)) {
+        chartRight.setOption(chartOption[0]);
+        setInterval(() => {
+            chartRight.setOption(chartOption[optionIndex]);
+            optionIndex = (optionIndex+1)%(chartOption.length-1) + 1;
+        }, 2000)
+    }
+    else{
+        chartRight.setOption(chartOption)
+    }
+    // let chartConfig = chartOptionTest[+(chartOptId.value.substring(0, 1))-1];
+    
     // TODO: window.onsize doesn't work on components
     // window.onresize = function () {
     //     chart.resize();
