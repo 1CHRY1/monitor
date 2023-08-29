@@ -1,5 +1,7 @@
 <template>
-  <div>THREE IS RESOURCE ADMIN VIEW</div>
+  <div>
+    <h1>资源条目管理页面</h1>
+  </div>
 </template>
 
 <script lang="ts">

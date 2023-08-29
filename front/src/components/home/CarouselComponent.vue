@@ -1,5 +1,5 @@
 <template>
-    <el-carousel :interval="300000" type="card" height="67vh" @change="carouselChange" ref="carousel">
+    <el-carousel :interval="3000" type="card" height="67vh" @change="carouselChange" ref="carousel">
     <el-carousel-item id="first">
         <img class="picture" src="/resource/pic.jpg" />
         <div class="describe">
