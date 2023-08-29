@@ -1,6 +1,7 @@
 <template>
   <div class="data-table-wrapper">
-    <table class="tb-container">
+    <div class="table-title">{{ tableData.name }}</div>
+    <table class="tb-container" ref="dataTable">
       <thead>
         <tr>
           <th v-for="head in tableData.tHead" :key="tableData.tHead.indexOf(head)">
@@ -8,10 +9,9 @@
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody ref="tableBody">
         <tr v-for="row in tableData.tBody">
           <td v-for="cell in row">{{ cell }}</td>
-          <!-- <td>{{ row.datD }}</td> -->
         </tr>
       </tbody>
     </table>
@@ -19,23 +19,58 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import {  } from "@/api/request";
 
+// const data = await 
 
 const tableData = ref({
+    'name': 'P1表面流轨迹',
     'tHead': [
       '时间', 'X', 'Y', '流速'
     ],
     'tBody': [
-        ['18:05:25', '578797.43', '3529961.32', '0.4'],
-        ['18:05:49',	'578798.37','3529951.74',	'0.42' ]
+        ['18:05:25', '578797.43', '3529961.32', '0.40'],
+        ['18:05:49',	'578798.37','3529951.74',	'0.43' ],
+        ['18:05:49',	'578798.37','3529951.74',	'0.44' ],
+        ['18:05:49',	'578798.37','3529951.74',	'0.45' ],
+        ['18:05:49',	'578798.37','3529951.74',	'0.46' ],
+        ['18:05:49',	'578798.37','3529951.74',	'0.47' ],
+        ['18:05:49',	'578798.37','3529951.74',	'0.48' ],
+        ['18:05:49',	'578798.37','3529951.74',	'0.49' ],
+        ['18:05:49',	'578798.37','3529951.74',	'0.52' ],
+        ['18:05:49',	'578798.37','3529951.74',	'0.52' ],
+        ['18:05:49',	'578798.37','3529951.74',	'0.32' ],
+        ['18:05:49',	'578798.37','3529951.74',	'0.82' ],
     ]
+})
+// const rowNum = tableData.value.tBody.length;
+
+const dataTable = ref<HTMLTableElement>();
+const tableBody = ref<HTMLElement>();
+
+// const upRowNum = 0;
+let scrollTable = (() => {
+  let firstRow = dataTable.value?.tBodies[0].firstChild;
+  // console.log('table scrolled...')
+  dataTable.value?.tBodies[0].removeChild(firstRow as Node);
+  dataTable.value?.tBodies[0].appendChild(firstRow as Node);
+  // tableBody.value?.style.setProperty('--upRowNum', upRowNum.toString());
+})
+
+onMounted(() => {
+    setInterval(scrollTable, 1000)
+    
 })
 
 </script>
 
 
 <style lang='scss' scoped>
+// :root {
+//   --upRowNum: 0;
+// }
+
 div.data-table-wrapper {
   // position: absolute;
   background-color: transparent;
@@ -43,10 +78,22 @@ div.data-table-wrapper {
   // top: 10vh;
   height: 100%;
   width: 100%;
+  overflow: hidden;
+
+  div.table-title {
+    position: relative;
+    height: 10%;
+    // line-height: 15%;
+    text-align: center;
+    font-size: calc(0.7vw + 0.8vh);
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+  }
 
   table.tb-container {
     overflow: hidden;
     width: 100%;
+    height: 88%;
     // margin: -0.1em -0.3em -0.1em -0.1em;
     display: table;
     h1 {
@@ -73,18 +120,16 @@ div.data-table-wrapper {
     }
     td,
     th {
-      padding-bottom: 1.2%;
-      padding-top: 1.2%;
+      // padding-bottom: 1.2%;
+      // padding-top: 1.2%;
       padding-left: 0%;
       padding-right: 0%;
       text-align: center;
       color: rgba(255, 255, 255, 1);
     }
-    th {
-      padding-bottom: 0.5%;
-      padding-top: 0.5%;
-    }
     thead {
+      position: relative;
+      z-index: 10;
       tr:first-child {
         th:first-child {
           border-top-left-radius: 0.6em;
@@ -94,27 +139,37 @@ div.data-table-wrapper {
         }
       }
     }
-    tr:nth-child(odd) {
-      background-color: rgba(5, 28, 56, 0.9);
+    tbody {
+      position: relative;
+      // transform: translateY(calc((-2vh) * var(--upRowNum)));
+      // transition: all 2s ease-in-out;
+      z-index: 1;
     }
-    tr:nth-child(even) {
-      background-color: rgba(9, 30, 80, 0.9);
-    }
-    tr:last-child {
-      td:first-child {
-        border-bottom-left-radius: 0.6em;
+    tr {
+      line-height: 2vh;
+      &:nth-child(odd) {
+        background-color: rgba(5, 28, 56, 0.9);
       }
-      td:last-child {
-        border-bottom-right-radius: 0.6em;
+      &:nth-child(even) {
+        background-color: rgba(9, 30, 80, 0.9);
+      }
+      &:last-child {
+        td:first-child {
+          border-bottom-left-radius: 0.6em;
+        }
+        td:last-child {
+          border-bottom-right-radius: 0.6em;
+        }
+      }
+      &:hover {
+        background-color: rgba(10, 76, 255, 0.8);
+        box-shadow: 0 4px 4px -4px #0e1119;
       }
     }
     th {
       background-color: rgba(0, 41, 155, 0.8);
     }
-    tr:hover {
-      background-color: rgba(10, 76, 255, 0.8);
-      box-shadow: 0 4px 4px -4px #0e1119;
-    }
+    
     td:hover {
       cursor: pointer;
       background-color: #42aaff;
