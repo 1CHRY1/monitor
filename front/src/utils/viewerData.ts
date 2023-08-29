@@ -1,10 +1,19 @@
 import axios from "axios";
 import * as echarts from "echarts";
 import { type EChartsOption } from "echarts";
+import { getSectionElevation, getSubstrate } from '@/api/request';
 
 type ProjectOption = {
-    id: number;
-    name: string;
+    id: string;
+    projectName: string;
+    avatar: string;
+    description: string;
+    institution: string;
+    location: string;
+    type: string;
+    uploadTime: string;
+    time: string;
+    visual: number;
 }
 
 type StringKeyObject = {
@@ -84,6 +93,34 @@ for (var t = 0; t < 25; t += 0.001) {
     data.push(['S800', y, z]);
 }
 
+function preparePercentData(data:Array<StringKeyObject>) {
+    let percentData = [];
+    let num = data.length;
+    let min = 100;
+    let max = 0;
+    for (let i = 0; i < num-1; i++) {
+        if(data[i]["value"] == 0) {
+            percentData.push({name: data[i]["key"] + '-' + data[i+1]["key"], value: 0});
+            min = 0;
+        }
+        else {
+            const value = data[i]["value"] - data[i+1]["value"];
+            if (value < min) {
+                min = value;
+            }
+            if (value > max) {
+                max = value;
+            }
+            percentData.push({name: data[i]["key"] + '-' + data[i+1]["key"], value: value});
+        }
+    }
+    percentData.push({name: data[num-1]["key"] + '-' + '0', value: data[num-1]["value"]});
+    if (min < 0) {
+        min = 0;
+    }
+    return {percentData, min, max};
+}
+
 let chartOptionTest: EChartsOption[] = [
     {
         title: {
@@ -95,28 +132,7 @@ let chartOptionTest: EChartsOption[] = [
                 color: 'rgba(255, 255, 255, 0.8)'
             }
         },
-        tooltip: { show: true, trigger: 'axis' },
-        // legend: {
-        //     show: true,
-        //     orient: 'vertical',
-        //     right: '0%',
-        //     top: '3%',
-        //     width: '10%',
-        //     itemGap: 15,
-        //     itemWidth: 15,
-        //     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-        //     borderRadius: 10,
-        //     padding: 10,
-        //     data: [{
-        //         name: '',
-        //         // itemStyle: { color: 'red' },
-        //         // lineStyle: { color: 'red' },
-        //         textStyle: {
-        //             fontSize: 18,
-        //             color: 'rgba(233,233,233, 0.8)'
-        //         },
-        //     }],
-        // },
+        tooltip: { show: true, trigger: 'item' },
         yAxis: {
             type: 'category',
             axisLine: {
@@ -127,16 +143,8 @@ let chartOptionTest: EChartsOption[] = [
             axisLabel: {
                 fontSize: 16,
                 color: 'rgba(255,255,255, 0.75)',
-                // formatter: '{dd}-{hh}:00'
             },
             axisTick: { show: false },
-            // name: '断面',
-            // nameTextStyle: {
-            //     color: 'rgba(255,255,255, 0.7)',
-            //     fontSize: 14,
-            //     fontWeight: 'bold',
-            // },
-            // nameLocation: 'start',
             data: [
                 'TZSD',
                 'TZSX',
@@ -155,7 +163,6 @@ let chartOptionTest: EChartsOption[] = [
                 },
             },
             axisLine: {
-                // show: true,
                 lineStyle: {
                     color: '#ccc'
                 }
@@ -182,18 +189,11 @@ let chartOptionTest: EChartsOption[] = [
         },
         series: [
             {
-                name: 'bar',
+                name: '潮流量',
                 type: 'pictorialBar',
                 symbol: drop_url,
                 barWidth: 18,
                 symbolClip: true,
-                // itemStyle: {
-                //     // borderRadius: 8,
-                //     color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                //         { offset: 0, color: '#14c8d4' },
-                //         { offset: 1, color: '#43eec6' }
-                //     ])
-                // },
                 symbolRepeat: true,
                 symbolSize: [28, 28],
                 symbolMargin: '10%',
@@ -201,7 +201,7 @@ let chartOptionTest: EChartsOption[] = [
             },
             {
                 data: tideAmountData,
-                name: 'fixed',
+                name: '潮流量',
                 type: 'pictorialBar',
                 symbol: drop_url,
                 barWidth: 18,
@@ -726,7 +726,7 @@ let chartOptionTest: EChartsOption[] = [
             }
         },
         tooltip: {
-            trigger: 'item'
+            trigger: 'item',
         },
         legend: {
             orient: 'vertical',
@@ -768,12 +768,12 @@ let chartOptionTest: EChartsOption[] = [
                 },
                 label: {
                     show: false,
-                    position: 'center'
+                    position: 'center',
                 },
                 emphasis: {
                     label: {
                         show: true,
-                        fontSize: '24',
+                        fontSize: 16,
                         fontWeight: 'bold',
                         borderColor: 'black',
                         color: 'white'
@@ -1025,149 +1025,42 @@ let chartOptionTest: EChartsOption[] = [
     },
 ]
 
-class DataViewerPreparer {
-    private _isDirty: boolean;
-    private _isPrepared = false;
-    private _requestUrl = '';
-    private _currentData = {};
-
-    constructor(
-        private _currentProject: ProjectOption
-    ) {
-        this._requestUrl = this.buildRequestUrl();
-        this._isDirty = false;
-        this.requestData()
-            .then((res) => {
-                this._currentData = res.data;
-                console.log("Data Requested.");
-            })
-            .catch(err => {
-                console.log(err);
-                this._isDirty = true;
-            })
-    }
-
-    private buildRequestUrl(): string {
-        return `/project/${this._currentProject.id}`
-    }
-
-    private async requestData(): Promise<any> {
-        console.log("Requeting data...");
-        return await axios.get(this._requestUrl);
-    }
-
-    get currentData(): any {
-        return this._currentData;
-    }
-
-    get isDirty(): boolean {
-        return this._isDirty;
-    }
-
-    set currentProject(newProject: ProjectOption) {
-        console.log(`Current Project Changed to ${newProject.name}`);
-        this._currentProject = newProject
-        this._isDirty = true
-        this._requestUrl = this.buildRequestUrl();
-        this._currentData = {}
-        this.requestData()
-            .then((res) => {
-                this._currentData = res.data;
-            })
-            .catch(err => {
-                console.log(err);
-                this._isDirty = true;
-            })
-        if (Object.keys(this._currentData).length != 0) {
-            this._isDirty = false;
-            console.log("Data Changed.")
-        }
-    }
-
-    public prepareData(): any {
-        if (this._isDirty) {
-            console.log("Data not Ready for preparation.");
-            return null;
-        }
-        if (this._isPrepared) {
-            console.log("Data has been prepared.")
-            return null;
-        }
-    }
-
-
-}
-
 
 class ChartDataPreparer {
-    private _isDirty = false;
-    private _requestUrl: string = '';
-    private _isPrepared = false;
-    private _currentData: StringKeyObject = {};
-    private _currentChartOption: EChartsOption | EChartsOption[] = {};
-
+    public isDynamic: boolean = false;
     constructor(
         public _chartId: number,
-        public _currentProjectId: number
     ) {
-        // this._requestUrl = this.buildRequestUrl();
-        // this.requestData()
-        //     .then((res) => {
-        //         this._currentData = res.data;
-        //         console.log("Data Requested.");
-        //         this._currentChartOption = this.buildData2ChartOption();
-        //     })
-        //     .catch(err => {
-        //         console.log(err);
-        //         this._isDirty = true;
-        //     })
     }
 
-    public async requestChartData(): Promise<any> {
-        console.log("Requeting data...");
-        let dataType = chartDataNameList[this._chartId];
-        this._requestUrl = `/${dataType}/${this._currentProjectId}`
-        return await axios.get(this._requestUrl);
-    }
-
-    public getDirty() {
-        this._isDirty = true;
-    }
-
-    public getClean() {
-        this._isDirty = false;
-    }
-
-    public buildData2ChartOption(requestedData: StringKeyObject): EChartsOption | EChartsOption[] {
-        if (this._isDirty) {
-            console.log("Data not Ready for preparation.");
-            return {};
-        }
-        if (this._isPrepared) {
-            console.log("Data has been prepared.")
-            return this._currentChartOption;
-        }
-        this._currentData = requestedData;
+    public async buildChartOption(currentProjectId: string): Promise<echarts.EChartsOption | echarts.EChartsOption[]> {
         switch (this._chartId) {
             case 5:
-                this._currentChartOption = this.buildSectionChartOption();
-                this._isPrepared = true;
-                return this._currentChartOption;
+                const sectionData = await getSectionElevation(currentProjectId);
+                const sectionSeries = this.generateSectionChartSeries(sectionData?.data);
+                const sectionOption = this.buildSectionChartOption(sectionSeries);
+                return sectionOption;
+            case 7:
+                const bottomParticleData = await getSubstrate(currentProjectId);
+                // console.log(bottomParticleData?.data);
+                const bottomParticleSeries = this.generateBottomParticleChartSeries(bottomParticleData?.data);
+                const bottomParticleOptions = this.buildBottomParticleChartOption(bottomParticleSeries);
+                return bottomParticleOptions;
             default:
-                return chartOptionTest[0];
+                return chartOptionTest[(+this._chartId)-1];
         }
     }
 
-    private buildSectionChartOption(): EChartsOption | EChartsOption[] { // 大断面
-        let generatedPart = this.generateSectionChartSeries();
+    private buildSectionChartOption(sectionSeries: Array<object>): EChartsOption | EChartsOption[] { // 大断面
         let sectionOption: EChartsOption = {
+            color: ['#dd6c6686', '#8dc1a991', '#759aa09d', '#eedc78a3', '#73a373aa', '#73babc93', '#e69d878d', '#ea7e5394', '#7289aba9', '#91ca8ca4', '#f49e4293'],
             title: {
                 left: 'center',
                 text: '大断面成果',
                 top: '2%',
                 textStyle: {
                     fontSize: 28,
-                    color: '#ffff'
+                    color: 'rgba(255, 255, 255, 0.8)'
                 }
             },
             legend: {
@@ -1177,7 +1070,17 @@ class ChartDataPreparer {
                 top: '12%',
                 width: '10%',
                 itemGap: 15,
-                data: generatedPart['legendData']
+                // itemWidth: 5,
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: 6,
+                padding: 10,
+                textStyle: {
+                    fontWeight: 'bold',
+                    color: 'rgba(255, 255, 255, 0.9)'
+                },
+                lineStyle: {
+                    width: 4
+                }
             },
             xAxis: {
                 type: 'value',
@@ -1198,7 +1101,7 @@ class ChartDataPreparer {
                 },
                 axisLabel: {
                     fontSize: 16,
-                    color: 'rgba(255,255,255, 0.6)'
+                    color: 'rgba(255,255,255, 0.75)'
                 },
                 min: (value) => {
                     return value.min
@@ -1230,8 +1133,11 @@ class ChartDataPreparer {
                 },
                 axisLabel: {
                     fontSize: 16,
-                    color: 'rgba(255,255,255, 0.6)'
+                    color: 'rgba(255,255,255, 0.75)'
                 },
+                min: (value) => {
+                    return value.min
+                }
             },
             tooltip: {
                 trigger: 'axis',
@@ -1243,60 +1149,25 @@ class ChartDataPreparer {
                 right: '10%',
                 containLabel: true
             },
-            series: generatedPart['series'],
-            visualMap: generatedPart['visualMap'],
+            series: sectionSeries
         }
 
         return sectionOption;
     }
 
-    private generateSectionChartSeries(): StringKeyObject {
+    private generateSectionChartSeries(sectionData: StringKeyObject): Array<object> {
         let series = [];
-        let visualMap = [];
-        let legendData = [];
-        let i = 0;
-        for (let name in this._currentData) {
-            if (i > colorMap.length - 1) {
-                colorMap.push(["#" + Math.floor(Math.random() * 16777215).toString(16), "#" + Math.floor(Math.random() * 16777215).toString(16)]);
-            }
-            // create legend data
-            legendData.push({
-                name: name,
-                itemStyle: {
-                    color: colorMap[i][0],
-                },
-                lineStyle: {
-                    color: colorMap[i][0],
-                }
-            });
-
+        for (let name in sectionData) {
             // create series
             series.push({
                 name: name,
-                symbolSize: 5,
-                data: this._currentData[name],
+                symbolSize: 1,
+                data: sectionData[name],
                 type: 'line',
                 areaStyle: {}
             });
-
-            let yArray = [];
-            for (let aXy of this._currentData[name]) {
-                yArray.push(aXy[1]);
-            }
-            // create visualmaps
-            visualMap.push({
-                show: false,
-                type: 'continuous',
-                seriesIndex: i,
-                min: Math.min(...yArray),
-                max: Math.max(...yArray),
-                inRange: {
-                    color: colorMap[i],
-                }
-            })
-            i += 1;
         }
-        return { legendData, visualMap, series };
+        return series;
     }
 
     private buildTideHeightChartOption(): EChartsOption | EChartsOption[] { // 潮位
@@ -1331,20 +1202,107 @@ class ChartDataPreparer {
         return {};
     }
 
-    private buildFloatParticleChartOption(): EChartsOption | EChartsOption[] { // 浮浮
-        return {};
+    private buildBottomParticleChartOption(optionChangeData: StringKeyObject): EChartsOption[] { // 底浮
+        console.log(optionChangeData);
+        let optionInit: EChartsOption = {
+            // color: ['#dd6b66', '#8dc1a9', '#759aa0', '#e69d87', '#ea7e53', '#eedd78', '#73a373', '#73b9bc', '#7289ab', '#91ca8c', '#f49f42'],
+            title: {
+                text: optionChangeData["name"][0]+'底质颗分成果',
+                left: '1%',
+                top: 10,
+                textStyle: {
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontWeight: 'bolder',
+                    fontFamily: 'Microsoft YaHei',
+                    fontSize: 20,
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+            },
+            legend: {
+                orient: 'vertical',
+                top: '16%',
+                right: '1%',
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: 10,
+                show: true,
+                padding: 10,
+                height: '85%',
+                textStyle: {
+                    color: 'white',
+                    fontWeight: 'bold'
+                }
+            },
+            visualMap: {
+                show: false,
+                min: optionChangeData["minMax"][0][0],
+                max: optionChangeData["minMax"][0][1],
+                inRange: {
+                    color: '#FFEAB9',
+                    colorLightness: [0.8, 0.3],
+                }
+            },
+            series: {
+                name: '底质颗粒百分数',
+                type: 'pie',
+                radius: ['24%', '64%'],
+                center: ['32%', '58%'],
+                // roseType: 'radius',
+                avoidLabelOverlap: false,
+                itemStyle: {
+                    borderRadius: 8,
+                    color: '#415CC2',
+                    shadowBlur: 200,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                },
+                label: {
+                    show: false,
+                    position: 'center',
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                        borderColor: 'black',
+                        color: 'white'
+                    }
+                },
+                data: optionChangeData["series"], 
+            }
+        }
+        const changeNum = optionChangeData["name"].length;
+        let optionArray: EChartsOption[] = [optionInit];
+        for (let i=0; i< changeNum; i++) {
+            const optionNew: EChartsOption = {
+                title: {
+                    text: optionChangeData["name"][i]+'底质颗分成果',
+                },
+                visualMap: {
+                    min: optionChangeData["minMax"][i][0],
+                    max: optionChangeData["minMax"][i][1],
+                },
+                series: {
+                    data: optionChangeData["series"][i]
+                }
+            }
+            optionArray.push(optionNew);
+        }
+        return optionArray;
     }
 
-    private generateFloatParticleChartSeries(): StringKeyObject {
-        return {};
-    }
-
-    private buildBottomParticleChartOption(): EChartsOption | EChartsOption[] { // 底浮
-        return {};
-    }
-
-    private generateBottomParticleChartSeries(): StringKeyObject {
-        return {};
+    private generateBottomParticleChartSeries(chartData: Array<StringKeyObject>): StringKeyObject {
+        let optionChange: StringKeyObject = {name: [], series: [], minMax: []};
+        for (const item of chartData) {
+            const day = item["time"].split(' ')[0]
+            optionChange.name.push(day+item["location"]+item["type"]);
+            const seriesData = preparePercentData(item["level"]);
+            optionChange.series.push(seriesData["percentData"]);
+            optionChange.minMax.push([seriesData["min"], seriesData["max"]]);
+        }
+        // console.log(optionChange);
+        return optionChange;
     }
 
     private buildSectionSandChartOption(): EChartsOption | EChartsOption[] { // 大断面沙量
@@ -1358,7 +1316,6 @@ class ChartDataPreparer {
 
 export {
     ProjectOption,
-    DataViewerPreparer,
     chartOptionTest,
     ChartDataPreparer
 }
