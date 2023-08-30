@@ -115,20 +115,14 @@ public class MonitorVisualServiceImpl implements MonitorVisualService {
         else if (type.equals("large")) type = "大潮";
         else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
         List<String> times = dynamicMapper.getTime(projectId, name, type);
-        List<String> nameList = dynamicMapper.getSectionSegment(projectId, name);
-        List<Double> valueList = dynamicMapper.getSpeedByNameAndType(projectId, name, type);
+        List<String> nameList = dynamicMapper.getSectionSegment(projectId, name, type);
         List<List<Double>> value = new ArrayList<>();
         Map<String, Object> res = new HashMap<>();
         res.put("name", name);
         res.put("time", times);
         res.put("nameList", nameList);
-        int index = 0;
-        for (int i = 0; i < nameList.size(); i++) {
-            List<Double> list = new ArrayList<>();
-            for (int j = 0; j < times.size(); j++) {
-                list.add(valueList.get(index++));
-            }
-            value.add(list);
+        for (String str : nameList) {
+            value.add(dynamicMapper.getSpeedByNameAndTypeAndDistance(projectId, name, type, str));
         }
         res.put("value", value);
         return res;
@@ -140,20 +134,14 @@ public class MonitorVisualServiceImpl implements MonitorVisualService {
         else if (type.equals("large")) type = "大潮";
         else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
         List<String> times = dynamicMapper.getTime(projectId, name, type);
-        List<String> nameList = dynamicMapper.getSectionSegment(projectId, name);
-        List<Double> valueList = dynamicMapper.getOrientationByNameAndType(projectId, name, type);
+        List<String> nameList = dynamicMapper.getSectionSegment(projectId, name, type);
         List<List<Double>> value = new ArrayList<>();
         Map<String, Object> res = new HashMap<>();
         res.put("name", name);
         res.put("time", times);
         res.put("nameList", nameList);
-        int index = 0;
-        for (int i = 0; i < nameList.size(); i++) {
-            List<Double> list = new ArrayList<>();
-            for (int j = 0; j < times.size(); j++) {
-                list.add(valueList.get(index++));
-            }
-            value.add(list);
+        for (String str : nameList) {
+            value.add(dynamicMapper.getOrientationByNameAndType(projectId, name, type, str));
         }
         res.put("value", value);
         return res;

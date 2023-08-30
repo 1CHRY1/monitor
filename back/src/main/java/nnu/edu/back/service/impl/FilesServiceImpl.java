@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -200,4 +202,27 @@ public class FilesServiceImpl implements FilesService {
         filesMapper.updateVisualIdAndType(id, "", "");
     }
 
+    @Override
+    public List<JSONObject> findByFolder(String path, String role) {
+        if (role.equals("admin")) {
+            List<JSONObject> res = new ArrayList<>();
+            Path address = Paths.get(baseDir, path);
+            File file = new File(address.toString());
+            if (!file.exists() && file.isFile()) throw new MyException(ResultEnum.NO_OBJECT);
+            File[] files = file.listFiles();
+            for (File f : files) {
+                JSONObject jsonObject = new JSONObject();
+                if (f.isDirectory()) {
+                    jsonObject.put("folder", true);
+                    jsonObject.put("name", f.getName());
+                } else {
+                    jsonObject.put("folder", false);
+                    jsonObject.put("name", f.getName());
+                    jsonObject.put("size", FileUtil.formatFileSize(f.length()));
+                }
+                res.add(jsonObject);
+            }
+            return res;
+        } else throw new MyException(ResultEnum.NO_ACCESS);
+    }
 }

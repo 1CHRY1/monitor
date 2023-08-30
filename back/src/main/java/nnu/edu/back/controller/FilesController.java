@@ -51,6 +51,10 @@ public class FilesController {
         return ResultUtils.success();
     }
 
-
+    @AuthCheck
+    @RequestMapping(value = "/findByFolder", method = RequestMethod.POST)
+    public JsonResult findByFolder(@RequestBody JSONObject jsonObject, @JwtTokenParser("role") String role) {
+        return ResultUtils.success(filesService.findByFolder(jsonObject.getString("path"), role));
+    }
 
 }
