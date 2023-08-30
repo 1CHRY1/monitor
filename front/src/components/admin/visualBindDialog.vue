@@ -367,7 +367,7 @@
               const file = fileList.shift();
               const number = total - fileList.length - 1;
               const formData = new FormData();
-              formData.append("file", file?.file as Blob);
+              formData.append("file", file!);
               const data = await uploadParts(uid, number, formData);
               if (data != null && (data as any).code === 0) {
                 percentage.value = parseFloat(

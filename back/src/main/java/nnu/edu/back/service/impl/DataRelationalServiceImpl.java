@@ -25,11 +25,13 @@ public class DataRelationalServiceImpl implements DataRelationalService {
 
     @Override
     public void addRelational(String dataListId, List<String> fileIdList) {
-        List<DataRelational> list = new ArrayList<>();
-        for (String fileId : fileIdList) {
-            list.add(new DataRelational(UUID.randomUUID().toString(), dataListId, fileId));
+        if (fileIdList.size() != 0) {
+            List<DataRelational> list = new ArrayList<>();
+            for (String fileId : fileIdList) {
+                list.add(new DataRelational(UUID.randomUUID().toString(), dataListId, fileId));
+            }
+            dataRelationalMapper.batchInsert(list);
         }
-        dataRelationalMapper.batchInsert(list);
     }
 
     @Override

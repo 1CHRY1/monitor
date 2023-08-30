@@ -204,7 +204,6 @@ export default defineComponent({
       providerAddress: "",
       timeStamp: "",
     });
-    const avatar = ref<File>();
 
     const editorRef = shallowRef<IDomEditor>();
     const toolbarConfig = {};
@@ -253,12 +252,12 @@ export default defineComponent({
             });
             if (
               data != null &&
-              (data as any).code === 0 &&
+              data.code === 0 &&
               data1 != null &&
-              (data1 as any).code === 0
+              data1.code === 0
             ) {
-              notice("success", "成功", "请等待管理员审核通过！");
               init();
+              notice("success", "成功", "新条目创建成功");
             }
           }
         });

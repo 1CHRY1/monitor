@@ -31,13 +31,22 @@
         <strong>简介：</strong
         ><span v-html="replaceHandle(dataListInfo.description)"></span>
       </div>
-      <el-popconfirm title="确定删除该项目?" @confirm="deleteHandle">
-        <template #reference>
-          <el-button type="danger" link class="delete">
-            <el-icon size="large"><DeleteFilled /></el-icon>
-          </el-button>
-        </template>
-      </el-popconfirm>
+
+      <div @click.stop>
+        <el-dropdown trigger="click" @command="commandHandle">
+          <el-button type="primary" text>操作</el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="update"
+                ><el-icon><Edit /></el-icon>修改</el-dropdown-item
+              >
+              <el-dropdown-item command="delete"
+                ><el-icon><DeleteFilled /></el-icon>删除</el-dropdown-item
+              >
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
     </div>
   </div>
 </template>
@@ -55,7 +64,7 @@ export default defineComponent({
       type: String,
     },
   },
-  emits: ["deleteHandle", "clickHandle"],
+  emits: ["commandHandle", "clickHandle"],
   setup(props, context) {
     const dataListInfo = computed(() => {
       return props.dataListInfo;
@@ -80,8 +89,8 @@ export default defineComponent({
       return currentStr;
     };
 
-    const deleteHandle = () => {
-      context.emit("deleteHandle", dataListInfo.value!.id);
+    const commandHandle = (val: string) => {
+      context.emit("commandHandle", { type: val, id: dataListInfo.value!.id });
     };
 
     const clickHandle = () => {
@@ -93,8 +102,8 @@ export default defineComponent({
       updateTime,
       pictureUrl,
       replaceHandle,
-      deleteHandle,
       clickHandle,
+      commandHandle,
     };
   },
 });
@@ -120,7 +129,7 @@ export default defineComponent({
     width: calc(100% - 21rem);
     padding: 1rem 2rem 1rem 0;
     position: relative;
-    .delete {
+    .el-dropdown {
       position: absolute;
       top: 1rem;
       right: 1rem;

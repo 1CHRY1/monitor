@@ -24,7 +24,7 @@
 
     <insert id="addDataList">
         insert into data_list values(#{dataList.id}, #{dataList.name}, #{dataList.location, typeHandler=nnu.edu.back.common.utils.ListTypeHandler}, #{dataList.description}, #{dataList.tags, typeHandler=nnu.edu.back.common.utils.ListTypeHandler},
-                                     datetime('now','localtime'), datetime('now','localtime'), #{dataList.download}, #{dataList.watch}, #{dataList.avatar}, #{dataList.provider}, #{dataList.range}, #{dataList.type}, #{dataList.providerPhone},
+                                     datetime('now','localtime'), datetime('now','localtime'), 0, 0, #{dataList.avatar}, #{dataList.provider}, #{dataList.range}, #{dataList.type}, #{dataList.providerPhone},
                                      #{dataList.providerEmail}, #{dataList.providerAddress}, #{dataList.detail}, #{dataList.timeStamp})
 
     </insert>

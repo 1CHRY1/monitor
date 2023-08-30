@@ -62,7 +62,7 @@
               :dataListInfo="item"
               :keyword="keyword"
               @clickHandle="clickHandle"
-              @deleteHandle="deleteHandle"
+              @commandHandle="commandHandle"
             ></resource-card>
           </div>
           <div class="page">
@@ -172,11 +172,10 @@ export default defineComponent({
       );
     };
 
-    const deleteHandle = async (id: string) => {
-      console.log(id);
-      const res = await deleteProject(id);
-      if (res && res.code === 0) {
-        notice("success", "成功", "删除成功");
+    const commandHandle = async (val: { type: string; id: string }) => {
+      if (val.type === "update") {
+        router.push({ name: "updateResource", params: { id: val.id } });
+      } else if (val.type === "delete") {
       }
     };
 
@@ -256,7 +255,7 @@ export default defineComponent({
       pageChange,
       changeType,
       searchHandle,
-      deleteHandle,
+      commandHandle,
       clickHandle,
       showHandle,
       sortHandle,

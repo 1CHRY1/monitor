@@ -93,6 +93,15 @@ export const findFiles = async (dataListId: string) => {
   return await get(`/dataList/findFiles/${dataListId}`, true);
 };
 
+export const updateDataList = async (
+  jsonData: Omit<
+    DataListType,
+    "createTime" | "updateTime" | "download" | "watch"
+  >
+) => {
+  return await patch(`/dataList/updateDataList`, true, jsonData);
+};
+
 export const addRelational = async (jsonDta: {
   dataListId: string;
   fileIdList: string[];

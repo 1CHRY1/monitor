@@ -153,7 +153,7 @@ export const asyncRouters: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "updateResource",
+        path: "updateResource/:id",
         name: "updateResource",
         component: () => import("@/views/UpdateResourceView.vue"),
         meta: {

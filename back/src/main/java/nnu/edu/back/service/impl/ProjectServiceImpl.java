@@ -43,7 +43,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public String uploadAvatar(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
+        String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        String fileName = UUID.randomUUID() + suffix;
         int code = FileUtil.uploadFile(file, fileName, avatarDir);
         if (code == -1) throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
         return fileName;

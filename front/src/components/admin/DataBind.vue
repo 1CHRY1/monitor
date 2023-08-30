@@ -121,12 +121,13 @@ type DialogTableType = {
   visualId?: string;
   view?: string;
 };
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, PropType, ref } from "vue";
 import { findByFolderId, getDownloadURL } from "@/api/request";
-import router from "@/router";
 import DataPreview from "./DataPreview.vue";
+import { BindDataFileInfo } from "@/type";
 export default defineComponent({
   components: { DataPreview },
+
   emits: ["changeData"],
   setup(props, context) {
     const dialogFlag = ref(false);
@@ -177,12 +178,9 @@ export default defineComponent({
       dataPreviewFlag.value = true;
     };
 
-    const downloadClick = async (val: any) => {
-      //   const key = await getDownloadURL(val.id);
-      //   if (key != null && (key as any).code === 0) {
-      //     const token = decrypt(key.data, store.state.user.id);
-      //     window.location.href = `${prefix}file/downloadLocalFile/${store.state.user.id}/${token}`;
-      //   }
+    const downloadClick = async (val: DialogTableType) => {
+      console.log(val);
+      window.location.href = `${process.env.VUE_APP_BACK_ADDRESS}files/downloadFile/${val.id}`;
     };
 
     const deleteClick = (val: DialogTableType) => {
@@ -304,7 +302,7 @@ export default defineComponent({
       }
     };
 
-    const getTableData = (files: any[]) => {
+    const getTableData = (files: BindDataFileInfo[]) => {
       tableData.value = [];
       files.forEach((item) => {
         tableData.value.push({
@@ -329,6 +327,14 @@ export default defineComponent({
       });
     };
 
+    const updateData = (files: BindDataFileInfo[]) => {
+      clearData();
+      if (files) {
+        console.log("updateData", files);
+        getTableData(files);
+      }
+    };
+
     const commit = () => {
       tableData.value = [];
       tempTableData.value.forEach((item) => {
@@ -339,10 +345,6 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      if (router.currentRoute.value.params.files != undefined) {
-        getTableData(router.currentRoute.value.params.files as any[]);
-      }
-
       const data = await findByFolderId("-1");
       if (data != null && (data as any).code === 0) {
         dialogTableData.value = [];
@@ -374,6 +376,7 @@ export default defineComponent({
       isView,
       viewClick,
       downloadClick,
+      updateData,
       fileInfo,
       dataPreviewFlag,
       visualCompareFlag,
