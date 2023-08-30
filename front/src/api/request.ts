@@ -1,5 +1,5 @@
 import { get, post, del, patch } from "./axios-config";
-import { File, Folder, DataListType } from "@/type";
+import { DataListType } from "@/type";
 
 export const login = async (jsonData: { email: string; password: string }) => {
   return await post(`/user/login`, true, jsonData);
@@ -470,77 +470,22 @@ export const getSandContentValue = async (projectId: string, name: string) => {
 };
 
 // ----------------管理员界面相关------------------------------
-export const findByFolder = async (jsonData: { path: string }) => {
-  return await post(`files/findByFolder`, true, jsonData);
-};
-export async function findByFolderId(folderId: string) {
-  const res: (Folder | File)[] = [];
 
-  if (folderId === "-1") {
-    //root的假数据
-    let i = 0;
-    while (i < 4) {
-      res.push({
-        id: "string" + i,
-        folderName: "测试文件夹" + i,
-        parentId: "string" + i,
-        flag: false,
-      });
-      i++;
-    }
-    while (i < 7) {
-      res.push({
-        id: "string" + i,
-        fileName: "测试文件" + i,
-        visualType: "",
-        size: 300 + i + "MB",
-        uploader: "管理员",
-        folderId: "string" + i,
-        visualId: "string" + i,
-        flag: false,
-        view: "",
-      });
-      i++;
-    }
-  } else {
-    let i = 0;
-    while (i < 3) {
-      res.push({
-        id: "substring" + i,
-        folderName: "子测试文件夹" + i,
-        parentId: "substring" + i,
-        flag: false,
-      });
-      i++;
-    }
-    while (i < 6) {
-      res.push({
-        id: "substring" + i,
-        fileName: "子测试文件" + i,
-        visualType: "",
-        size: 100 + i + "MB",
-        uploader: "管理员",
-        folderId: "substring" + i,
-        visualId: "substring" + i,
-        flag: false,
-        view: "",
-      });
-      i++;
-    }
-  }
+export async function findByFolderId(parentId: string) {
+  return await get(`/files/findByFolderId/${parentId}`, true);
+}
 
-  return {
-    code: 0,
-    data: res,
-  };
+export async function addFolder(jsonData: {
+  folderName: string;
+  parentId: string;
+}) {
+  return await post(`/files/addFolder`, true, jsonData);
 }
 
 export async function deleteFilesOrFolders(jsonData: {
   files: string[];
   folders: string[];
-}) {
-  return findByFolderId("-1");
-}
+}) {}
 
 export async function uploadParts(
   uid: string,
@@ -591,23 +536,4 @@ export async function cancelVisualBind(id: string) {
 
 export async function getDownloadURL(id: string) {
   return "downloadURL";
-}
-
-export async function addFolder(jsonData: {
-  folderName: string;
-  parentId: string;
-}) {
-  // return await post(`/folder/addFolder`, jsonData);
-
-  const newFile = {
-    id: "NEWADDstring",
-    folderName: jsonData.folderName,
-    parentId: jsonData.parentId,
-    flag: false,
-  };
-
-  return {
-    data: newFile,
-    code: 0,
-  };
 }

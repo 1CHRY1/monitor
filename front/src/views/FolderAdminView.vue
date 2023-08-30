@@ -97,6 +97,7 @@
                     content="预览"
                     placement="top"
                     :hide-after="50"
+                    v-if="!isFolder(scope.row)"
                   >
                     <span style="margin-right: 10px">
                       <el-button
@@ -134,6 +135,7 @@
                     content="下载"
                     placement="top"
                     :hide-after="50"
+                    v-if="!isFolder(scope.row)"
                   >
                     <span style="margin-right: 10px">
                       <el-button
@@ -216,10 +218,10 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
-import { Folder, File } from "@/type";
+import { FolderType, FileType } from "@/type";
 import { notice, uuid, getFileSize } from "@/utils/common";
 import { ElMessageBox, ElMessage, rowContextKey } from "element-plus";
-import visualBindDialog from "@/components/admin/visualBindDialog.vue";
+import VisualBindDialog from "@/components/admin/VisualBindDialog.vue";
 import DataPreviewDialog from "@/components/admin/DataPreviewDialog.vue";
 import FolderDialog from "@/components/admin/FolderDialog.vue";
 import {
@@ -232,7 +234,9 @@ import { UploadFile, UploadFiles } from "element-plus";
 // import useStore from 'vuex';
 
 // const store = useStore();
-const tableData = ref<(Folder | File)[]>([]);
+const tableData = ref<
+  ((FolderType & { flag: boolean }) | (FileType & { flag: boolean }))[]
+>([]);
 const fileInfo = ref<any>();
 const skeletonFlag = ref(true);
 const selectList = ref<{ id: string; type: string }[]>([]);
@@ -246,7 +250,7 @@ const upload = ref<HTMLElement>();
 const input = ref("");
 const inputFocus = ref<HTMLElement>();
 
-const getName = (item: Folder | File) => {
+const getName = (item: FolderType | FileType) => {
   if ("fileName" in item) {
     return item.fileName;
   } else {
@@ -255,7 +259,7 @@ const getName = (item: Folder | File) => {
   // return '测试文件夹';
 };
 
-const getSize = (item: Folder | File) => {
+const getSize = (item: FolderType | FileType) => {
   if ("size" in item) {
     return item.size;
   } else {
@@ -264,7 +268,7 @@ const getSize = (item: Folder | File) => {
   // return '666 MB';
 };
 
-const isFolder = (item: Folder | File) => {
+const isFolder = (item: FolderType | FileType) => {
   if ("fileName" in item) {
     return false;
   } else {
@@ -289,18 +293,17 @@ const flushed = async () => {
     transitionData(data.data);
     skeletonFlag.value = false;
   } else {
-    //tabledata.length===0;
     transitionData([]);
     skeletonFlag.value = false;
   }
 };
 
-const previewClick = (param: Folder | File) => {
+const previewClick = (param: FolderType | FileType) => {
   fileInfo.value = param;
   Visible_PreviewDialog.value = true;
 };
 
-const deleteClick = (item: Folder | File) => {
+const deleteClick = (item: FolderType | FileType) => {
   ElMessageBox.confirm("确定删除文件夹及文件夹以下内容", "警告", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -338,7 +341,7 @@ const deleteClick = (item: Folder | File) => {
     .catch(() => {});
 };
 
-const visualClick = (param: Folder | File) => {
+const visualClick = (param: FolderType | FileType) => {
   // console.log('visualClick');
   fileInfo.value = param;
   Visible_BindDialog.value = true;
@@ -349,19 +352,16 @@ const OpenCreateFolder = async () => {
 };
 
 const CreateFolder = async (val: string) => {
-  // console.log('CreateFolder');
-
   const jsonData = {
     folderName: val,
     parentId: path.value.length > 0 ? path.value[path.value.length - 1].id : "",
   };
   const data = await addFolder(jsonData); //后端创建文件夹数据，返回
-  if (data != null && (data as any).code === 0) {
+  if (data && data.code === 0) {
     tableData.value.push({
       id: data.data.id,
-      folderName: data.data.folderName,
-      parentId: data.data.parentId,
-      // uploader: data.data.uploader,
+      folderName: jsonData.folderName,
+      parentId: jsonData.parentId,
       flag: false,
     });
     notice("success", "成功", "文件夹创建成功！");
@@ -374,8 +374,8 @@ const CreateFolder = async (val: string) => {
 const updateVisualFile = (val: { visualId: string; visualType: string }) => {
   for (let i = 0; i < tableData.value.length; i++) {
     if (tableData.value[i].id === fileInfo.value.id) {
-      (tableData.value[i] as File).visualType = val.visualType;
-      (tableData.value[i] as File).visualId = val.visualId;
+      (tableData.value[i] as FileType).visualType = val.visualType;
+      (tableData.value[i] as FileType).visualId = val.visualId;
       break;
     }
   }
@@ -430,13 +430,9 @@ const batDelete = async () => {
     });
 };
 
-const downloadClick = async (item: Folder | File) => {
+const downloadClick = async (item: FolderType | FileType) => {
   //基于ID 获取文件下载URL
-  const key = await getDownloadURL(item.id);
-  // if (key != null && (key as any).code === 0) {
-  //   const token = decrypt(key.data, store.state.user.id);
-  //   window.location.href = `${prefix}file/downloadLocalFile/${store.state.user.id}/${token}`;
-  // }
+  window.location.href = `${process.env.VUE_APP_BACK_ADDRESS}files/downloadFile/${item.id}`;
 };
 
 const upLoadChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
@@ -454,7 +450,9 @@ const upLoadChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
   // });
 };
 
-const changeHandle = (item: Folder | File) => {
+const changeHandle = (
+  item: (FolderType & { flag: boolean }) | (FileType & { flag: boolean })
+) => {
   //checkBox  to  select List
   if (item.flag) {
     if ("folderName" in item) {
@@ -479,14 +477,14 @@ const changeHandle = (item: Folder | File) => {
   // console.log(selectList.value.length);
 };
 
-const dblclick = async (item: Folder | File) => {
+const dblclick = async (item: FolderType | FileType) => {
   //双击进入文件夹
 
   if ("folderName" in item) {
     //基于id 向后端拿数据  后 transition 为tableData
     //path也得更新
     const data = await findByFolderId(item.id); //拿到item的所有下级文件信息
-    if (data != null && (data as any).code === 0) {
+    if (data && data.code === 0) {
       transitionData(data.data);
       path.value.push({
         id: item.id,
@@ -505,50 +503,31 @@ const backClick = async () => {
     }
     //取出parentId，重新请求数据
     const dataList = await findByFolderId(parentId);
-    if (dataList != null && (dataList as any).code === 0) {
+    if (dataList && dataList.code === 0) {
       transitionData(dataList.data);
       path.value.pop();
     }
   } else {
     const dataList = await findByFolderId("-1");
-    if (dataList != null && (dataList as any).code === 0) {
+    if (dataList && dataList.code === 0) {
       transitionData(dataList.data);
       path.value.pop();
     }
   }
 };
 
-const transitionData = (param: any[]) => {
+const transitionData = (param: FolderType[] | FileType[]) => {
   tableData.value = [];
   param.forEach((item) => {
-    if ("folderName" in item) {
-      tableData.value.push({
-        id: item.id,
-        folderName: item.folderName,
-        parentId: item.parentId,
-        flag: false,
-      });
-    } else {
-      tableData.value.push({
-        id: item.id,
-        fileName: item.fileName,
-        visualType: item.visualType,
-        visualId: item.visualId,
-        size: item.size,
-        uploader: item.uploader,
-        folderId: item.folderId,
-        flag: false,
-        view: item.view,
-      });
-    }
+    tableData.value.push({ ...item, flag: false });
   });
 };
 
 onMounted(async () => {
   const tableList = await findByFolderId("-1");
-  if (tableList != null && (tableList as any).code === 0) {
+  if (tableList && tableList.code === 0) {
     transitionData(tableList.data);
-  } else console.log("null");
+  }
   skeletonFlag.value = false;
 });
 </script>

@@ -11,6 +11,7 @@ import nnu.edu.back.dao.main.DataRelationalMapper;
 import nnu.edu.back.dao.main.FilesMapper;
 import nnu.edu.back.dao.main.VisualFileMapper;
 import nnu.edu.back.pojo.Files;
+import nnu.edu.back.pojo.Folder;
 import nnu.edu.back.pojo.VisualFile;
 import nnu.edu.back.service.FilesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -203,26 +204,40 @@ public class FilesServiceImpl implements FilesService {
     }
 
     @Override
-    public List<JSONObject> findByFolder(String path, String role) {
+    public List<Object> findByFolderId(String parentId, String role) {
         if (role.equals("admin")) {
-            List<JSONObject> res = new ArrayList<>();
-            Path address = Paths.get(baseDir, path);
-            File file = new File(address.toString());
-            if (!file.exists() && file.isFile()) throw new MyException(ResultEnum.NO_OBJECT);
-            File[] files = file.listFiles();
-            for (File f : files) {
-                JSONObject jsonObject = new JSONObject();
-                if (f.isDirectory()) {
-                    jsonObject.put("folder", true);
-                    jsonObject.put("name", f.getName());
-                } else {
-                    jsonObject.put("folder", false);
-                    jsonObject.put("name", f.getName());
-                    jsonObject.put("size", FileUtil.formatFileSize(f.length()));
-                }
-                res.add(jsonObject);
-            }
+            if (parentId.equals("-1")) parentId = "";
+            List<Object> res = new ArrayList<>();
+            res.addAll(filesMapper.findFolderByParentId(parentId));
+            res.addAll(filesMapper.findFilesByParentId(parentId));
             return res;
+        } else throw new MyException(ResultEnum.NO_ACCESS);
+    }
+
+    @Override
+    public String addFolder(String folderName, String parentId, String role) {
+        if (role.equals("admin")) {
+            String temp = parentId;
+            String address;
+            if (parentId.equals("-1")) {
+                parentId = "";
+                address = Paths.get(baseDir, folderName).toString();
+            } else {
+                String path = folderName;
+                while (!parentId.equals("")) {
+                    Folder folder = filesMapper.findFolderById(parentId);
+                    path = folder.getFolderName() + "/" + path;
+                    parentId = folder.getParentId();
+                }
+                address = Paths.get(baseDir, path).toString();
+            }
+            File file = new File(address);
+            if (file.exists()) throw new MyException(-99, "文件夹已存在!");
+            String uuid = UUID.randomUUID().toString();
+            file.mkdirs();
+            Folder folder = new Folder(uuid, folderName, temp);
+            filesMapper.addFolder(folder);
+            return uuid;
         } else throw new MyException(ResultEnum.NO_ACCESS);
     }
 }

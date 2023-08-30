@@ -8,18 +8,14 @@ import lombok.NoArgsConstructor;
  * Created with IntelliJ IDEA.
  *
  * @Author: Yiming
- * @Date: 2023/08/15/19:27
+ * @Date: 2023/08/30/21:18
  * @Description:
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Files {
+public class Folder {
     String id;
-    String fileName;
-    String address;
-    String size;
-    String visualType;
-    String visualId;
+    String folderName;
     String parentId;
 }

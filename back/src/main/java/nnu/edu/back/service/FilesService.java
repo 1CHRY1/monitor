@@ -23,5 +23,7 @@ public interface FilesService {
 
     void cancelVisualBind(String id);
 
-    List<JSONObject> findByFolder(String path, String role);
+    List<Object> findByFolderId(String parentId, String role);
+
+    String addFolder(String folderName, String parentId, String role);
 }

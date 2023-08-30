@@ -8,6 +8,13 @@
         <result property="size" column="size"/>
         <result property="visualType" column="visual_type"/>
         <result property="visualId" column="visual_id"/>
+        <result property="parentId" column="parentId"/>
+    </resultMap>
+
+    <resultMap id="FolderMap" type="nnu.edu.back.pojo.Folder">
+        <id property="id" column="id"/>
+        <result property="folderName" column="folder_name"/>
+        <result property="parentId" column="parent_id"/>
     </resultMap>
 
     <insert id="addFile">
@@ -35,4 +42,20 @@
     <select id="findInfoById" resultMap="FilesMap">
         select * from files where id = #{id}
     </select>
+
+    <select id="findFolderByParentId" resultMap="FolderMap">
+        select * from folder where parent_id = #{parentId}
+    </select>
+
+    <select id="findFilesByParentId" resultMap="FilesMap">
+        select * from files where parent_id = #{parentId}
+    </select>
+
+    <select id="findFolderById" resultMap="FolderMap">
+        select * from folder where id = #{id}
+    </select>
+
+    <insert id="addFolder">
+        insert into folder values(#{folder.id}, #{folder.folderName}, #{folder.parentId})
+    </insert>
 </mapper>
