@@ -184,7 +184,7 @@ export default defineComponent({
     const inputValue = ref("");
     const inputVisible = ref(false);
     const InputRef = ref<InstanceType<typeof ElInput>>();
-    const avatarUpload = ref<{ clearAvatar: () => {} }>();
+    const avatarUpload = ref<{ updateImage: (image: string) => {} }>();
     const form: Omit<
       DataListType,
       "createTime" | "updateTime" | "download" | "watch"
@@ -364,10 +364,9 @@ export default defineComponent({
 
     const initData = (id: string) => {
       Promise.all([getFileInfo(id), findFiles(id)]).then((res) => {
-        console.log(res);
         if (res[0] && res[1] && res[0].code === 0 && res[1].code === 0) {
           form.id = res[0].data.id;
-          form.avatar = res[0].data.avatar;
+          form.avatar = `/monitor/visual/getAvatar/${res[0].data.avatar}`;
           form.description = res[0].data.description;
           form.range = res[0].data.range;
           form.tags = res[0].data.tags;
@@ -393,6 +392,7 @@ export default defineComponent({
           }
           const files = res[1].data;
           dataBind.value.updateData(files);
+          avatarUpload.value?.updateImage(form.avatar);
         } else router.push({ name: "404" });
       });
     };

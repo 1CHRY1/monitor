@@ -65,12 +65,24 @@
         select * from substrate_result order by time ASC
     </select>
 
-    <select id="getSandTransportNameAndType" resultType="java.util.HashMap">
-        select name, type from sand_transport_result group by name, type
+    <select id="getSandTransportTableList" resultType="java.lang.String">
+        select distinct table_id from sand_transport_result
     </select>
 
-    <select id="getSandTransportByNameAndType" resultMap="SandTransportMap">
-        select * from sand_transport_result where name = #{name} and type = #{type} order by time ASC
+    <select id="getSandTransportTypeByTableId" resultType="java.lang.String">
+        select distinct type from sand_transport_result where table_id = #{tableId}
+    </select>
+
+    <select id="getSandTransportTimeListByTableId" resultType="java.lang.String">
+        select distinct time from sand_transport_result where table_id = #{tableId} order by time ASC
+    </select>
+
+    <select id="getSandTransportNameListByTableId" resultType="java.lang.String">
+        select distinct name from sand_transport_result where table_id = #{tableId}
+    </select>
+
+    <select id="getSandTransportValueByTableIdAndName" resultType="java.lang.Double">
+        select ifnull(value, 0) from sand_transport_result where table_id = #{tableId} and name = #{name} order by time ASC
     </select>
 
     <select id="getSectionSegment" resultType="java.lang.String">

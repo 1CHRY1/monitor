@@ -102,6 +102,10 @@ export const updateDataList = async (
   return await patch(`/dataList/updateDataList`, true, jsonData);
 };
 
+export const deleteDataList = async (dataListId: string) => {
+  return await del(`/dataList/deleteDataList/${dataListId}`, true);
+};
+
 export const addRelational = async (jsonDta: {
   dataListId: string;
   fileIdList: string[];

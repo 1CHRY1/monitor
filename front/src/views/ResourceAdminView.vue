@@ -89,7 +89,7 @@ import { defineComponent, onMounted, reactive, ref } from "vue";
 import ResourceClass from "@/components/admin/ResourceClass.vue";
 import ResourceCard from "@/components/admin/ResourceCard.vue";
 
-import { deleteProject, fuzzyQueryDataList } from "@/api/request";
+import { deleteDataList, fuzzyQueryDataList } from "@/api/request";
 import { DataListType } from "@/type";
 import { notice } from "@/utils/common";
 import PageCopyright from "@/layout/PageCopyright.vue";
@@ -176,6 +176,8 @@ export default defineComponent({
       if (val.type === "update") {
         router.push({ name: "updateResource", params: { id: val.id } });
       } else if (val.type === "delete") {
+        const res = await deleteDataList(val.id);
+        if (res && res.code === 0) notice("success", "成功", "条目删除成功");
       }
     };
 

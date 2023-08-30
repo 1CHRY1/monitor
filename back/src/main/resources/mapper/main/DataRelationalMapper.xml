@@ -22,6 +22,10 @@
         </foreach>
     </delete>
 
+    <delete id="deleteByDataListId">
+        delete from data_relational where data_list_id = #{dataListId}
+    </delete>
+
 
     <select id="findFilesByDataListId" resultMap="FilesMap">
         select files.* from files, data_relational where files.id = data_relational.file_id and data_relational.data_list_id = #{dataListId}

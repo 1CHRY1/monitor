@@ -83,26 +83,24 @@ public class MonitorVisualServiceImpl implements MonitorVisualService {
     }
 
     @Override
-    public List<Map<String, Object>> getSandTransportNameAndType(String projectId) {
-        return dynamicMapper.getSandTransportNameAndType(projectId);
-    }
-
-    @Override
-    public Map<String, Object> getSandTransportByNameAndType(String projectId, String name, String type) {
-        if (type.equals("small")) type = "小潮";
-        else if (type.equals("large")) type = "大潮";
-        else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
-        List<SandTransport> sandTransportList = dynamicMapper.getSandTransportByNameAndType(projectId, name, type);
-        Map<String, Object> res = new HashMap<>();
-        List<String> time = new ArrayList<>();
-        List<Double> value = new ArrayList<>();
-        res.put("name", name);
-        for (SandTransport sandTransport : sandTransportList) {
-            time.add(sandTransport.getTime());
-            value.add(sandTransport.getValue() == null ? 0 : sandTransport.getValue());
+    public List<Map<String, Object>> getSandTransport(String projectId) {
+        List<Map<String, Object>> res = new ArrayList<>();
+        List<String> tableIdList = dynamicMapper.getSandTransportTableList(projectId);
+        for (String tableId : tableIdList) {
+            Map<String, Object> map = new HashMap<>();
+            List<String> timeList = dynamicMapper.getSandTransportTimeListByTableId(projectId, tableId);
+            List<String> nameList = dynamicMapper.getSandTransportNameListByTableId(projectId, tableId);
+            List<List<Double>> value = new ArrayList<>();
+            for (String name : nameList) {
+                List<Double> valueList = dynamicMapper.getSandTransportValueByTableIdAndName(projectId, tableId, name);
+                value.add(valueList);
+            }
+            map.put("type", dynamicMapper.getSandTransportTypeByTableId(projectId, tableId));
+            map.put("time", timeList);
+            map.put("name", nameList);
+            map.put("value", value);
+            res.add(map);
         }
-        res.put("time", time);
-        res.put("value", value);
         return res;
     }
 

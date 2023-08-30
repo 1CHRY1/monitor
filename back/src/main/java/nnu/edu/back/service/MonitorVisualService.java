@@ -22,9 +22,9 @@ public interface MonitorVisualService {
 
     List<Substrate> getSubstrate(String projectId);
 
-    List<Map<String, Object>> getSandTransportNameAndType(String projectId);
 
-    Map<String, Object> getSandTransportByNameAndType(String projectId, String name, String type);
+
+    List<Map<String, Object>> getSandTransport(String projectId);
 
     List<Map<String, Object>> getSpeedOrientationNameAndType(String projectId);
 
