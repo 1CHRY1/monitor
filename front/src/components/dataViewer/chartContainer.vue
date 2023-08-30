@@ -14,7 +14,7 @@ import * as echarts from 'echarts';
 import { EChartsOption } from 'echarts';
 import { onMounted, ref, toRef } from 'vue';
 import { chartOptionTest, ChartDataPreparer } from '@/utils/viewerData';
-import { getSectionElevation, getFluxNameAndType, getSubstrate } from '@/api/request';
+import { getSectionElevation } from '@/api/request';
 
 interface Props {
     chartId: string,
@@ -48,7 +48,7 @@ const changeData = () => {
 //       noShown.value = !newShown;
 //       console.log(noShown.value);
 //   });
-
+let optionIndex = 0;
 onMounted(async () => {
     // console.log(chartDom.value);
     let chart = echarts.init(chartDom.value as HTMLElement);
@@ -56,9 +56,28 @@ onMounted(async () => {
     // if (chartOption is EChartsOption) {
 
     // }
-
-    // let chartConfig = chartOptionTest[+(chartOptId.value)-1];
-    chart.setOption(chartOption as echarts.EChartsOption)
+    if (Array.isArray(chartOption)) {
+        // console.log("options", chartOption)
+        chart.setOption(chartOption[0]);
+        setInterval(() => {
+            chart.setOption(chartOption[optionIndex+1]);
+            optionIndex = (optionIndex+1)%(chartOption.length-1);
+        }, 2000)
+    }
+    else{
+        // console.log("option", chartOption)
+        chart.setOption(chartOption)
+        if (chartDatapreparer.isDynamic === true) {
+            setInterval(async () => {
+                chartDatapreparer.dynamicIndex += 1;
+                const newSeries = await chartDatapreparer.buildChartOption(projectId.value);
+                chart.clear();
+                chartOption.series = (newSeries as EChartsOption).series;
+                // console.log(chartOption);
+                chart.setOption(chartOption);
+            }, 2000)
+        }
+    }
     // TODO: window.onsize doesn't work on components
     // window.onresize = function () {
     //     chart.resize();

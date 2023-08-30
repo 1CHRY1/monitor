@@ -47,7 +47,7 @@ const chartPreparer = new ChartDataPreparer(+chartOptId.value.substring(0, 1));
 //       console.log(noShown.value);
 //   });
 
-let optionIndex = 1;
+let optionIndex = 0;
 
 onMounted(async () => {
     // console.log(chartDom.value);
@@ -55,12 +55,12 @@ onMounted(async () => {
     let chartRight = echarts.init(chartLeft.value as HTMLElement);
 
     const chartOption = await chartPreparer.buildChartOption(projectId.value);
-    console.log(chartOption);
+    // console.log(chartOption);
     if (Array.isArray(chartOption)) {
         chartRight.setOption(chartOption[0]);
         setInterval(() => {
-            chartRight.setOption(chartOption[optionIndex]);
-            optionIndex = (optionIndex+1)%(chartOption.length-1) + 1;
+            chartRight.setOption(chartOption[optionIndex+1]);
+            optionIndex = (optionIndex+1)%(chartOption.length-1);
         }, 2000)
     }
     else{
