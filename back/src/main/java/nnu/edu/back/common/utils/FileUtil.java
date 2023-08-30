@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -273,5 +274,25 @@ public class FileUtil {
             }
             return "";
         }
+    }
+
+    public static String formatFileSize(Long fileLength) {
+
+        String fileSizeString = "";
+        if (fileLength == null) {
+            return fileSizeString;
+        }
+        DecimalFormat df = new DecimalFormat("#.00");
+        if (fileLength < 1024) {
+            fileSizeString = df.format((double) fileLength) + "B";
+        } else if (fileLength < 1048576) {
+            fileSizeString = df.format((double) fileLength / 1024) + "K";
+        } else if (fileLength < 1073741824) {
+            fileSizeString = df.format((double) fileLength / 1048576) + "M";
+        } else {
+            fileSizeString = df.format((double) fileLength / 1073741824) + "G";
+        }
+        return fileSizeString;
+
     }
 }

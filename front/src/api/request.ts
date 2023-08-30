@@ -429,24 +429,6 @@ export const getSubstrate = async (projectId: string) => {
   return await get(`/monitorVisual/getSubstrate/${projectId}`, true);
 };
 
-export const getSandTransportNameAndType = async (projectId: string) => {
-  return await get(
-    `/monitorVisual/getSandTransportNameAndType/${projectId}`,
-    true
-  );
-};
-
-export const getSandTransportByNameAndType = async (
-  projectId: string,
-  name: string,
-  type: string
-) => {
-  return await get(
-    `/monitorVisual/getSandTransportByNameAndType/${projectId}/${name}/${type}`,
-    true
-  );
-};
-
 export const getSpeedOrientationNameAndType = async (projectId: string) => {
   return await get(
     `/monitorVisual/getSpeedOrientationNameAndType/${projectId}`,
@@ -488,6 +470,9 @@ export const getSandContentValue = async (projectId: string, name: string) => {
 };
 
 // ----------------管理员界面相关------------------------------
+export const findByFolder = async (jsonData: { path: string }) => {
+  return await post(`files/findByFolder`, true, jsonData);
+};
 export async function findByFolderId(folderId: string) {
   const res: (Folder | File)[] = [];
 

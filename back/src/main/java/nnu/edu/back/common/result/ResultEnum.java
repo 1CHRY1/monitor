@@ -23,7 +23,8 @@ public enum ResultEnum {
     QUERY_TYPE_ERROR(-7, "查询类型不支持"),//查询类型不支持
     REMOTE_SERVICE_ERROR(-8, "远程服务调用出错"),//远程服务调用出错
     DUPLICATE_NAME_ERROR(-9, "文件重名！"),
-    DATASOURCE_ERROR(-10, "数据源错误！")
+    DATASOURCE_ERROR(-10, "数据源错误！"),
+    NO_ACCESS(-11, "没有权限")
 
 
     ;

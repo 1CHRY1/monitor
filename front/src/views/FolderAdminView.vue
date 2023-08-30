@@ -12,11 +12,6 @@
                 <div class="path-item">{{ item.name }}</div>
                 <div class="path-item separate">/</div>
               </div>
-              <!-- 数据::path -->
-              <!-- <div class="item">
-              <div class="path-item">Folder</div>
-              <div class="path-item"></div> 
-            </div> -->
             </div>
             <div class="btn">
               <el-button size="default" @click="OpenCreateFolder"

@@ -86,7 +86,7 @@
     </select>
 
     <select id="getSectionSegment" resultType="java.lang.String">
-        select distance from v_d_result where name = #{name} group by distance order by cast(replace(distance, "S", "") as integer) ASC
+        select distance from v_d_result where name = #{name} and type = #{type} group by distance order by cast(replace(distance, "S", "") as integer) ASC
     </select>
 
     <select id="getSpeedOrientationNameAndType" resultType="java.util.HashMap">
@@ -97,12 +97,12 @@
         select distinct time from v_d_result where name = #{name} and type = #{type} order by time ASC
     </select>
 
-    <select id="getSpeedByNameAndType" resultType="java.lang.Double">
-        select ifnull(ave_v, 0) as "speed" from v_d_result where name = #{name} and type = #{type} order by cast(replace(distance, "S", "") as integer) ASC, time ASC
+    <select id="getSpeedByNameAndTypeAndDistance" resultType="java.lang.Double">
+        select ifnull(ave_v, 0) from v_d_result where name = #{name} and type = #{type} and distance = #{distance} order by cast(replace(distance, "S", "") as integer) ASC, time ASC
     </select>
 
     <select id="getOrientationByNameAndType" resultType="java.lang.Double">
-        select ifnull(ave_d, 0) from v_d_result where name = #{name} and type = #{type} order by cast(replace(distance, "S", "") as integer) ASC, time ASC
+        select ifnull(ave_d, 0) from v_d_result where name = #{name} and type = #{type} and distance = #{distance} order by cast(replace(distance, "S", "") as integer) ASC, time ASC
     </select>
 
     <select id="getSandContentClass" resultType="java.lang.String">

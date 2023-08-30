@@ -46,15 +46,15 @@ public interface DynamicMapper {
 
     List<Double> getSandTransportValueByTableIdAndName(String id, @Param("tableId") String tableId, @Param("name") String name);
 
-    List<String> getSectionSegment(String id, @Param("name") String name);
+    List<String> getSectionSegment(String id, @Param("name") String name, @Param("type") String type);
 
     List<Map<String, Object>> getSpeedOrientationNameAndType(String id);
 
     List<String> getTime(String id, @Param("name") String name, @Param("type") String type);
 
-    List<Double> getSpeedByNameAndType(String id, @Param("name") String name, @Param("type") String type);
+    List<Double> getSpeedByNameAndTypeAndDistance(String id, @Param("name") String name, @Param("type") String type, @Param("distance") String distance);
 
-    List<Double> getOrientationByNameAndType(String id, @Param("name") String name, @Param("type") String type);
+    List<Double> getOrientationByNameAndType(String id, @Param("name") String name, @Param("type") String type, @Param("distance") String distance);
 
     List<String> getSandContentClass(String id);
 
