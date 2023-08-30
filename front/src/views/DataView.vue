@@ -60,7 +60,7 @@ import chartContainer from '@/components/dataViewer/chartContainer.vue';
 import doubleChartContainer from '@/components/dataViewer/doubleChartContainer.vue';
 import { type ProjectOption } from '@/utils/viewerData';
 import { 
-    getAllVisualProject, getAllSection,  getSectionElevation
+    getAllVisualProject, getSpeed, getSpeedOrientationNameAndType, getSandContentClass, getSandContentValue
 } from '@/api/request';
 
 const projects = await getAllVisualProject();
@@ -71,6 +71,10 @@ let projectOptions = ref(projects?.data);
 const chartConatinerRefs = ref<InstanceType<typeof chartContainer>[]>([]);
 
 let currentProject = ref<ProjectOption>(projectOptions.value[0]);
+
+// console.log("sand", await getSandContentClass(currentProject.value.id))
+const test = await getSandContentValue(currentProject.value.id, "LSSD-AD");
+console.log("test result", test);
 
 let expanded = ref(false);
 
