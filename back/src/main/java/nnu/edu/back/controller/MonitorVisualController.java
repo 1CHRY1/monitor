@@ -42,14 +42,9 @@ public class MonitorVisualController {
         return ResultUtils.success(monitorVisualService.getSubstrate(projectId));
     }
 
-    @RequestMapping(value = "/getSandTransportNameAndType/{projectId}", method = RequestMethod.GET)
-    public JsonResult getSandTransportNameAndType(@PathVariable String projectId) {
-        return ResultUtils.success(monitorVisualService.getSandTransportNameAndType(projectId));
-    }
-
-    @RequestMapping(value = "/getSandTransportByNameAndType/{projectId}/{name}/{type}", method = RequestMethod.GET)
-    public JsonResult getSandTransportByNameAndType(@PathVariable String projectId, @PathVariable String name, @PathVariable String type) {
-        return ResultUtils.success(monitorVisualService.getSandTransportByNameAndType(projectId, name, type));
+    @RequestMapping(value = "/getSandTransport/{projectId}", method = RequestMethod.GET)
+    public JsonResult getSandTransport(@PathVariable String projectId) {
+        return ResultUtils.success(monitorVisualService.getSandTransport(projectId));
     }
 
     @RequestMapping(value = "/getSpeedOrientationNameAndType/{projectId}", method = RequestMethod.GET)

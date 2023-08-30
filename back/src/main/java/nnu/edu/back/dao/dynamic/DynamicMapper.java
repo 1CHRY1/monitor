@@ -36,9 +36,15 @@ public interface DynamicMapper {
 
     List<Substrate> getAllSubstrate(String id);
 
-    List<Map<String, Object>> getSandTransportNameAndType(String id);
+    List<String> getSandTransportTableList(String id);
 
-    List<SandTransport> getSandTransportByNameAndType(String id, @Param("name") String name, @Param("type") String type);
+    String getSandTransportTypeByTableId(String id, @Param("tableId") String tableId);
+
+    List<String> getSandTransportTimeListByTableId(String id, @Param("tableId") String tableId);
+
+    List<String> getSandTransportNameListByTableId(String id, @Param("tableId") String tableId);
+
+    List<Double> getSandTransportValueByTableIdAndName(String id, @Param("tableId") String tableId, @Param("name") String name);
 
     List<String> getSectionSegment(String id, @Param("name") String name);
 

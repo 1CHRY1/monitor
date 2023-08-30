@@ -91,4 +91,9 @@ public class DataListController {
     public JsonResult getIdAndDataListName(@PathVariable int size) {
         return ResultUtils.success(dataListService.getIdAndDataListName(size));
     }
+
+    @RequestMapping(value = "/deleteDataList/{id}", method = RequestMethod.DELETE)
+    public JsonResult deleteDataList(@PathVariable String id, @JwtTokenParser("role") String role) {
+        return ResultUtils.success();
+    }
 }

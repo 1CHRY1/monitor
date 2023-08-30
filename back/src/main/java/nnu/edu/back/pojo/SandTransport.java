@@ -19,4 +19,5 @@ public class SandTransport {
     String name;
     String type;
     Double value;
+    String tableId;
 }

@@ -39,4 +39,6 @@ public interface DataListService {
     Map<String, Object> getSimilarData(String type, String id, int size, int page);
 
     List<Map<String, Object>> getIdAndDataListName(int size);
+
+    void deleteDataList(String id, String role);
 }
