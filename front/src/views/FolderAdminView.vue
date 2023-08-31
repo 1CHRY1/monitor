@@ -369,7 +369,7 @@ const CreateFolder = async (val: string) => {
   } else {
     notice("error", "错误", "文件夹创建失败！");
   }
-};
+}; 
 
 const updateVisualFile = (val: { visualId: string; visualType: string }) => {
   for (let i = 0; i < tableData.value.length; i++) {

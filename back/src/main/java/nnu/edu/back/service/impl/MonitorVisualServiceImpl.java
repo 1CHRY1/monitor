@@ -1,16 +1,17 @@
 package nnu.edu.back.service.impl;
 
+import com.alibaba.fastjson2.JSONObject;
 import nnu.edu.back.common.exception.MyException;
 import nnu.edu.back.common.result.ResultEnum;
+import nnu.edu.back.common.utils.FileUtil;
 import nnu.edu.back.dao.dynamic.DynamicMapper;
-import nnu.edu.back.pojo.Flux;
-import nnu.edu.back.pojo.SandTransport;
-import nnu.edu.back.pojo.Section;
-import nnu.edu.back.pojo.Substrate;
+import nnu.edu.back.pojo.*;
 import nnu.edu.back.service.MonitorVisualService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,25 @@ import java.util.Map;
 public class MonitorVisualServiceImpl implements MonitorVisualService {
     @Autowired
     DynamicMapper dynamicMapper;
+
+    @Value("${baseDir}")
+    String baseDir;
+
+    @Override
+    public List<String> getLocusPoint(String projectId) {
+        return dynamicMapper.getLocusPoint(projectId);
+    }
+
+    @Override
+    public List<Locus> getLocusTable(String projectId, String name) {
+        return dynamicMapper.getLocusTable(projectId, name);
+    }
+
+    @Override
+    public JSONObject getLocusShape(String projectId, String name) {
+        String address = Paths.get(baseDir, "out", name + ".geojson").toString();
+        return FileUtil.readJson(address);
+    }
 
     @Override
     public List<Section> getAllSection(String projectId) {

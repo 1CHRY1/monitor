@@ -1,9 +1,6 @@
 package nnu.edu.back.dao.dynamic;
 
-import nnu.edu.back.pojo.Flux;
-import nnu.edu.back.pojo.SandTransport;
-import nnu.edu.back.pojo.Section;
-import nnu.edu.back.pojo.Substrate;
+import nnu.edu.back.pojo.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +16,10 @@ import java.util.Map;
  */
 @Repository
 public interface DynamicMapper {
+    List<String> getLocusPoint(String id);
+
+    List<Locus> getLocusTable(String id, @Param("name") String name);
+
     List<Section> getAllSection(String id);
 
     List<Map<String, Object>> getDistanceAndElevationByName(String id, @Param("sectionName") String sectionName);
