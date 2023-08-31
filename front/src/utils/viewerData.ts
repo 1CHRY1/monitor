@@ -2,7 +2,7 @@ import axios from "axios";
 import * as echarts from "echarts";
 import { type EChartsOption } from "echarts";
 import { drop_url, sandUrl } from "./picData";
-import { getFlux, getSectionElevation, getSubstrate, getSandContentClass, getSandContentValue } from '@/api/request';
+import { getFlux, getSectionElevation, getSubstrate, getSandContentClass, getSandContentValue, getSpeed, getSpeedOrientationNameAndType } from '@/api/request';
 
 type ProjectOption = {
     id: string;
@@ -32,6 +32,11 @@ const colorMap = [
     ['#6819A8', '#E9A7F2'], ['#C92128', '#F2D8EE'], ['#730240', '#559BD9'],
     ['#456E47', '#CCFFA3'], ['#04BF8A', '#4BF2E2'], ['#00213A', '#3498BF'],
 ]
+
+let typeMap: StringKeyObject = {
+    "大潮": "large",
+    "小潮": "small"
+}
 
 // Generate data
 // let dottedBase = +new Date();
@@ -444,7 +449,7 @@ let chartOptionTest: EChartsOption[] = [
             left: '0%',
             top: '12%',
             width: '10%',
-            itemGap: 15,
+            itemGap: 0,
             // itemWidth: 5,
             backgroundColor: 'rgba(255, 255, 255, 0.2)',
             borderRadius: 6,
@@ -1145,6 +1150,14 @@ class ChartDataPreparer {
                 const fluxSeries = this.generateTideAmountChartSeries(fluxData?.data);
                 const fluxOptions = this.buildTideAmountChartOption(fluxSeries);
                 return fluxOptions;
+            case 4:
+                this.isDynamic = true;
+                if (this.requestStringData.length == 0) {
+                    const speedNameTypes = await getSpeedOrientationNameAndType(currentProjectId);
+                    this.requestStringData = speedNameTypes?.data;
+                }
+                const speedOption = await this.buildFlowVelocityChartOption(currentProjectId);
+                return speedOption;
             case 5:
                 const sectionData = await getSectionElevation(currentProjectId);
                 const sectionSeries = this.generateSectionChartSeries(sectionData?.data);
@@ -1157,12 +1170,14 @@ class ChartDataPreparer {
                 return bottomParticleOptions;
             case 9:
                 this.isDynamic = true;
-                const sandContentNames = await getSandContentClass(currentProjectId);
-                this.requestStringData = groupSandAmountData(sandContentNames?.data);
+                if (this.requestStringData.length == 0) {
+                    const sandContentNames = await getSandContentClass(currentProjectId);
+                    this.requestStringData = groupSandAmountData(sandContentNames?.data);
+                }
                 // const dataTest = await getSandContentValue(currentProjectId, "TZSD-AD");
-                const chartOption = this.buildSandAmountChartOption(currentProjectId);
+                const sandAmountOption = this.buildSandAmountChartOption(currentProjectId);
                 // console.log(groupedNames);
-                return chartOption;
+                return sandAmountOption;
             default:
                 return chartOptionTest[(+this.chartId)-1];
         }
@@ -1300,7 +1315,7 @@ class ChartDataPreparer {
         let optionInit: EChartsOption = {
             title: {
                 left: 'center',
-                text: changeSeries[0].title[0],
+                text: changeSeries[0].title[0] + '潮流量',
                 top: '2%',
                 textStyle: {
                     fontSize: 20,
@@ -1387,7 +1402,7 @@ class ChartDataPreparer {
             for(let j = 0; j < changeSeries[i].data.length; j++){
                 options.push({
                     title: {
-                        text: changeSeries[i].title[j]
+                        text: changeSeries[i].title[j] + '潮流量'
                     },
                     xAxis: {
                         min: changeSeries[i].minMax[j][0],
@@ -1477,12 +1492,148 @@ class ChartDataPreparer {
         return changeSeries;
     }
 
-    private buildFlowVelocityChartOption(): EChartsOption | EChartsOption[] { // 流速
-        return {};
+    private async buildFlowVelocityChartOption(currentProjectId: string): Promise<EChartsOption> { // 流速
+        const dynamicNum = this.requestStringData.length;
+        const curNameType: StringKeyObject = this.requestStringData[(this.dynamicIndex%dynamicNum)];
+        const speedData = await getSpeed(currentProjectId, curNameType["name"], typeMap[curNameType["type"]]);
+        const seriesData = this.generateFlowVelocityChartSeries(speedData?.data);
+        const chartSeries = [];
+        for (let i=0; i < seriesData["names"].length; i++) {
+            chartSeries.push({
+                name: seriesData["names"][i],
+                symbolSize: 4,
+                data: seriesData["value"][i],
+                type: 'line',
+                emphasis: {
+                    focus: 'series'
+                },
+                lineStyle: {
+                    width: 3,
+                },
+            })
+        }
+
+        if(this.dynamicIndex == 0) {
+            const option: EChartsOption = {
+                // color: ['#91ca8c', '#f49f42', '#eedd78', '#73a373', '#73b9bc', '#7289ab', '#dd6b66', '#8dc1a9', '#759aa0', '#e69d87', '#ea7e53'],
+                title: {
+                    left: 'center',
+                    text: seriesData["title"] + '流速',
+                    top: '2%',
+                    textStyle: {
+                        fontSize: 28,
+                        color: 'rgba(255, 255, 255, 0.8)'
+                    }
+                },
+                legend: {
+                    show: true,
+                    orient: 'vertical',
+                    left: '0%',
+                    top: '12%',
+                    width: '10%',
+                    itemGap: 0,
+                    // itemWidth: 5,
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: 6,
+                    padding: 10,
+                    textStyle: {
+                        fontWeight: 'bold',
+                        color: 'rgba(255, 255, 255, 0.9)'
+                    },
+                    lineStyle: {
+                        width: 4
+                    }
+                },
+                // backgroundColor: '#063462c1',
+                tooltip: { show: true, trigger: 'axis' },
+                xAxis: {
+                    type: 'time',
+                    // name: '起点距(米)',
+                    nameTextStyle: {
+                        color: 'rgba(255,255,255, 0.7)',
+                        fontSize: 14,
+                        fontWeight: 'bold'
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: 'rgba(233,233,233, 0.5)'
+                        },
+                        onZero: false
+                    },
+                    splitLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        fontSize: 16,
+                        color: 'rgba(255,255,255, 0.75)',
+                        formatter: '{dd}-{hh}:00'
+                    },
+                    min: (value) => {
+                        return value.min
+                    },
+                    max: (value) => {
+                        return value.max
+                    },
+                    boundaryGap: ['5%', '5%']
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'm/s',
+                    nameTextStyle: {
+                        color: 'rgba(255,255,255, 0.7)',
+                        fontSize: 14,
+                        fontWeight: 'bold'
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: 'rgba(233,233,233, 0.5)'
+                        },
+                        onZero: false
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: 'rgba(255,255,255, 0.2)',
+                            width: 1.5
+                        }
+                    },
+                    axisLabel: {
+                        fontSize: 16,
+                        color: 'rgba(255,255,255, 0.75)'
+                    },
+                    min: (value) => {
+                        return value.min.toFixed(4)
+                    },
+                    max: (value) => {
+                        return value.max.toFixed(4)
+                    },
+                },
+                grid: {
+                    top: '14%',
+                    bottom: '2%',
+                    left: '12%',
+                    right: '2%',
+                    containLabel: true
+                },
+                series: chartSeries as any
+            }
+            return option;
+        }
+        else {
+            return {
+                title: {text: seriesData["title"] + '流速'},
+                series: chartSeries as any
+            }
+        }
     }
 
-    private generateFlowVelocityChartSeries(): StringKeyObject {
-        return {};
+    private generateFlowVelocityChartSeries(speedData: StringKeyObject): StringKeyObject {
+        let resData: StringKeyObject = {title: speedData["name"], names: speedData["nameList"], value: []};
+        for (let array of speedData["value"]) {
+            resData["value"].push(speedData["time"].map((key: string, index: number) => [Date.parse(key.replace(' ', 'T')), array[index]]))
+        }
+        // console.log(resData);
+
+        return resData;
     }
 
     private async buildSandAmountChartOption(currentProjectId: string): Promise<EChartsOption> { // 沙量
