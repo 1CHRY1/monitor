@@ -1,17 +1,4 @@
 <template>
-    <!-- <div class="folder-main">
-      文件名:
-      <el-input v-model="input" ref="inputFocus" />
-      <el-button
-        type="primary"
-        plain
-        size="small"
-        style="margin-left: 130px"
-        @click="commit"
-        >确定</el-button
-      >
-    </div> -->
-
     <div class="Create">
       <p class="title">创建文件夹</p>
           <div class="flex">

@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <el-row :gutter="0">
+    <el-row :gutter="0" id="main-elrow">
       <el-col :span="14" :offset="5">
         <div class="resource-main">
           <div class="table-head">
@@ -41,11 +41,12 @@
             <el-table
               v-else
               :data="tableData"
-              style="width: 100%"
+              style="width: 100% ;" max-height="calc(90vh - 240px - 5rem)"
+              stripe
               @cell-dblclick="dblclick"
               highlight-current-row
             >
-              <el-table-column prop="name" label="名称" width="500">
+              <el-table-column  width="40">
                 <template #default="scope">
                   <!-- #default="scope" 插槽，作为参数可以让外面的方法能够访问到scope内部的数据 -->
                   <div class="table-name">
@@ -58,13 +59,28 @@
                       />
                       <div class="checkmark"></div>
                     </label>
+                  </div>
+                </template>
+
+              </el-table-column>
+
+              <el-table-column prop="name" label="名称" width="500">
+                <template #default="scope">
+                  <!-- #default="scope" 插槽，作为参数可以让外面的方法能够访问到scope内部的数据 -->
+                  <div class="table-name">
+                    <!-- <el-checkbox v-model="scope.row.flag" size="large" @change="changeHandle(scope.row)" /> -->
+                    <!-- <label class="container">
+                      <input
+                        v-model="scope.row.flag"
+                        type="checkbox"
+                        @change="changeHandle(scope.row)"
+                      />
+                      <div class="checkmark"></div>
+                    </label> -->
                     <div class="text">
-                      <el-icon v-show="isFolder(scope.row)"
-                        ><FolderChecked style="margin-top: 1vh"
-                      /></el-icon>
-                      <el-icon v-show="!isFolder(scope.row)"
-                        ><Document style="margin-top: 1vh"
-                      /></el-icon>
+                      <svg style="width: 28px; height: 28px; ">
+                        <use :xlink:href="getIcon(scope.row)"></use>
+                      </svg>
                       <div class="name">
                         {{ getName(scope.row) }}
                       </div>
@@ -81,15 +97,29 @@
 
               <el-table-column align="right" fixed="right" width="300">
                 <template #header>
-                  <el-button
-                    size="small"
-                    :text="true"
-                    type="danger"
-                    :disabled="selectList.length === 0"
-                    :hide-after="50"
-                    @click="batDelete"
-                    ><strong>批量删除</strong></el-button
-                  >
+                  <el-button 
+                  type="primary" 
+                  size="small"
+                  @click="selectAll"
+                  round
+                  >全选</el-button>
+                  <el-button 
+                  type="primary" 
+                  size="small"
+                  @click="cancelAll"
+                  round
+                  >重置</el-button>
+
+                  <el-button 
+                  type="danger" 
+                  size="small"
+           
+                  :disabled="selectList.length === 0"
+                  :hide-after="50"
+                  @click="batDelete"
+                  round
+                  >批量删除</el-button>
+
                 </template>
                 <template #default="scope">
                   <el-tooltip
@@ -125,7 +155,7 @@
                         v-if="!isFolder(scope.row)"
                         @click="visualClick(scope.row)"
                         plain
-                        ><el-icon><Share /></el-icon
+                        ><el-icon><Link /></el-icon
                       ></el-button>
                     </span>
                   </el-tooltip>
@@ -213,6 +243,7 @@
         </div>
       </el-col>
     </el-row>
+  <PageCopyright style="bottom: 0px;"/>
   </div>
 </template>
 
@@ -221,16 +252,17 @@ import { ref, onMounted } from "vue";
 import { FolderType, FileType } from "@/type";
 import { notice, uuid, getFileSize } from "@/utils/common";
 import { ElMessageBox, ElMessage, rowContextKey } from "element-plus";
-import VisualBindDialog from "@/components/admin/VisualBindDialog.vue";
+import VisualBindDialog from "@/components/admin/visualBindDialog.vue";
 import DataPreviewDialog from "@/components/admin/DataPreviewDialog.vue";
 import FolderDialog from "@/components/admin/FolderDialog.vue";
 import {
   findByFolderId,
-  deleteFilesOrFolders,
-  getDownloadURL,
+  deleteFilesOrFolders,  
+  getDownloadURL,  
   addFolder,
 } from "@/api/request";
 import { UploadFile, UploadFiles } from "element-plus";
+import PageCopyright from "@/layout/PageCopyright.vue";
 // import useStore from 'vuex';
 
 // const store = useStore();
@@ -323,12 +355,9 @@ const deleteClick = (item: FolderType | FileType) => {
 
       const data = await deleteFilesOrFolders(json); //后端删除数据,返回的是？
       if (data != null && (data as any).code === 0) {
-        //假设返回的还是原来的东西，那后端干啥了?
+        //前端删除?
         for (let i = 0; i < tableData.value.length; i++) {
           if (tableData.value[i].id === item.id) {
-            //这里的意义是再确认一遍？ 前端删除
-            console.log("找到你小子了");
-
             tableData.value.splice(i, 1);
             break;
           }
@@ -479,7 +508,7 @@ const changeHandle = (
 
 const dblclick = async (item: FolderType | FileType) => {
   //双击进入文件夹
-
+  cancelAll(); //清除selected
   if ("folderName" in item) {
     //基于id 向后端拿数据  后 transition 为tableData
     //path也得更新
@@ -496,6 +525,8 @@ const dblclick = async (item: FolderType | FileType) => {
 };
 
 const backClick = async () => {
+  // 清空selected
+  cancelAll();
   if (path.value.length > 0) {
     let parentId: string = "-1";
     if (path.value[path.value.length - 1].parentId != "") {
@@ -530,6 +561,37 @@ onMounted(async () => {
   }
   skeletonFlag.value = false;
 });
+
+const getIcon = (item: FolderType | FileType) => {
+  const flag = isFolder(item);
+  if (flag) {
+    return "#icon-wenjianjia";
+  }else
+    return "#icon-wenjian";
+}
+
+const selectAll = ()=>{
+  // console.log(tableData.value);
+  // console.log(selectList.value);
+  for(let item of tableData.value){
+    if(!item.flag){
+      item.flag = true;
+      selectList.value.push({
+        id:item.id,
+        type:isFolder(item)?'folder':'file',
+      });
+    }
+  }
+}
+
+const cancelAll = ()=>{
+  selectList.value = [];
+  for(let item of tableData.value){
+    item.flag = false;
+  }
+}
+
+
 </script>
 
 <style lang="scss" scoped>
@@ -547,7 +609,6 @@ onMounted(async () => {
     }
 
     .path {
-      cursor: pointer;
       width: 60%;
       display: flex;
 
@@ -556,8 +617,10 @@ onMounted(async () => {
       }
 
       .path-item {
-        height: 20px;
+        height: 30px;
         line-height: 20px;
+        font-size: 20px;
+        font-weight: 600;
       }
 
       .separate {
@@ -590,7 +653,7 @@ onMounted(async () => {
         .text {
           display: flex;
           line-height: 30px;
-          padding: 0vw 1vw;
+          padding: 0vw 0vw;
 
           .name {
             width: 620px;
@@ -626,7 +689,7 @@ onMounted(async () => {
 
 .container {
   --input-focus: #2d8cf0;
-  --input-out-of-focus: #ccc;
+  --input-out-of-focus: rgb(252, 249, 249);
   --bg-color: #fff;
   --bg-color-alt: #666;
   --main-color: #323232;
@@ -689,11 +752,14 @@ onMounted(async () => {
   display: block;
 }
 
-:deep() .el-row {
-  margin-right: 0;
-}
 
 .el-icon {
   font-size: 20px;
 }
+
+#main-elrow{
+  height:calc(100vh - 250px - 5rem);
+}
+
+
 </style>
