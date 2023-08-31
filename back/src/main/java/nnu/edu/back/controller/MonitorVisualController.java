@@ -22,6 +22,22 @@ public class MonitorVisualController {
     @Autowired
     MonitorVisualService monitorVisualService;
 
+    @RequestMapping(value = "/getLocusPoint/{projectId}", method = RequestMethod.GET)
+    public JsonResult getLocusPoint(@PathVariable String projectId) {
+        return ResultUtils.success(monitorVisualService.getLocusPoint(projectId));
+    }
+
+    @RequestMapping(value = "/getLocusTable/{projectId}/{name}", method = RequestMethod.GET)
+    public JsonResult getLocusTable(@PathVariable String projectId, @PathVariable String name) {
+        return ResultUtils.success(monitorVisualService.getLocusTable(projectId, name));
+    }
+
+    @RequestMapping(value = "/getLocusShape/{projectId}/{name}", method = RequestMethod.GET)
+    public JsonResult getLocusShape(@PathVariable String projectId, @PathVariable String name) {
+        return ResultUtils.success(monitorVisualService.getLocusShape(projectId, name));
+    }
+
+
     @RequestMapping(value = "/getAllSection/{projectId}", method = RequestMethod.GET)
     public JsonResult getAllSection(@PathVariable String projectId) {
         return ResultUtils.success(monitorVisualService.getAllSection(projectId));

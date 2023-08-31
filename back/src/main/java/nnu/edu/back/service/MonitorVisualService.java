@@ -1,5 +1,7 @@
 package nnu.edu.back.service;
 
+import com.alibaba.fastjson2.JSONObject;
+import nnu.edu.back.pojo.Locus;
 import nnu.edu.back.pojo.Section;
 import nnu.edu.back.pojo.Substrate;
 
@@ -14,6 +16,12 @@ import java.util.Map;
  * @Description:
  */
 public interface MonitorVisualService {
+    List<String> getLocusPoint(String projectId);
+
+    List<Locus> getLocusTable(String projectId, String name);
+
+    JSONObject getLocusShape(String projectId, String name);
+
     List<Section> getAllSection(String projectId);
 
     Map<String, Object> getSectionElevation(String projectId);
