@@ -43,7 +43,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public String uploadAvatar(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
+        String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        String fileName = UUID.randomUUID() + suffix;
         int code = FileUtil.uploadFile(file, fileName, avatarDir);
         if (code == -1) throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
         return fileName;
@@ -95,5 +96,12 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<Project> getAllVisualProject() {
         return projectMapper.getAllVisualProject();
+    }
+
+    @Override
+    public void deleteProject(String id, String role) {
+        if (role.equals("admin")) {
+            projectMapper.deleteProject(id);
+        }
     }
 }

@@ -18,15 +18,13 @@ public interface MonitorVisualService {
 
     Map<String, Object> getSectionElevation(String projectId);
 
-    List<Map<String, Object>> getFluxNameAndType(String projectId);
-
-    Map<String, Object> getFluxByNameAndType(String projectId, String name, String type);
+    List<Map<String, Object>> getFlux(String projectId);
 
     List<Substrate> getSubstrate(String projectId);
 
-    List<Map<String, Object>> getSandTransportNameAndType(String projectId);
 
-    Map<String, Object> getSandTransportByNameAndType(String projectId, String name, String type);
+
+    List<Map<String, Object>> getSandTransport(String projectId);
 
     List<Map<String, Object>> getSpeedOrientationNameAndType(String projectId);
 

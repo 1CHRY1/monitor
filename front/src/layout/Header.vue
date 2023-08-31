@@ -5,7 +5,7 @@
         <el-col :span="1">
           <div class="grid-content" />
         </el-col>
-        <el-col :span="6">
+        <el-col :span="5">
           <div class="grid-content name">
             交通运输行业野外科学观测研究基地<br />深水航道水沙环境与工程安全平台
           </div>
@@ -27,7 +27,23 @@
         <el-col :span="2">
           <div class="grid-content help" @click="nav('analysis')">分析中心</div>
         </el-col>
-        <el-col :span="2" :offset="4">
+        <el-col :span="2">
+          <el-dropdown
+            trigger="hover"
+            @command="userNav"
+            v-if="adminFlag"
+            class="admin"
+          >
+            <span class="grid-content">管理员</span>
+            <template #dropdown>
+              <el-dropdown-menu :router="true">
+                <el-dropdown-item command="1">数据仓库</el-dropdown-item>
+                <el-dropdown-item command="2">资源条目管理</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </el-col>
+        <el-col :span="2" :offset="3">
           <el-dropdown trigger="hover" @command="userNav" v-if="logined">
             <el-button
               type="primary"
@@ -39,15 +55,6 @@
             </el-button>
             <template #dropdown>
               <el-dropdown-menu :router="true">
-                <el-dropdown-item command="1" v-if="adminFlag"
-                  >资源条目管理</el-dropdown-item
-                >
-                <el-dropdown-item command="4" v-if="adminFlag"
-                  >资源文件管理</el-dropdown-item
-                >
-                <el-dropdown-item v-if="adminFlag" command="2"
-                  >监测项目管理</el-dropdown-item
-                >
                 <el-dropdown-item command="3">退出</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -109,12 +116,13 @@ export default defineComponent({
     };
 
     const userNav = (param: string) => {
+      console.log(param);
       switch (param) {
         case "1":
-          router.push({ name: "resourceAdmin" });
+          router.push({ name: "folderAdmin" });
           return;
         case "2":
-          router.push({ name: "project" });
+          router.push({ name: "resourceAdmin" });
           return;
         case "3":
           store.logout();
@@ -170,6 +178,9 @@ div.header-main {
       font-size: 2vh;
       font-weight: 600;
       transition-duration: 0.5s;
+      &:focus-visible {
+        outline: none !important;
+      }
       &:hover {
         cursor: pointer;
         transition-duration: 0.3s;
@@ -260,6 +271,11 @@ div.header-main {
         background-size: contain;
         background-repeat: no-repeat;
       }
+    }
+    .admin {
+      display: block;
+      // position: none;
+      text-align: center;
     }
     &:last-child {
       border-radius: 3vh;

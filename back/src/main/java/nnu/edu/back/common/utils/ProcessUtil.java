@@ -19,7 +19,7 @@ import java.util.List;
 public class ProcessUtil {
 
     //    static String pythonDir = "C:/nhri/pythonDir/";
-    static String pythonDir = "D:/desktop/桌面/Assignments/data/monitor/python/";
+    static String pythonDir = "D:/zhuomian/水科院/python/";
     //    static String pythonDir = "/home/zym/python/";
     static String pythonStr = "python";
 //    static String pythonStr = "python3";

@@ -23,25 +23,38 @@ public interface DynamicMapper {
 
     List<Map<String, Object>> getDistanceAndElevationByName(String id, @Param("sectionName") String sectionName);
 
-    List<Map<String, Object>> getFluxNameAndType(String id);
+    List<String> getTableIdList(String id);
 
-    List<Flux> getFluxByNameAndType(String id, @Param("name") String name, @Param("type") String type);
+    String getTypeByTableId(String id, @Param("tableId") String tableId);
+
+    List<String> getTimeListByTableId(String id, @Param("tableId") String tableId);
+
+    List<String> getNameListByTableId(String id, @Param("tableId") String tableId);
+
+    List<Double> getFluxValueByTableIdAndName(String id, @Param("tableId") String tableId, @Param("name") String name);
+
 
     List<Substrate> getAllSubstrate(String id);
 
-    List<Map<String, Object>> getSandTransportNameAndType(String id);
+    List<String> getSandTransportTableList(String id);
 
-    List<SandTransport> getSandTransportByNameAndType(String id, @Param("name") String name, @Param("type") String type);
+    String getSandTransportTypeByTableId(String id, @Param("tableId") String tableId);
 
-    List<String> getSectionSegment(String id, @Param("name") String name);
+    List<String> getSandTransportTimeListByTableId(String id, @Param("tableId") String tableId);
+
+    List<String> getSandTransportNameListByTableId(String id, @Param("tableId") String tableId);
+
+    List<Double> getSandTransportValueByTableIdAndName(String id, @Param("tableId") String tableId, @Param("name") String name);
+
+    List<String> getSectionSegment(String id, @Param("name") String name, @Param("type") String type);
 
     List<Map<String, Object>> getSpeedOrientationNameAndType(String id);
 
     List<String> getTime(String id, @Param("name") String name, @Param("type") String type);
 
-    List<Double> getSpeedByNameAndType(String id, @Param("name") String name, @Param("type") String type);
+    List<Double> getSpeedByNameAndTypeAndDistance(String id, @Param("name") String name, @Param("type") String type, @Param("distance") String distance);
 
-    List<Double> getOrientationByNameAndType(String id, @Param("name") String name, @Param("type") String type);
+    List<Double> getOrientationByNameAndType(String id, @Param("name") String name, @Param("type") String type, @Param("distance") String distance);
 
     List<String> getSandContentClass(String id);
 

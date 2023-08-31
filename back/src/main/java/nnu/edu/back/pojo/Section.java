@@ -20,4 +20,5 @@ public class Section {
     Double startLat;
     Double endLon;
     Double endLat;
+    String angle;
 }

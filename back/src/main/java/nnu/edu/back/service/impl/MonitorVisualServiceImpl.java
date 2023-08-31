@@ -51,28 +51,29 @@ public class MonitorVisualServiceImpl implements MonitorVisualService {
         return map;
     }
 
-    @Override
-    public List<Map<String, Object>> getFluxNameAndType(String projectId) {
-        return dynamicMapper.getFluxNameAndType(projectId);
-    }
 
     @Override
-    public Map<String, Object> getFluxByNameAndType(String projectId, String name, String type) {
-        if (type.equals("small")) type = "小潮";
-        else if (type.equals("large")) type = "大潮";
-        else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
-        List<Flux> fluxList = dynamicMapper.getFluxByNameAndType(projectId, name, type);
-        Map<String, Object> res = new HashMap<>();
-        List<String> time = new ArrayList<>();
-        List<Double> value = new ArrayList<>();
-        res.put("name", name);
-        for (Flux flux : fluxList) {
-            time.add(flux.getTime());
-            value.add(flux.getValue() == null ? 0 : flux.getValue());
+    public List<Map<String, Object>> getFlux(String projectId) {
+        List<Map<String, Object>> res = new ArrayList<>();
+        List<String> tableIdList = dynamicMapper.getTableIdList(projectId);
+        for (String tableId : tableIdList) {
+            Map<String, Object> map = new HashMap<>();
+            List<String> timeList = dynamicMapper.getTimeListByTableId(projectId, tableId);
+            List<String> nameList = dynamicMapper.getNameListByTableId(projectId, tableId);
+            List<List<Double>> value = new ArrayList<>();
+            for (String name : nameList) {
+                List<Double> valueList = dynamicMapper.getFluxValueByTableIdAndName(projectId, tableId, name);
+                value.add(valueList);
+            }
+            map.put("type", dynamicMapper.getTypeByTableId(projectId, tableId));
+            map.put("time", timeList);
+            map.put("name", nameList);
+            map.put("value", value);
+            res.add(map);
         }
-        res.put("time", time);
-        res.put("value", value);
         return res;
+
+
     }
 
     @Override
@@ -82,26 +83,24 @@ public class MonitorVisualServiceImpl implements MonitorVisualService {
     }
 
     @Override
-    public List<Map<String, Object>> getSandTransportNameAndType(String projectId) {
-        return dynamicMapper.getSandTransportNameAndType(projectId);
-    }
-
-    @Override
-    public Map<String, Object> getSandTransportByNameAndType(String projectId, String name, String type) {
-        if (type.equals("small")) type = "小潮";
-        else if (type.equals("large")) type = "大潮";
-        else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
-        List<SandTransport> sandTransportList = dynamicMapper.getSandTransportByNameAndType(projectId, name, type);
-        Map<String, Object> res = new HashMap<>();
-        List<String> time = new ArrayList<>();
-        List<Double> value = new ArrayList<>();
-        res.put("name", name);
-        for (SandTransport sandTransport : sandTransportList) {
-            time.add(sandTransport.getTime());
-            value.add(sandTransport.getValue() == null ? 0 : sandTransport.getValue());
+    public List<Map<String, Object>> getSandTransport(String projectId) {
+        List<Map<String, Object>> res = new ArrayList<>();
+        List<String> tableIdList = dynamicMapper.getSandTransportTableList(projectId);
+        for (String tableId : tableIdList) {
+            Map<String, Object> map = new HashMap<>();
+            List<String> timeList = dynamicMapper.getSandTransportTimeListByTableId(projectId, tableId);
+            List<String> nameList = dynamicMapper.getSandTransportNameListByTableId(projectId, tableId);
+            List<List<Double>> value = new ArrayList<>();
+            for (String name : nameList) {
+                List<Double> valueList = dynamicMapper.getSandTransportValueByTableIdAndName(projectId, tableId, name);
+                value.add(valueList);
+            }
+            map.put("type", dynamicMapper.getSandTransportTypeByTableId(projectId, tableId));
+            map.put("time", timeList);
+            map.put("name", nameList);
+            map.put("value", value);
+            res.add(map);
         }
-        res.put("time", time);
-        res.put("value", value);
         return res;
     }
 
@@ -116,20 +115,14 @@ public class MonitorVisualServiceImpl implements MonitorVisualService {
         else if (type.equals("large")) type = "大潮";
         else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
         List<String> times = dynamicMapper.getTime(projectId, name, type);
-        List<String> nameList = dynamicMapper.getSectionSegment(projectId, name);
-        List<Double> valueList = dynamicMapper.getSpeedByNameAndType(projectId, name, type);
+        List<String> nameList = dynamicMapper.getSectionSegment(projectId, name, type);
         List<List<Double>> value = new ArrayList<>();
         Map<String, Object> res = new HashMap<>();
         res.put("name", name);
         res.put("time", times);
         res.put("nameList", nameList);
-        int index = 0;
-        for (int i = 0; i < nameList.size(); i++) {
-            List<Double> list = new ArrayList<>();
-            for (int j = 0; j < times.size(); j++) {
-                list.add(valueList.get(index++));
-            }
-            value.add(list);
+        for (String str : nameList) {
+            value.add(dynamicMapper.getSpeedByNameAndTypeAndDistance(projectId, name, type, str));
         }
         res.put("value", value);
         return res;
@@ -141,20 +134,14 @@ public class MonitorVisualServiceImpl implements MonitorVisualService {
         else if (type.equals("large")) type = "大潮";
         else throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
         List<String> times = dynamicMapper.getTime(projectId, name, type);
-        List<String> nameList = dynamicMapper.getSectionSegment(projectId, name);
-        List<Double> valueList = dynamicMapper.getOrientationByNameAndType(projectId, name, type);
+        List<String> nameList = dynamicMapper.getSectionSegment(projectId, name, type);
         List<List<Double>> value = new ArrayList<>();
         Map<String, Object> res = new HashMap<>();
         res.put("name", name);
         res.put("time", times);
         res.put("nameList", nameList);
-        int index = 0;
-        for (int i = 0; i < nameList.size(); i++) {
-            List<Double> list = new ArrayList<>();
-            for (int j = 0; j < times.size(); j++) {
-                list.add(valueList.get(index++));
-            }
-            value.add(list);
+        for (String str : nameList) {
+            value.add(dynamicMapper.getOrientationByNameAndType(projectId, name, type, str));
         }
         res.put("value", value);
         return res;

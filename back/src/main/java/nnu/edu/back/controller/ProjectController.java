@@ -69,4 +69,10 @@ public class ProjectController {
         return ResultUtils.success(projectService.getAllVisualProject());
     }
 
+    @RequestMapping(value = "/deleteProject/{id}", method = RequestMethod.DELETE)
+    public JsonResult deleteProject(@PathVariable String id, @JwtTokenParser("role") String role) {
+        projectService.deleteProject(id, role);
+        return ResultUtils.success();
+    }
+
 }

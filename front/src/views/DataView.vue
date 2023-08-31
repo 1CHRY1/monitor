@@ -12,7 +12,7 @@
             </div>
             <div class="title-text">
                 <div class="title-text-up">工程监测可视化</div>
-                <div class="title-text-bot">{{ currentProject?.name }}</div>
+                <div class="title-text-bot">{{ currentProject?.projectName }}</div>
             </div>
             <div class="title-wrap-right">
                 <svg class="title-svg-right" x="0" y="0" width="100%" height="100%" viewBox="0 0 600 600" preserveAspectRatio="none">
@@ -25,10 +25,10 @@
                 <el-option  
                     v-for="item in projectOptions"
                     :key="item.id"
-                    :label="item.name"
+                    :label="item.projectName"
                     :value="item"
                 >
-                    <span style="float: left">{{ item.name }}</span>
+                    <span style="float: left">{{ item.projectName }}</span>
                     <span style="float: right; color: var(--el-text-color-secondary);" > {{ item.time }}</span>
                 </el-option>
             </el-select>
@@ -40,9 +40,15 @@
     </div>
     <div class="content-container">
         <div class="content-container-wrapper">
-            <chartContainer v-for="chart in chartObjects" :chartId="chart.chartId" :styleType="chart.styleType" :order="chart.order" :project-id="currentProject.id" ref="chartConatinerRefs"/>
-            <doubleChartContainer v-for="chart in doubleChartObjects" :chartId="chart.chartId" :styleType="chart.styleType" :order="chart.order" :project-id="currentProject.id"/>
-            <centerMap :mapId="mapIndex" order="4"></centerMap>
+            <Suspense>
+                <chartContainer v-for="chart in chartObjects" :chartId="chart.chartId" :styleType="chart.styleType" :order="chart.order" :project-id="currentProject.id" ref="chartConatinerRefs"/>
+            </Suspense>
+            <Suspense>
+                <doubleChartContainer v-for="chart in doubleChartObjects" :chartId="chart.chartId" :styleType="chart.styleType" :order="chart.order" :project-id="currentProject.id"/>
+            </Suspense>
+            <Suspense>
+                <centerMap :mapId="mapIndex" order="4"></centerMap>
+            </Suspense>
         </div>
     </div>
 </template>
@@ -53,15 +59,22 @@ import centerMap from '@/components/dataViewer/centerMap.vue';
 import chartContainer from '@/components/dataViewer/chartContainer.vue';
 import doubleChartContainer from '@/components/dataViewer/doubleChartContainer.vue';
 import { type ProjectOption } from '@/utils/viewerData';
+import { 
+    getAllVisualProject, getSpeedOrientationNameAndType, getSpeed
+} from '@/api/request';
 
+const projects = await getAllVisualProject();
+console.log('projects', projects?.data);
 
-let projectOptions = ref([
-    {id: 1, name: '苏通二通道工可阶段水沙观测', time:'2023-07'},
-]);
+let projectOptions = ref(projects?.data);
 
 const chartConatinerRefs = ref<InstanceType<typeof chartContainer>[]>([]);
 
 let currentProject = ref<ProjectOption>(projectOptions.value[0]);
+
+console.log("speed ori", await getSpeed(currentProject.value.id, 'ETDD', 'small'));
+// const test = await getSandContentValue(currentProject.value.id, "LSSD-AD");
+// console.log("test result", test);
 
 let expanded = ref(false);
 
@@ -97,7 +110,7 @@ let doubleChartObjects = [
 
 onMounted(() => {
     setInterval(updataTime, 1000);
-    console.log(chartConatinerRefs.value[0].changeData());
+    // console.log(chartConatinerRefs.value[0].changeData());
 });
 
 </script>

@@ -1,6 +1,7 @@
 package nnu.edu.back.dao.main;
 
 import nnu.edu.back.pojo.Files;
+import nnu.edu.back.pojo.Folder;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -25,5 +26,11 @@ public interface FilesMapper {
 
     Files findInfoById(@Param("id") String id);
 
+    List<Folder> findFolderByParentId(@Param("parentId") String parentId);
 
+    List<Files> findFilesByParentId(@Param("parentId") String parentId);
+
+    Folder findFolderById(@Param("id") String id);
+
+    void addFolder(@Param("folder") Folder folder);
 }

@@ -5,6 +5,7 @@ import nnu.edu.back.pojo.Files;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,4 +23,7 @@ public interface FilesService {
 
     void cancelVisualBind(String id);
 
+    List<Object> findByFolderId(String parentId, String role);
+
+    String addFolder(String folderName, String parentId, String role);
 }

@@ -24,4 +24,6 @@ public interface ProjectMapper {
     int getPageCount(@Param("keyword") String keyword, @Param("type") String type);
 
     List<Project> getAllVisualProject();
+
+    void deleteProject(@Param("id") String id);
 }

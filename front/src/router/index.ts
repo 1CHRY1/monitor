@@ -23,7 +23,16 @@ const constantRoutes: Array<RouteRecordRaw> = [
   {
     path: "/dataViewer",
     name: "dataViewer",
-    component: () => import("@/views/DataView.vue"),
+    component: () => import("@/views/DataViewWrapper.vue"),
+  },
+  {
+    path:"/test",
+    name:"test",
+    component:()=>import("@/views/FolderAdminView.vue"),
+    meta: {
+          requiresAuth: "member",
+          keepAlive: true,
+    },
   },
   {
     path: "/login",
@@ -114,16 +123,7 @@ export const asyncRouters: Array<RouteRecordRaw> = [
     children: [
       {
         path: "",
-        redirect: "/admin/project",
-      },
-      {
-        path: "project",
-        name: "project",
-        component: () => import("@/views/ProjectAdminView.vue"),
-        meta: {
-          requiresAuth: "admin",
-          // keepAlive: true,
-        },
+        redirect: "/admin/folder",
       },
       {
         path: "folder",
@@ -140,12 +140,12 @@ export const asyncRouters: Array<RouteRecordRaw> = [
         component: () => import("@/views/ResourceAdminView.vue"),
         meta: {
           requiresAuth: "admin",
-          keepAlive: true,
+          // keepAlive: true,
         },
       },
       {
         path: "createResource",
-        name: "createResource", 
+        name: "createResource",
         component: () => import("@/views/CreateResourceView.vue"),
         meta: {
           requiresAuth: "admin",
@@ -153,7 +153,7 @@ export const asyncRouters: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "updateResource",
+        path: "updateResource/:id",
         name: "updateResource",
         component: () => import("@/views/UpdateResourceView.vue"),
         meta: {

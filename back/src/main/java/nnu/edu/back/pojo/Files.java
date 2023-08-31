@@ -21,4 +21,5 @@ public class Files {
     String size;
     String visualType;
     String visualId;
+    String parentId;
 }

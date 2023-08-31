@@ -19,6 +19,8 @@ import java.util.Map;
 public interface DataRelationalMapper {
     void batchDeleteByDataListId(@Param("list") List<String> list);
 
+    void deleteByDataListId(@Param("dataListId") String dataListId);
+
     List<Files> findFilesByDataListId(@Param("dataListId") String dataListId);
 
     List<String> findFileIdByDataListId(@Param("dataListId") String dataListId);

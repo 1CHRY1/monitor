@@ -15,6 +15,7 @@
 import CarouselComponent from "@/components/home/CarouselComponent.vue";
 import { defineComponent, onMounted } from "vue";
 import IntroduceComponent from "@/components/home/IntroduceComponent.vue";
+
 export default defineComponent({
   components: { IntroduceComponent, CarouselComponent },
   setup() {

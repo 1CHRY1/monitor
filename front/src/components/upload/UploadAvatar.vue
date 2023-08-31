@@ -37,12 +37,20 @@ export default defineComponent({
       }
     };
 
+    const clearAvatar = () => {
+      imageUrl.value = "";
+    };
+
+    const updateImage = (image: string) => {
+      imageUrl.value = image;
+    };
+
     onMounted(() => {
       if (props.pictureName) {
         imageUrl.value = props.pictureName;
       }
     });
-    return { imageUrl, changeHandle, successHandle };
+    return { imageUrl, changeHandle, successHandle, clearAvatar, updateImage };
   },
 });
 </script>

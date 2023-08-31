@@ -11,26 +11,24 @@ export default {
   
 <script setup lang='ts'>
 import * as echarts from 'echarts';
-// import { BarChart, LineChart, PictorialBarChart } from 'echarts/charts';
-// import { TitleComponent, TooltipComponent, GridComponent } from 'echarts/components';
-// import { CanvasRenderer } from 'echarts/renderers';
+import { EChartsOption } from 'echarts';
 import { onMounted, ref, toRef } from 'vue';
 import { chartOptionTest, ChartDataPreparer } from '@/utils/viewerData';
-import * as themeJson from '../../utils/dark.json';
-
-// echarts.use([BarChart, LineChart, PictorialBarChart, TitleComponent, TooltipComponent, GridComponent, CanvasRenderer]);
+import { getSectionElevation } from '@/api/request';
 
 interface Props {
     chartId: string,
     order: string,
     styleType: string,
-    projectId: number
+    projectId: string
 }
-echarts.registerTheme('darkNew', themeJson);
 
 const props = defineProps<Props>();
 
 let curProjectId = toRef(props, 'projectId')
+
+// const test = await getSubstrate(props.projectId);
+// console.log("test result", test);
 
 const chartOptId = ref(props.chartId);
 const styleId = ref(props.styleType);
@@ -38,7 +36,7 @@ const chartDom = ref<HTMLElement>();
 const order = ref(props.order);
 let projectId = ref(props.projectId);
 
-const chartDatapreparer = new ChartDataPreparer(+chartOptId.value, projectId.value);
+const chartDatapreparer = new ChartDataPreparer(+chartOptId.value);
 
 const changeData = () => {
     console.log(curProjectId.value);
@@ -50,21 +48,36 @@ const changeData = () => {
 //       noShown.value = !newShown;
 //       console.log(noShown.value);
 //   });
-
-onMounted(() => {
+let optionIndex = 0;
+onMounted(async () => {
     // console.log(chartDom.value);
     let chart = echarts.init(chartDom.value as HTMLElement);
-    // chartDatapreparer.requestChartData()
-    //     .then((res) => {
-    //         chartDatapreparer.buildData2ChartOption(res.data);
-    //         chartDatapreparer.getClean();
-    //     })
-    //     .catch((err) => {
-    //         console.log(`request chart ${chartOptId.value} data error`, err);
-    //         chartDatapreparer.getDirty();
-    //     })
-    let chartConfig = chartOptionTest[+(chartOptId.value)-1];
-    chart.setOption(chartConfig)
+    const chartOption = await chartDatapreparer.buildChartOption(projectId.value);
+    // if (chartOption is EChartsOption) {
+
+    // }
+    if (Array.isArray(chartOption)) {
+        // console.log("options", chartOption)
+        chart.setOption(chartOption[0]);
+        setInterval(() => {
+            chart.setOption(chartOption[optionIndex+1]);
+            optionIndex = (optionIndex+1)%(chartOption.length-1);
+        }, 2000)
+    }
+    else{
+        // console.log("option", chartOption)
+        chart.setOption(chartOption)
+        if (chartDatapreparer.isDynamic === true) {
+            setInterval(async () => {
+                chartDatapreparer.dynamicIndex += 1;
+                const newSeries = await chartDatapreparer.buildChartOption(projectId.value);
+                chart.clear();
+                chartOption.series = (newSeries as EChartsOption).series;
+                // console.log(chartOption);
+                chart.setOption(chartOption);
+            }, 2000)
+        }
+    }
     // TODO: window.onsize doesn't work on components
     // window.onresize = function () {
     //     chart.resize();
@@ -89,6 +102,7 @@ div.chart-container {
     &[styleId='1'] {
         width: 28%;
         height: 32%;
+        // color: #dd6c6686, #8dc1a991, #759aa09d,#eedc78a3, #73a373aa, #73babc93, #e69d878d, #ea7e5394, #7289aba9, #91ca8ca4, #f49e4293;
     }
 
     &[styleId='2'] {

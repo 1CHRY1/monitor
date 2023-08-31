@@ -1,4 +1,5 @@
 import { get, post, del, patch } from "./axios-config";
+import { DataListType } from "@/type";
 
 export const login = async (jsonData: { email: string; password: string }) => {
   return await post(`/user/login`, true, jsonData);
@@ -48,6 +49,19 @@ export const getAllVisualProject = async () => {
   return await get(`/project/getAllVisualProject`, true);
 };
 
+export const deleteProject = async (id: string) => {
+  return await del(`/project/deleteProject/${id}`, true);
+};
+
+export const addDataList = async (
+  jsonData: Omit<
+    DataListType,
+    "createTime" | "updateTime" | "download" | "watch"
+  >
+) => {
+  return await post(`/dataList/addDataList`, true, jsonData);
+};
+
 export const fuzzyQueryDataList = async (jsonData: {
   page: number;
   size: number;
@@ -77,6 +91,26 @@ export const addWatchCount = async (id: string) => {
 
 export const findFiles = async (dataListId: string) => {
   return await get(`/dataList/findFiles/${dataListId}`, true);
+};
+
+export const updateDataList = async (
+  jsonData: Omit<
+    DataListType,
+    "createTime" | "updateTime" | "download" | "watch"
+  >
+) => {
+  return await patch(`/dataList/updateDataList`, true, jsonData);
+};
+
+export const deleteDataList = async (dataListId: string) => {
+  return await del(`/dataList/deleteDataList/${dataListId}`, true);
+};
+
+export const addRelational = async (jsonDta: {
+  dataListId: string;
+  fileIdList: string[];
+}) => {
+  return await post(`/relational/addRelational`, true, jsonDta);
 };
 
 export const getSimilarData = async (
@@ -387,41 +421,12 @@ export const getSectionElevation = async (projectId: string) => {
   return await get(`/monitorVisual/getSectionElevation/${projectId}`, true);
 };
 
-export const getFluxNameAndType = async (projectId: string) => {
-  return await get(`/monitorVisual/getFluxNameAndType/${projectId}`, true);
-};
-
-export const getFluxByNameAndType = async (
-  projectId: string,
-  name: string,
-  type: string
-) => {
-  return await get(
-    `/monitorVisual/getFluxByNameAndType/${projectId}/${name}/${type}`,
-    true
-  );
+export const getFlux = async (projectId: string) => {
+  return await get(`/monitorVisual/getFlux/${projectId}`, true);
 };
 
 export const getSubstrate = async (projectId: string) => {
   return await get(`/monitorVisual/getSubstrate/${projectId}`, true);
-};
-
-export const getSandTransportNameAndType = async (projectId: string) => {
-  return await get(
-    `/monitorVisual/getSandTransportNameAndType/${projectId}`,
-    true
-  );
-};
-
-export const getSandTransportByNameAndType = async (
-  projectId: string,
-  name: string,
-  type: string
-) => {
-  return await get(
-    `/monitorVisual/getSandTransportByNameAndType/${projectId}/${name}/${type}`,
-    true
-  );
 };
 
 export const getSpeedOrientationNameAndType = async (projectId: string) => {
@@ -464,15 +469,71 @@ export const getSandContentValue = async (projectId: string, name: string) => {
   );
 };
 
-
-
 // ----------------管理员界面相关------------------------------
-export async function findByFolderId(folderId: string) {
-  return 'findByFolderId';
+
+export async function findByFolderId(parentId: string) {
+  return await get(`/files/findByFolderId/${parentId}`, true);
 }
 
-export async function deleteFilesOrFolders(jsonData:{
-  filesToDelete:string [],folderToDelete:string []
+export async function addFolder(jsonData: {
+  folderName: string;
+  parentId: string;
 }) {
-  return 'deleteFilesOrFolders';
+  return await post(`/files/addFolder`, true, jsonData);
+}
+
+export async function deleteFilesOrFolders(jsonData: {
+  files: string[];
+  folders: string[];
+}) {}
+
+export async function uploadParts(
+  uid: string,
+  number: number,
+  formData: FormData
+) {
+  // return await post(`/visual/uploadParts/${uid}/${number}`, formData);
+  return {
+    data: "123",
+  };
+}
+
+export async function mergeParts(
+  uid: string,
+  total: number,
+  type: string,
+  name: string
+) {
+  // return await post(`/visual/mergeParts/${uid}/${total}/${type}/${name}`);
+  return {
+    data: "123",
+  };
+}
+
+export async function bindVisualData(jsonData: {
+  id: string;
+  fileName: string;
+  type: string;
+  srid: string;
+  coordinates: number[][];
+  view: {
+    zoom: number;
+    center: number[];
+  } | null;
+}) {
+  // return await post(`/file/bindVisualData`, jsonData);
+  return {
+    data: "123",
+  };
+}
+
+export async function cancelVisualBind(id: string) {
+  // return await del(`/file/cancelVisualBind/${id}`);
+  return {
+    data: "123",
+  };
+}
+
+export async function getDownloadURL(id: string) {
+  return "downloadURL";
 }

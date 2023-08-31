@@ -262,20 +262,28 @@ export type TreeData = {
   parentName?: string;
 };
 
-export type Folder = {
+export type BindDataFileInfo = {
+  id: string;
+  fileName: string;
+  address: string;
+  size: string;
+  visualType: string;
+  visualId: string;
+  view: string;
+};
+
+export type FolderType = {
   id: string;
   folderName: string;
   parentId: string;
   flag: boolean;
 };
-export type File = {
+export type FileType = {
   id: string;
   fileName: string;
+  address: string;
   visualType: string;
   size: string;
-  uploader: string;
-  folderId: string;
+  parentId: string;
   visualId: string;
-  flag: boolean;
-  view?: string;
 };

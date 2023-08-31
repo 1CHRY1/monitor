@@ -180,4 +180,12 @@ public class DataListServiceImpl implements DataListService {
     public List<Map<String, Object>> getIdAndDataListName(int size) {
         return dataListMapper.getRandom(size);
     }
+
+    @Override
+    public void deleteDataList(String id, String role) {
+        if (role.equals("admin")) {
+            dataListMapper.deleteById(id);
+            dataRelationalMapper.deleteByDataListId(id);
+        }
+    }
 }

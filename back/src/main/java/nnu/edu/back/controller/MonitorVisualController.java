@@ -32,14 +32,9 @@ public class MonitorVisualController {
         return ResultUtils.success(monitorVisualService.getSectionElevation(projectId));
     }
 
-    @RequestMapping(value = "/getFluxNameAndType/{projectId}", method = RequestMethod.GET)
-    public JsonResult getFluxNameAndType(@PathVariable String projectId) {
-        return ResultUtils.success(monitorVisualService.getFluxNameAndType(projectId));
-    }
-
-    @RequestMapping(value = "/getFluxByNameAndType/{projectId}/{name}/{type}", method = RequestMethod.GET)
-    public JsonResult getFluxByNameAndType(@PathVariable String projectId, @PathVariable String name, @PathVariable String type) {
-        return ResultUtils.success(monitorVisualService.getFluxByNameAndType(projectId, name, type));
+    @RequestMapping(value = "/getFlux/{projectId}", method = RequestMethod.GET)
+    public JsonResult getFlux(@PathVariable String projectId) {
+        return ResultUtils.success(monitorVisualService.getFlux(projectId));
     }
 
     @RequestMapping(value = "/getSubstrate/{projectId}", method = RequestMethod.GET)
@@ -47,14 +42,9 @@ public class MonitorVisualController {
         return ResultUtils.success(monitorVisualService.getSubstrate(projectId));
     }
 
-    @RequestMapping(value = "/getSandTransportNameAndType/{projectId}", method = RequestMethod.GET)
-    public JsonResult getSandTransportNameAndType(@PathVariable String projectId) {
-        return ResultUtils.success(monitorVisualService.getSandTransportNameAndType(projectId));
-    }
-
-    @RequestMapping(value = "/getSandTransportByNameAndType/{projectId}/{name}/{type}", method = RequestMethod.GET)
-    public JsonResult getSandTransportByNameAndType(@PathVariable String projectId, @PathVariable String name, @PathVariable String type) {
-        return ResultUtils.success(monitorVisualService.getSandTransportByNameAndType(projectId, name, type));
+    @RequestMapping(value = "/getSandTransport/{projectId}", method = RequestMethod.GET)
+    public JsonResult getSandTransport(@PathVariable String projectId) {
+        return ResultUtils.success(monitorVisualService.getSandTransport(projectId));
     }
 
     @RequestMapping(value = "/getSpeedOrientationNameAndType/{projectId}", method = RequestMethod.GET)
