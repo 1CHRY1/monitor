@@ -463,3 +463,16 @@ export const getSandContentValue = async (projectId: string, name: string) => {
     true
   );
 };
+
+
+
+// ----------------管理员界面相关------------------------------
+export async function findByFolderId(folderId: string) {
+  return 'findByFolderId';
+}
+
+export async function deleteFilesOrFolders(jsonData:{
+  filesToDelete:string [],folderToDelete:string []
+}) {
+  return 'deleteFilesOrFolders';
+}
