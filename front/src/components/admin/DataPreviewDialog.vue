@@ -252,6 +252,7 @@
       align-items: center;
       padding-left: 50px;
       padding-top: 20px;
+      padding-bottom: 20px;
     }
 
     .head::before,.head::after {

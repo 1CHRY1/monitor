@@ -1,10 +1,11 @@
 <template>
   <div class="main">
     <el-row :gutter="0" id="main-elrow">
-      <el-col :span="14" :offset="5">
+      <el-col :span="16" :offset="4 "> 
         <div class="resource-main">
           <div class="table-head">
-            <el-icon size="20px" @click="backClick"><arrow-left /></el-icon>
+            <el-icon size="20px" @click="backClick" ><arrow-left /></el-icon>
+
             <div class="path">
               <div class="path-item">user</div>
               <div class="path-item separate">/</div>
@@ -43,6 +44,7 @@
               :data="tableData"
               style="width: 100% ;" max-height="calc(90vh - 240px - 5rem)"
               stripe
+              v-loading="loading"
               @cell-dblclick="dblclick"
               highlight-current-row
             >
@@ -68,15 +70,6 @@
                 <template #default="scope">
                   <!-- #default="scope" 插槽，作为参数可以让外面的方法能够访问到scope内部的数据 -->
                   <div class="table-name">
-                    <!-- <el-checkbox v-model="scope.row.flag" size="large" @change="changeHandle(scope.row)" /> -->
-                    <!-- <label class="container">
-                      <input
-                        v-model="scope.row.flag"
-                        type="checkbox"
-                        @change="changeHandle(scope.row)"
-                      />
-                      <div class="checkmark"></div>
-                    </label> -->
                     <div class="text">
                       <svg style="width: 28px; height: 28px; ">
                         <use :xlink:href="getIcon(scope.row)"></use>
@@ -220,7 +213,6 @@
 
           <el-dialog
             v-model="Visible_PreviewDialog"
-            width="25%"
             :show-close="false"
           >
             <!-- 一个组件，专门写PreviewDialog -->
@@ -238,8 +230,6 @@
               @updateVisualFile="updateVisualFile"
             ></visualBindDialog>
           </el-dialog>
-
-          <!-- 其他dialog   预览等-->
         </div>
       </el-col>
     </el-row>
@@ -280,7 +270,8 @@ const Visible_BindDialog = ref(false);
 const upload = ref<HTMLElement>();
 // const Visible_BindDialog = ref(false);
 const input = ref("");
-const inputFocus = ref<HTMLElement>();
+const loading = ref(false);
+
 
 const getName = (item: FolderType | FileType) => {
   if ("fileName" in item) {
@@ -510,8 +501,7 @@ const dblclick = async (item: FolderType | FileType) => {
   //双击进入文件夹
   cancelAll(); //清除selected
   if ("folderName" in item) {
-    //基于id 向后端拿数据  后 transition 为tableData
-    //path也得更新
+    loading.value = true;
     const data = await findByFolderId(item.id); //拿到item的所有下级文件信息
     if (data && data.code === 0) {
       transitionData(data.data);
@@ -521,12 +511,15 @@ const dblclick = async (item: FolderType | FileType) => {
         parentId: item.parentId,
       });
     }
+    loading.value = false;
+
   }
 };
 
 const backClick = async () => {
   // 清空selected
   cancelAll();
+  loading.value = true;
   if (path.value.length > 0) {
     let parentId: string = "-1";
     if (path.value[path.value.length - 1].parentId != "") {
@@ -539,12 +532,14 @@ const backClick = async () => {
       path.value.pop();
     }
   } else {
+    loading.value = false;
     const dataList = await findByFolderId("-1");
     if (dataList && dataList.code === 0) {
       transitionData(dataList.data);
       path.value.pop();
     }
   }
+  loading.value = false;
 };
 
 const transitionData = (param: FolderType[] | FileType[]) => {
@@ -556,9 +551,11 @@ const transitionData = (param: FolderType[] | FileType[]) => {
 
 onMounted(async () => {
   const tableList = await findByFolderId("-1");
-  if (tableList && tableList.code === 0) {
+
+  if (tableList && tableList.code === 0) {   
     transitionData(tableList.data);
   }
+
   skeletonFlag.value = false;
 });
 
@@ -590,6 +587,7 @@ const cancelAll = ()=>{
     item.flag = false;
   }
 }
+
 
 
 </script>
@@ -697,7 +695,7 @@ const cancelAll = ()=>{
   cursor: pointer;
   input {
     position: absolute;
-    opacity: 0;
+    opacity: 0; 
   }
 }
 
@@ -760,6 +758,5 @@ const cancelAll = ()=>{
 #main-elrow{
   height:calc(100vh - 250px - 5rem);
 }
-
 
 </style>

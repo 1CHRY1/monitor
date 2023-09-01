@@ -1,5 +1,6 @@
 <template>
   <div class="data-bind-main">
+
     <el-table :data="tableData" height="300px">
       <el-table-column label="名称" prop="name" />
       <el-table-column label="大小" prop="size" />
@@ -31,6 +32,7 @@
     </el-table>
 
     <el-dialog v-model="dialogFlag" width="800px" :show-close="false">
+      <p class="title">创建文件夹</p>
       <div class="dialogTable">
         <div class="table-head">
           <el-icon size="20px" @click="backClick"><arrow-left /></el-icon>
@@ -393,6 +395,45 @@ export default defineComponent({
   border: solid 0.5px #ebeef5;
   padding: 0 5px;
 
+  .title{
+    font-size: 25px;
+    color: royalblue;
+    font-weight: 600;
+    letter-spacing: -1px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-left: 40px;
+    padding-top: 10px;
+    margin: 5px 0px;
+  }
+  .title::before,.title::after {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      left: 10px;
+      background-color: royalblue;
+    }
+    @keyframes pulse {
+      from {
+        transform: scale(0.9);
+        opacity: 1;
+      }
+      to {
+        transform: scale(1.8);
+        opacity: 0;
+      }
+    }
+
+    .title::after {
+      width: 18px;
+      height: 18px;
+      animation: pulse 1s linear infinite;
+    }
+
+
   .dialogTable {
     padding: 15px 10px 10px 10px;
     cursor: pointer;
@@ -412,6 +453,7 @@ export default defineComponent({
         .path-item {
           height: 20px;
           line-height: 20px;
+          font-size: 15px;
         }
         .separate {
           color: #b7bbc3;

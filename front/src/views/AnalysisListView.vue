@@ -177,7 +177,8 @@ export default defineComponent({
     background-color: black;
     // background-color: #29a3a36e;
     background-image: url("../assets/turquoiseBackImg1.jpg");
-    background-size: cover;
+    background-size: 100vw 100vh;
+    background-repeat: no-repeat;
     background-position: center center;
   }
 
@@ -187,6 +188,7 @@ export default defineComponent({
     justify-content: space-around;
     // margin-bottom: 30px;
     padding-bottom: 30px;
+    padding-top: 35px;
 
     :deep().el-pagination__jump{
       color:#ffffff
