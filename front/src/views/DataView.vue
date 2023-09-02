@@ -60,7 +60,7 @@ import chartContainer from '@/components/dataViewer/chartContainer.vue';
 import doubleChartContainer from '@/components/dataViewer/doubleChartContainer.vue';
 import { type ProjectOption } from '@/utils/viewerData';
 import { 
-    getAllVisualProject, getSpeedOrientationNameAndType, getSpeed
+    getAllVisualProject, getSandTansport
 } from '@/api/request';
 
 const projects = await getAllVisualProject();
@@ -72,7 +72,7 @@ const chartConatinerRefs = ref<InstanceType<typeof chartContainer>[]>([]);
 
 let currentProject = ref<ProjectOption>(projectOptions.value[0]);
 
-console.log("speed ori", await getSpeed(currentProject.value.id, 'ETDD', 'small'));
+// console.log("speed ori", await getSandTansport(currentProject.value.id));
 // const test = await getSandContentValue(currentProject.value.id, "LSSD-AD");
 // console.log("test result", test);
 

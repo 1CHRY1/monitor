@@ -432,7 +432,7 @@ export const getSubstrate = async (projectId: string) => {
 export const getSpeedOrientationNameAndType = async (projectId: string) => {
   return await get(
     `/monitorVisual/getSpeedOrientationNameAndType/${projectId}`,
-    true
+    false
   );
 };
 
@@ -456,6 +456,10 @@ export const getOrientation = async (
     `/monitorVisual/getOrientation/${projectId}/${name}/${type}`,
     true
   );
+};
+
+export const getSandTansport = async (projectId: string) => {
+  return await get(`/monitorVisual/getSandTransport/${projectId}`, true);
 };
 
 export const getSandContentClass = async (projectId: string) => {
