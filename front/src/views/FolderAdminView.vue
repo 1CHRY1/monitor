@@ -221,7 +221,7 @@ import { ref, onMounted } from "vue";
 import { FolderType, FileType } from "@/type";
 import { notice, uuid, getFileSize } from "@/utils/common";
 import { ElMessageBox, ElMessage, rowContextKey } from "element-plus";
-import VisualBindDialog from "@/components/admin/VisualBindDialog.vue";
+// import VisualBindDialog from "@/components/admin/VisualBindDialog.vue";
 import DataPreviewDialog from "@/components/admin/DataPreviewDialog.vue";
 import FolderDialog from "@/components/admin/FolderDialog.vue";
 import {
