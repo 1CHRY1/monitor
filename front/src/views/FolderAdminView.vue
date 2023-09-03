@@ -224,11 +224,11 @@
 
           <el-dialog v-model="Visible_BindDialog" width="600px">
             <!-- 一个组件，专门写VisualDataBind -->
-            <visualBindDialog
+            <!-- <visualBindDialog
               v-if="Visible_BindDialog"
               :fileInfo="fileInfo"
               @updateVisualFile="updateVisualFile"
-            ></visualBindDialog>
+            ></visualBindDialog> -->
           </el-dialog>
         </div>
       </el-col>
