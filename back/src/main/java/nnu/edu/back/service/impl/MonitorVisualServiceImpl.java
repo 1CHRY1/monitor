@@ -32,6 +32,9 @@ public class MonitorVisualServiceImpl implements MonitorVisualService {
     @Value("${baseDir}")
     String baseDir;
 
+    @Value("${projectDir}")
+    String projectDir;
+
     @Override
     public List<String> getLocusPoint(String projectId) {
         return dynamicMapper.getLocusPoint(projectId);
@@ -44,7 +47,7 @@ public class MonitorVisualServiceImpl implements MonitorVisualService {
 
     @Override
     public JSONObject getLocusShape(String projectId, String name) {
-        String address = Paths.get(baseDir, "out", name + ".geojson").toString();
+        String address = Paths.get(projectDir, projectId, "out", name + ".geojson").toString();
         return FileUtil.readJson(address);
     }
 
