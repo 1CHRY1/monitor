@@ -21,6 +21,18 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import {  } from "@/api/request";
+import { ChartDataPreparer } from "@/utils/viewerData";
+
+interface Props {
+    projectId: string
+}
+
+const props = defineProps<Props>();
+
+console.log("table project id", props.projectId)
+
+const chartDatapreparer = new ChartDataPreparer(0);
+let curTableData = await chartDatapreparer.buildChartOption(props.projectId);
 
 // const data = await 
 
@@ -57,6 +69,7 @@ let scrollTable = (() => {
   dataTable.value?.tBodies[0].appendChild(firstRow as Node);
   // tableBody.value?.style.setProperty('--upRowNum', upRowNum.toString());
 })
+
 
 onMounted(() => {
     setInterval(scrollTable, 1000)

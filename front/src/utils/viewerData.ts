@@ -2,7 +2,11 @@ import axios from "axios";
 import * as echarts from "echarts";
 import { type EChartsOption } from "echarts";
 import { drop_url, sandUrl } from "./picData";
-import { getFlux, getSectionElevation, getSubstrate, getSandContentClass, getSandContentValue, getSpeed, getSpeedOrientationNameAndType, getOrientation, getSandTansport } from '@/api/request';
+import { 
+    getFlux, getSectionElevation, getSubstrate, getSandContentClass, getSandContentValue, 
+    getSpeed, getSpeedOrientationNameAndType, getOrientation, getSandTansport, 
+    getFloatPointTable, getFloatPoint
+} from '@/api/request';
 
 type ProjectOption = {
     id: string;
@@ -164,6 +168,15 @@ function groupSandAmountData(sandType: Array<string>): Array<Array<String>> {
         // res.push(aGroup);
     }
     // console.log("grouped list", res)
+    return res;
+}
+
+function convertPtData2Matrix(ori_data: Array<StringKeyObject>): Array<Array<string>> {
+    let res = [];
+    for(let item of ori_data) {
+        const a_row = [item["time"].split(' ')[1], item["locationX"].toString(), item["locationY"].toString(), item["speed"].toString()]
+        res.push(a_row);
+    }
     return res;
 }
 
@@ -1146,6 +1159,15 @@ class ChartDataPreparer {
 
     public async buildChartOption(currentProjectId: string): Promise<echarts.EChartsOption | echarts.EChartsOption[]> {
         switch (this.chartId) {
+            case 0:
+                this.isDynamic = true;
+                if (this.requestStringData.length == 0) {
+                    const ptNames = await getFloatPoint(currentProjectId);
+                    // console.log(speedNameTypes);
+                    this.requestStringData = ptNames?.data;
+                }
+                const tableData = await this.buildFloatTableData(currentProjectId)
+                return tableData;
             case 1:
                 const fluxData = await getFlux(currentProjectId);
                 const fluxSeries = this.generateTideAmountChartSeries(fluxData?.data);
@@ -1197,6 +1219,16 @@ class ChartDataPreparer {
             default:
                 return chartOptionTest[(+this.chartId)-1];
         }
+    }
+
+    private async buildFloatTableData(currentProjectId: string): Promise<StringKeyObject> {
+        const dynamicNum = this.requestStringData.length;
+        const curName: string = this.requestStringData[(this.dynamicIndex%dynamicNum)]
+        const ptData = await getFloatPointTable(currentProjectId, curName);
+        const ptMat = convertPtData2Matrix(ptData?.data);
+        console.log(ptMat);
+
+        return {name: curName+ptData?.data[0]["time"].split(" ")[1], data: ptMat};
     }
 
     private buildSectionChartOption(sectionSeries: Array<object>): EChartsOption | EChartsOption[] { // 大断面

@@ -473,6 +473,27 @@ export const getSandContentValue = async (projectId: string, name: string) => {
   );
 };
 
+export const getFloatPoint = async (projectId: string) => {
+  return await get(
+    `/monitorVisual/getLocusPoint/${projectId}`,
+    false
+  );
+}
+
+export const getFloatPointTable = async (projectId: string, pointName: string) => {
+  return await get(
+    `/monitorVisual/getLocusTable/${projectId}/${pointName}`,
+    false
+  );
+}
+
+export const getFloatPointShape = async (projectId: string, pointName: string) => {
+  return await get(
+    `/monitorVisual/getLocusShape/${projectId}/${pointName}`,
+    false
+  );
+}
+
 // ----------------管理员界面相关------------------------------
 
 export async function findByFolderId(parentId: string) {
