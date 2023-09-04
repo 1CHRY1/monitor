@@ -6,7 +6,7 @@
         <result property="name" column="name"/>
         <result property="locationX" column="location_x"/>
         <result property="locationY" column="location_y"/>
-        <result property="speed" column="speed"/>
+        <result property="speed" column="ave_v"/>
     </resultMap>
     <resultMap id="SectionMap" type="nnu.edu.back.pojo.Section">
         <id property="name" column="name"/>

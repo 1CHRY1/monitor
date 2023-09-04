@@ -47,7 +47,7 @@
                 <doubleChartContainer v-for="chart in doubleChartObjects" :chartId="chart.chartId" :styleType="chart.styleType" :order="chart.order" :project-id="currentProject.id"/>
             </Suspense>
             <Suspense>
-                <centerMap :mapId="mapIndex" order="4"></centerMap>
+                <centerMap :mapId="mapIndex" order="4" :project-id="currentProject.id"></centerMap>
             </Suspense>
         </div>
     </div>
@@ -60,7 +60,7 @@ import chartContainer from '@/components/dataViewer/chartContainer.vue';
 import doubleChartContainer from '@/components/dataViewer/doubleChartContainer.vue';
 import { type ProjectOption } from '@/utils/viewerData';
 import { 
-    getAllVisualProject, getFloatPointTable, getFloatPointShape
+    getAllVisualProject, getAllSection
 } from '@/api/request';
 
 const projects = await getAllVisualProject();
@@ -72,7 +72,7 @@ const chartConatinerRefs = ref<InstanceType<typeof chartContainer>[]>([]);
 
 let currentProject = ref<ProjectOption>(projectOptions.value[0]);
 
-console.log("float", await getFloatPointTable(currentProject.value.id, "P1"));
+// console.log("section", await getAllSection(currentProject.value.id));
 // const test = await getSandContentValue(currentProject.value.id, "LSSD-AD");
 // console.log("test result", test);
 

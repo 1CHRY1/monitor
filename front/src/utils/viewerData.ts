@@ -2,10 +2,10 @@ import axios from "axios";
 import * as echarts from "echarts";
 import { type EChartsOption } from "echarts";
 import { drop_url, sandUrl } from "./picData";
-import { 
-    getFlux, getSectionElevation, getSubstrate, getSandContentClass, getSandContentValue, 
-    getSpeed, getSpeedOrientationNameAndType, getOrientation, getSandTansport, 
-    getFloatPointTable, getFloatPoint
+import {
+    getFlux, getSectionElevation, getSubstrate, getSandContentClass, getSandContentValue,
+    getSpeed, getSpeedOrientationNameAndType, getOrientation, getSandTansport,
+    getFloatPointTable, getFloatPoint, getAllSection
 } from '@/api/request';
 
 type ProjectOption = {
@@ -56,8 +56,8 @@ for (let i = 0; i < 8; i++) {
 
 let dottedBase = +new Date();
 let oneHour = 3600 * 1000;
-let tideSpeedData:Array<Array<number>> = [];
-let tideSpeedDataB:Array<Array<number>> = [];
+let tideSpeedData: Array<Array<number>> = [];
+let tideSpeedDataB: Array<Array<number>> = [];
 let tideDirectDataB = [];
 let tideDirectDataA = [];
 for (let i = 0; i < 30; i++) {
@@ -81,49 +81,49 @@ for (var t = 0; t < 25; t += 0.001) {
     data.push(['S800', y, z]);
 }
 
-function preparePercentData(data:Array<StringKeyObject>) {
+function preparePercentData(data: Array<StringKeyObject>) {
     let percentData = [];
     let num = data.length;
     let min = 100;
     let max = 0;
-    for (let i = 0; i < num-1; i++) {
-        if(data[i]["value"] == 0) {
-            percentData.push({name: data[i]["key"] + '-' + data[i+1]["key"], value: 0});
+    for (let i = 0; i < num - 1; i++) {
+        if (data[i]["value"] == 0) {
+            percentData.push({ name: data[i]["key"] + '-' + data[i + 1]["key"], value: 0 });
             min = 0;
         }
         else {
-            const value = data[i]["value"] - data[i+1]["value"];
+            const value = data[i]["value"] - data[i + 1]["value"];
             if (value < min) {
                 min = value;
             }
             if (value > max) {
                 max = value;
             }
-            percentData.push({name: data[i]["key"] + '-' + data[i+1]["key"], value: value});
+            percentData.push({ name: data[i]["key"] + '-' + data[i + 1]["key"], value: value });
         }
     }
-    percentData.push({name: data[num-1]["key"] + '-' + '0', value: data[num-1]["value"]});
+    percentData.push({ name: data[num - 1]["key"] + '-' + '0', value: data[num - 1]["value"] });
     if (min < 0) {
         min = 0;
     }
-    return {percentData, min, max};
+    return { percentData, min, max };
 }
 
 
-function prepareOneFluxData(data:StringKeyObject): StringKeyObject {
-    let fluxRes: StringKeyObject = {names: data["name"], minMax: [], data: [], title: []};
-    for(let j=0; j < data["value"][0].length; j++) {
+function prepareOneFluxData(data: StringKeyObject): StringKeyObject {
+    let fluxRes: StringKeyObject = { names: data["name"], minMax: [], data: [], title: [] };
+    for (let j = 0; j < data["value"][0].length; j++) {
         let oneTimeData = [];
-        for(let i = 0; i<data["name"].length; i++) {
+        for (let i = 0; i < data["name"].length; i++) {
             oneTimeData.push(data["value"][i][j]);
         }
         let min = Math.min(...oneTimeData);
-        if(min > 0) {
+        if (min > 0) {
             min = 0;
         }
         fluxRes.minMax.push([min, Math.max(...oneTimeData)]);
         fluxRes.data.push(oneTimeData);
-        fluxRes.title.push(data["time"][j].slice(0, data["time"][j].length-3) + data["type"]);
+        fluxRes.title.push(data["time"][j].slice(0, data["time"][j].length - 3) + data["type"]);
     }
     return fluxRes;
 }
@@ -143,7 +143,7 @@ function groupSandAmountData(sandType: Array<string>): Array<Array<String>> {
             groupedData[positionName] = [[], []];
         }
         // console.log("char", typeName.charAt(typeName.length-1))
-        if (typeName.charAt(typeName.length-1) == 'D') {
+        if (typeName.charAt(typeName.length - 1) == 'D') {
             groupedData[positionName][0].push(typeName);
         }
         else {
@@ -151,16 +151,16 @@ function groupSandAmountData(sandType: Array<string>): Array<Array<String>> {
         }
     }
     let res = [];
-    for(let key in groupedData) {
+    for (let key in groupedData) {
         // let aGroup = [];
-        for(let itemList of groupedData[key]) {
+        for (let itemList of groupedData[key]) {
             let bGroup = [];
-            for(let item of itemList) {
-                if(item == '') {
+            for (let item of itemList) {
+                if (item == '') {
                     bGroup.push(key);
                 }
                 else {
-                    bGroup.push(key + '-' +item);   
+                    bGroup.push(key + '-' + item);
                 }
             }
             res.push(bGroup);
@@ -173,7 +173,7 @@ function groupSandAmountData(sandType: Array<string>): Array<Array<String>> {
 
 function convertPtData2Matrix(ori_data: Array<StringKeyObject>): Array<Array<string>> {
     let res = [];
-    for(let item of ori_data) {
+    for (let item of ori_data) {
         const a_row = [item["time"].split(' ')[1], item["locationX"].toString(), item["locationY"].toString(), item["speed"].toString()]
         res.push(a_row);
     }
@@ -896,7 +896,7 @@ let chartOptionTest: EChartsOption[] = [
                     { value: 42, name: 'M' },
                 ].sort(function (a, b) {
                     return b.value - a.value;
-                }), 
+                }),
             }
         ]
     },
@@ -1157,7 +1157,7 @@ class ChartDataPreparer {
     ) {
     }
 
-    public async buildChartOption(currentProjectId: string): Promise<echarts.EChartsOption | echarts.EChartsOption[]> {
+    public async buildChartOption(currentProjectId: string): Promise<echarts.EChartsOption | echarts.EChartsOption[] | StringKeyObject> {
         switch (this.chartId) {
             case 0:
                 this.isDynamic = true;
@@ -1217,18 +1217,18 @@ class ChartDataPreparer {
                 // console.log(groupedNames);
                 return sandAmountOption;
             default:
-                return chartOptionTest[(+this.chartId)-1];
+                return chartOptionTest[(+this.chartId) - 1];
         }
     }
 
     private async buildFloatTableData(currentProjectId: string): Promise<StringKeyObject> {
         const dynamicNum = this.requestStringData.length;
-        const curName: string = this.requestStringData[(this.dynamicIndex%dynamicNum)]
+        const curName: string = this.requestStringData[(this.dynamicIndex % dynamicNum)]
         const ptData = await getFloatPointTable(currentProjectId, curName);
         const ptMat = convertPtData2Matrix(ptData?.data);
-        console.log(ptMat);
+        // console.log(ptMat);
 
-        return {name: curName+ptData?.data[0]["time"].split(" ")[1], data: ptMat};
+        return { name: curName + ' ' + ptData?.data[0]["time"].split(" ")[0], data: ptMat };
     }
 
     private buildSectionChartOption(sectionSeries: Array<object>): EChartsOption | EChartsOption[] { // 大断面
@@ -1247,16 +1247,18 @@ class ChartDataPreparer {
                 show: true,
                 orient: 'vertical',
                 right: '0%',
-                top: '12%',
+                top: 'center',
                 width: '10%',
-                itemGap: 15,
-                // itemWidth: 5,
+                padding: 2,
+                itemGap: 3,
+                // itemWidth:20,
+                // itemHeight:20,
                 backgroundColor: 'rgba(255, 255, 255, 0.2)',
                 borderRadius: 6,
-                padding: 10,
                 textStyle: {
                     fontWeight: 'bold',
-                    color: 'rgba(255, 255, 255, 0.9)'
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    fontSize: 10
                 },
                 lineStyle: {
                     width: 4
@@ -1352,13 +1354,13 @@ class ChartDataPreparer {
 
     private async buildFlowOrientChartOption(currentProjectId: string): Promise<EChartsOption> { // 潮位
         const dynamicNum = this.requestStringData.length;
-        const curNameType: StringKeyObject = this.requestStringData[(this.dynamicIndex%dynamicNum)];
+        const curNameType: StringKeyObject = this.requestStringData[(this.dynamicIndex % dynamicNum)];
         const speedData = await getOrientation(currentProjectId, curNameType["name"], typeMap[curNameType["type"]]);
         // console.log(speedData);
         const seriesData = this.generateFlowVelocityChartSeries(speedData?.data);
         // console.log(seriesData);
         const chartSeries = [];
-        for (let i=0; i < seriesData["names"].length; i++) {
+        for (let i = 0; i < seriesData["names"].length; i++) {
             chartSeries.push({
                 name: seriesData["names"][i],
                 symbolSize: 4,
@@ -1374,12 +1376,12 @@ class ChartDataPreparer {
             })
         }
 
-        if(this.dynamicIndex == 0) {
+        if (this.dynamicIndex == 0) {
             const option: EChartsOption = {
                 color: ['#dd6b66', '#8dc1a9', '#759aa0', '#e69d87', '#ea7e53', '#eedd78', '#73a373', '#73b9bc', '#7289ab', '#91ca8c', '#f49f42'],
                 title: {
                     left: 'center',
-                    text: seriesData["title"]+ curNameType["type"] + '流向',
+                    text: seriesData["title"] + curNameType["type"] + '流向',
                     top: '2%',
                     textStyle: {
                         fontSize: 28,
@@ -1473,7 +1475,7 @@ class ChartDataPreparer {
             return {
                 title: {
                     left: 'center',
-                    text: seriesData["title"]+ curNameType["type"] + '流向',
+                    text: seriesData["title"] + curNameType["type"] + '流向',
                     top: '2%',
                     textStyle: {
                         fontSize: 28,
@@ -1573,8 +1575,8 @@ class ChartDataPreparer {
         };
         let options: EChartsOption[] = [optionInit];
 
-        for( let i = 0; i < changeSeries.length; i++){
-            for(let j = 0; j < changeSeries[i].data.length; j++){
+        for (let i = 0; i < changeSeries.length; i++) {
+            for (let j = 0; j < changeSeries[i].data.length; j++) {
                 options.push({
                     title: {
                         text: changeSeries[i].title[j] + '潮流量'
@@ -1660,23 +1662,23 @@ class ChartDataPreparer {
     }
 
     private generateTideAmountChartSeries(fluxData: Array<StringKeyObject>): Array<StringKeyObject> {
-        console.log(fluxData);
+        // console.log(fluxData);
         let changeSeries = [];
         for (let record of fluxData) {
-            changeSeries.push(prepareOneFluxData(record)); 
+            changeSeries.push(prepareOneFluxData(record));
         }
         return changeSeries;
     }
 
     private async buildFlowVelocityChartOption(currentProjectId: string): Promise<EChartsOption> { // 流速
         const dynamicNum = this.requestStringData.length;
-        const curNameType: StringKeyObject = this.requestStringData[(this.dynamicIndex%dynamicNum)];
+        const curNameType: StringKeyObject = this.requestStringData[(this.dynamicIndex % dynamicNum)];
         const speedData = await getSpeed(currentProjectId, curNameType["name"], typeMap[curNameType["type"]]);
         // console.log(speedData);
         const seriesData = this.generateFlowVelocityChartSeries(speedData?.data);
         // console.log(seriesData);
         const chartSeries = [];
-        for (let i=0; i < seriesData["names"].length; i++) {
+        for (let i = 0; i < seriesData["names"].length; i++) {
             chartSeries.push({
                 name: seriesData["names"][i],
                 symbolSize: 4,
@@ -1692,12 +1694,12 @@ class ChartDataPreparer {
             })
         }
 
-        if(this.dynamicIndex == 0) {
+        if (this.dynamicIndex == 0) {
             const option: EChartsOption = {
                 // color: ['#91ca8c', '#f49f42', '#eedd78', '#73a373', '#73b9bc', '#7289ab', '#dd6b66', '#8dc1a9', '#759aa0', '#e69d87', '#ea7e53'],
                 title: {
                     left: 'center',
-                    text: seriesData["title"]+ curNameType["type"] + '流速',
+                    text: seriesData["title"] + curNameType["type"] + '流速',
                     top: '2%',
                     textStyle: {
                         fontSize: 28,
@@ -1795,7 +1797,7 @@ class ChartDataPreparer {
             return {
                 title: {
                     left: 'center',
-                    text: seriesData["title"]+ curNameType["type"] + '流速',
+                    text: seriesData["title"] + curNameType["type"] + '流速',
                     top: '2%',
                     textStyle: {
                         fontSize: 28,
@@ -1808,11 +1810,11 @@ class ChartDataPreparer {
     }
 
     private generateFlowVelocityChartSeries(speedData: StringKeyObject): StringKeyObject {
-        let resData: StringKeyObject = {title: speedData["name"], names: speedData["nameList"], value: []};
+        let resData: StringKeyObject = { title: speedData["name"], names: speedData["nameList"], value: [] };
         let maxData = 0;
         for (let array of speedData["value"]) {
             let aMax = Math.max(...array);
-            if(aMax > maxData) {
+            if (aMax > maxData) {
                 maxData = aMax
             }
             resData["value"].push(speedData["time"].map((key: string, index: number) => [Date.parse(key.replace(' ', 'T')), array[index]]))
@@ -1825,7 +1827,7 @@ class ChartDataPreparer {
 
     private async buildSandAmountChartOption(currentProjectId: string): Promise<EChartsOption> { // 沙量
         const dynamicNum = this.requestStringData.length;
-        const curNames = this.requestStringData[(this.dynamicIndex%dynamicNum)];
+        const curNames = this.requestStringData[(this.dynamicIndex % dynamicNum)];
         // console.log("names", curNames);
         const curDataSeries = [];
         for (let name of curNames) {
@@ -1862,15 +1864,16 @@ class ChartDataPreparer {
                     orient: 'horizontal',
                     right: '1%',
                     top: '2%',
-                    // width: '10%',
-                    itemGap: 15,
-                    // itemWidth: 5,
+                    padding: 2,
+                    itemGap: 3,
+                    // itemWidth:20,
+                    // itemHeight:20,
                     backgroundColor: 'rgba(255, 255, 255, 0.2)',
                     borderRadius: 6,
-                    padding: 10,
                     textStyle: {
                         fontWeight: 'bold',
-                        color: 'rgba(255, 255, 255, 0.9)'
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: 10
                     },
                     lineStyle: {
                         width: 4
@@ -1934,7 +1937,7 @@ class ChartDataPreparer {
                     },
                     min: 0,
                     max: (value) => {
-                        return (value.max+0.0005).toFixed(4);
+                        return (value.max + 0.0005).toFixed(4);
                     },
                 },
                 grid: {
@@ -1966,7 +1969,7 @@ class ChartDataPreparer {
         let optionInit: EChartsOption = {
             // color: ['#dd6b66', '#8dc1a9', '#759aa0', '#e69d87', '#ea7e53', '#eedd78', '#73a373', '#73b9bc', '#7289ab', '#91ca8c', '#f49f42'],
             title: {
-                text: optionChangeData["name"][0]+'\n底质颗分成果',
+                text: optionChangeData["name"][0] + '\n底质颗分成果',
                 left: '1%',
                 top: 10,
                 textStyle: {
@@ -1986,12 +1989,15 @@ class ChartDataPreparer {
                 backgroundColor: 'rgba(255, 255, 255, 0.2)',
                 borderRadius: 10,
                 show: true,
-                padding: 10,
+                padding: 2,
+                itemGap: 3,
+                itemWidth: 10,
+                itemHeight: 10,
                 // height: '95%',
                 textStyle: {
                     color: 'white',
                     fontWeight: 'bold',
-                    fontSize: 8
+                    fontSize: 12
                 }
             },
             visualMap: {
@@ -2029,15 +2035,15 @@ class ChartDataPreparer {
                         color: 'white'
                     }
                 },
-                data: optionChangeData["series"], 
+                data: optionChangeData["series"],
             }
         }
         const changeNum = optionChangeData["name"].length;
         let optionArray: EChartsOption[] = [optionInit];
-        for (let i=0; i< changeNum; i++) {
+        for (let i = 0; i < changeNum; i++) {
             const optionNew: EChartsOption = {
                 title: {
-                    text: optionChangeData["name"][i]+'\n底质颗分成果',
+                    text: optionChangeData["name"][i] + '\n底质颗分成果',
                 },
                 visualMap: {
                     min: optionChangeData["minMax"][i][0],
@@ -2053,10 +2059,10 @@ class ChartDataPreparer {
     }
 
     private generateBottomParticleChartSeries(chartData: Array<StringKeyObject>): StringKeyObject {
-        let optionChange: StringKeyObject = {name: [], series: [], minMax: []};
+        let optionChange: StringKeyObject = { name: [], series: [], minMax: [] };
         for (const item of chartData) {
             const day = item["time"].split(' ')[0]
-            optionChange.name.push(day+item["location"]+item["type"]);
+            optionChange.name.push(day + item["location"] + item["type"]);
             const seriesData = preparePercentData(item["level"]);
             optionChange.series.push(seriesData["percentData"]);
             optionChange.minMax.push([seriesData["min"], seriesData["max"]]);
@@ -2152,8 +2158,8 @@ class ChartDataPreparer {
         };
         let options: EChartsOption[] = [optionInit];
 
-        for( let i = 0; i < changeSeries.length; i++){
-            for(let j = 0; j < changeSeries[i].data.length; j++){
+        for (let i = 0; i < changeSeries.length; i++) {
+            for (let j = 0; j < changeSeries[i].data.length; j++) {
                 options.push({
                     title: {
                         text: changeSeries[i].title[j] + '输沙率'
@@ -2243,8 +2249,66 @@ class ChartDataPreparer {
     }
 }
 
-export {
-    ProjectOption,
-    chartOptionTest,
-    ChartDataPreparer
+
+function ConvertSectionData2Geojson(sectionData: Array<StringKeyObject>): Array<StringKeyObject> {
+    const lineFeatureCollection = {
+        'type': 'FeatureCollection',
+        'features':<Array<StringKeyObject>> []
+    }
+    const centerPtCollection = {
+        'type': 'FeatureCollection',
+        'features':<Array<StringKeyObject>> []
+    }
+    for (let feat of sectionData) {
+        const aLineFeat = {
+            "type": "Feature",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [feat["startLon"], feat["startLat"]],
+                    [feat["endLon"], feat["endLat"]]
+                ],
+            },
+            "properties": {
+                "name": feat["name"],
+                "angle": feat["angle"]
+            }
+        }
+        const aPtFeat = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    (feat["startLon"]+feat["endLon"])/2, (feat["startLat"]+feat["endLat"])/2,
+                ],
+            },
+            "properties": {
+                "name": feat["name"],
+                "angle": feat["angle"]
+            }
+        }
+        lineFeatureCollection.features.push(aLineFeat)
+        centerPtCollection.features.push(aPtFeat)
+    }
+    return [lineFeatureCollection, centerPtCollection]
 }
+
+
+    class MapDataPreparer {
+        public async prepareSectionDataSource(projectId: string) {
+            const sectionData = await getAllSection(projectId);
+            const sectionGeojson = ConvertSectionData2Geojson(sectionData?.data);
+            console.log(sectionGeojson);
+            return sectionGeojson;
+        }
+
+    }
+
+
+    export {
+        ProjectOption,
+        chartOptionTest,
+        ChartDataPreparer,
+        StringKeyObject,
+        MapDataPreparer
+    };
