@@ -5,8 +5,9 @@ import { drop_url, sandUrl } from "./picData";
 import {
     getFlux, getSectionElevation, getSubstrate, getSandContentClass, getSandContentValue,
     getSpeed, getSpeedOrientationNameAndType, getOrientation, getSandTansport,
-    getFloatPointTable, getFloatPoint, getAllSection
+    getFloatPointTable, getFloatPoint, getAllSection, getFloatPointShape
 } from '@/api/request';
+import mapboxgl from "mapbox-gl";
 
 type ProjectOption = {
     id: string;
@@ -2253,11 +2254,11 @@ class ChartDataPreparer {
 function ConvertSectionData2Geojson(sectionData: Array<StringKeyObject>): Array<StringKeyObject> {
     const lineFeatureCollection = {
         'type': 'FeatureCollection',
-        'features':<Array<StringKeyObject>> []
+        'features': <Array<StringKeyObject>>[]
     }
     const centerPtCollection = {
         'type': 'FeatureCollection',
-        'features':<Array<StringKeyObject>> []
+        'features': <Array<StringKeyObject>>[]
     }
     for (let feat of sectionData) {
         const aLineFeat = {
@@ -2279,7 +2280,7 @@ function ConvertSectionData2Geojson(sectionData: Array<StringKeyObject>): Array<
             "geometry": {
                 "type": "Point",
                 "coordinates": [
-                    (feat["startLon"]+feat["endLon"])/2, (feat["startLat"]+feat["endLat"])/2,
+                    (feat["startLon"] + feat["endLon"]) / 2, (feat["startLat"] + feat["endLat"]) / 2,
                 ],
             },
             "properties": {
@@ -2294,21 +2295,212 @@ function ConvertSectionData2Geojson(sectionData: Array<StringKeyObject>): Array<
 }
 
 
-    class MapDataPreparer {
-        public async prepareSectionDataSource(projectId: string) {
-            const sectionData = await getAllSection(projectId);
-            const sectionGeojson = ConvertSectionData2Geojson(sectionData?.data);
-            console.log(sectionGeojson);
-            return sectionGeojson;
+const average = (arr: Array<number>) => arr.reduce((p, c) => p + c, 0) / arr.length;
+
+function simplifyFloatLineGeosjon(lineGeojson: StringKeyObject): StringKeyObject {
+    const feat = lineGeojson["features"][0];
+    feat["properties"]["avgV"] = average(feat["properties"]["velocity"]);
+    delete feat["properties"]["velocity"];
+    delete feat["properties"]["time"];
+    return feat;
+}
+
+
+class MapDataPreparer {
+    public floatPtNum = 0;
+    public floatPtV: Array<number> = [];
+    public async prepareSectionDataSource(projectId: string) {
+        const sectionData = await getAllSection(projectId);
+        const sectionGeojson = ConvertSectionData2Geojson(sectionData?.data);
+        console.log(sectionGeojson);
+        return sectionGeojson;
+    }
+
+    public addSectionLayers(map: mapboxgl.Map, sectionData: StringKeyObject[]) {
+        // console.log('map section data', sectionData);
+        map.addSource('section', {
+            'type': 'geojson',
+            'data': sectionData[0] as any
+        })
+
+        map.addSource('sectionPt', {
+            'type': 'geojson',
+            'data': sectionData[1] as any
+        })
+
+        map.addLayer({
+            'id': 'section',
+            'type': 'line',
+            'source': 'section',
+            'paint': {
+                'line-color': '#F2AE30',
+                'line-width': [
+                    'interpolate', ["linear"], ['zoom'],
+                    1, 1,
+                    5, 2,
+                    10, 4,
+                    22, 16
+                ],
+            },
+            'layout': {
+                'line-cap': 'round'
+            }
+        })
+
+        map.addLayer({
+            'id': 'sectionLabel',
+            'type': 'symbol',
+            'source': 'sectionPt',
+            'layout': {
+                'text-field': [
+                    'format',
+                    ['get', 'name'],
+                    { 'font-scale': 0.8 },
+                    '\n',
+                    {},
+                    ['get', 'angle'],
+                    { 'font-scale': 0.5 }
+                ],
+                'text-variable-anchor': ["center", "left", "right", "top", "bottom", "top-left", "top-right", "bottom-left", "bottom-right"],
+                'text-radial-offset': [
+                    'interpolate', ["linear"], ['zoom'],
+                    1, 0.07,
+                    5, 0.0925,
+                    10, 0.128,
+                    22, 0.2
+                ],
+                'text-size': [
+                    'interpolate', ["linear"], ['zoom'],
+                    2, 0,
+                    5, 4,
+                    10, 16,
+                    22, 64
+                ],
+                'text-font': ["Open Sans Bold"]
+            },
+            'paint': {
+                'text-color': '#66fffa',
+                'text-halo-color': '#009efa',
+                'text-halo-width': [
+                    'interpolate', ["linear"], ['zoom'],
+                    1, 0,
+                    5, 0,
+                    9, 0.1,
+                    10, 0.5,
+                    22, 1.25
+                ],
+                'text-opacity': 0.6,
+                'text-halo-blur': 0.3
+            }
+        })
+    }
+
+    public async prepareFloatLineDataSource(projectId: string) {
+        const floatPtNames = await getFloatPoint(projectId);
+        this.floatPtNum = floatPtNames?.data?.length;
+        const floatLineGeojson: StringKeyObject[] = [];
+        for (let name of floatPtNames?.data) {
+            const floatPtGeojson = await getFloatPointShape(projectId, name);
+            const floatLineCollection = floatPtGeojson?.data as StringKeyObject;
+            floatLineCollection["features"][0]["properties"]["avgV"] = average(floatLineCollection["features"][0]["properties"]["velocity"]);
+            this.floatPtV.push(floatLineCollection["features"][0]["properties"]["avgV"]);
+            delete floatLineCollection["features"][0]["properties"]["velocity"];
+            delete floatLineCollection["features"][0]["properties"]["time"];
+            // console.log(floatLineFeat);
+            floatLineGeojson.push(floatLineCollection);
+        }
+        console.log(floatLineGeojson)
+        return floatLineGeojson;
+    }
+
+    public addFloatLineLayers(map: mapboxgl.Map, floatLineGeojson: StringKeyObject[]) {
+        for (let i = 0; i < this.floatPtNum; i++) {
+            map.addSource('floatLine' + i, {
+                'type': 'geojson',
+                'data': floatLineGeojson[i] as any
+            })
+            map.addLayer({
+                'id': 'floatLine' + i + '-bg',
+                'type': 'line',
+                'source': 'floatLine' + i,
+                'paint': {
+                    'line-color': '#DBF227',
+                    'line-width': [
+                        'interpolate', ["linear"], ['zoom'],
+                        1, 1,
+                        5, 2,
+                        10, 4,
+                        22, 10
+                    ],
+                    'line-opacity': 0.4
+                }
+            })
+            map.addLayer({
+                'id': 'floatLine' + i + '-dashed',
+                'type': 'line',
+                'source': 'floatLine' + i,
+                'paint': {
+                    'line-color': '#DBF227',
+                    'line-width': [
+                        'interpolate', ["linear"], ['zoom'],
+                        1, 1,
+                        5, 2,
+                        10, 4,
+                        22, 10
+                    ],
+                    'line-dasharray': [0, 4, 3]
+                }
+            })
+            map.addLayer({
+                'id': 'floatLine' + i + '-label',
+                'type': 'symbol',
+                'source': 'floatLine' + i,
+                'layout': {
+                    'text-field': [
+                        'format',
+                        'P' + (i+1),
+                        { 'font-scale': 0.8 },
+                    ],
+                    'text-variable-anchor': ["center", "left", "right", "top", "bottom", "top-left", "top-right", "bottom-left", "bottom-right"],
+                    'text-radial-offset': [
+                        'interpolate', ["linear"], ['zoom'],
+                        1, 0.07,
+                        5, 0.0925,
+                        10, 0.128,
+                        22, 0.2
+                    ],
+                    'text-size': [
+                        'interpolate', ["linear"], ['zoom'],
+                        2, 0,
+                        5, 4,
+                        10, 14,
+                        22, 56
+                    ],
+                    'text-font': ["Open Sans Bold"]
+                },
+                'paint': {
+                    'text-color': '#ebe5ff',
+                    'text-halo-color': '#9a42ff',
+                    'text-halo-width': [
+                        'interpolate', ["linear"], ['zoom'],
+                        1, 0,
+                        5, 0,
+                        9, 0.05,
+                        10, 0.3,
+                        22, 1.
+                    ],
+                    'text-halo-blur': 0.3
+                }
+            })
         }
 
     }
+}
 
-
-    export {
-        ProjectOption,
-        chartOptionTest,
-        ChartDataPreparer,
-        StringKeyObject,
-        MapDataPreparer
-    };
+export {
+    ProjectOption,
+    chartOptionTest,
+    ChartDataPreparer,
+    StringKeyObject,
+    MapDataPreparer
+};
