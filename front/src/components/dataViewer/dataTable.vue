@@ -20,29 +20,27 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import {  } from "@/api/request";
+import { type StringKeyObject, ChartDataPreparer } from "@/utils/viewerData";
+
+interface Props {
+    projectId: string
+}
+
+const props = defineProps<Props>();
+
+console.log("table project id", props.projectId)
+
+const chartDatapreparer = new ChartDataPreparer(0);
+let curTableData = await chartDatapreparer.buildChartOption(props.projectId);
 
 // const data = await 
 
 const tableData = ref({
-    'name': 'P1表面流轨迹',
+    'name': (curTableData as StringKeyObject)["name"]+'表面流轨迹',
     'tHead': [
       '时间', 'X', 'Y', '流速'
     ],
-    'tBody': [
-        ['18:05:25', '578797.43', '3529961.32', '0.40'],
-        ['18:05:49',	'578798.37','3529951.74',	'0.43' ],
-        ['18:05:49',	'578798.37','3529951.74',	'0.44' ],
-        ['18:05:49',	'578798.37','3529951.74',	'0.45' ],
-        ['18:05:49',	'578798.37','3529951.74',	'0.46' ],
-        ['18:05:49',	'578798.37','3529951.74',	'0.47' ],
-        ['18:05:49',	'578798.37','3529951.74',	'0.48' ],
-        ['18:05:49',	'578798.37','3529951.74',	'0.49' ],
-        ['18:05:49',	'578798.37','3529951.74',	'0.52' ],
-        ['18:05:49',	'578798.37','3529951.74',	'0.52' ],
-        ['18:05:49',	'578798.37','3529951.74',	'0.32' ],
-        ['18:05:49',	'578798.37','3529951.74',	'0.82' ],
-    ]
+    'tBody': (curTableData as StringKeyObject)["data"]
 })
 // const rowNum = tableData.value.tBody.length;
 
@@ -57,6 +55,7 @@ let scrollTable = (() => {
   dataTable.value?.tBodies[0].appendChild(firstRow as Node);
   // tableBody.value?.style.setProperty('--upRowNum', upRowNum.toString());
 })
+
 
 onMounted(() => {
     setInterval(scrollTable, 1000)
@@ -85,7 +84,7 @@ div.data-table-wrapper {
     height: 10%;
     // line-height: 15%;
     text-align: center;
-    font-size: calc(0.7vw + 0.8vh);
+    font-size: calc(0.5vw + 0.6vh);
     color: rgba(255, 255, 255, 0.8);
     font-weight: 600;
   }
