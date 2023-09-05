@@ -2,6 +2,7 @@ package nnu.edu.back.service;
 
 import com.alibaba.fastjson2.JSONObject;
 import nnu.edu.back.pojo.Files;
+import nnu.edu.back.pojo.VisualFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,4 +27,8 @@ public interface FilesService {
     List<Object> findByFolderId(String parentId, String role);
 
     String addFolder(String folderName, String parentId, String role);
+
+    VisualFile getVisualFileByVisualId(String visualId);
+
+    void deleteFilesOrFolders(JSONObject jsonObject, String role);
 }

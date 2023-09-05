@@ -17,6 +17,14 @@
         <result property="parentId" column="parent_id"/>
     </resultMap>
 
+    <resultMap id="VisualFileMap" type="nnu.edu.back.pojo.VisualFile">
+        <id property="id" column="id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="type" column="type"/>
+        <result property="content" column="content"/>
+        <result property="view" column="view"/>
+    </resultMap>
+
     <insert id="addFile">
         insert into files values(#{files.id}, #{files.fileName}, #{files.size}, #{files.address}, #{files.visualType}, #{files.visualId})
     </insert>
@@ -58,4 +66,32 @@
     <insert id="addFolder">
         insert into folder values(#{folder.id}, #{folder.folderName}, #{folder.parentId})
     </insert>
+
+    <select id="getVisualFileByVisualId" resultMap="VisualFileMap">
+        select * from visual_file where id = #{visualId}
+    </select>
+
+    <delete id="recursionDeleteFile">
+        with recursive temp_folder as (
+            select * from folder
+            <foreach collection="list" item="item" open="where id in (" close=")" separator=",">
+                #{item}
+            </foreach>
+            union
+            select f.* from folder f
+            inner join temp_folder on temp_folder.id = f.parent_id
+        ) delete from files where parent_id in (select id from temp_folder);delete from folder where id in (select id from temp_folder1);
+    </delete>
+
+    <delete id="recursionDeleteFolder">
+        with recursive temp_folder as (
+        select * from folder
+        <foreach collection="list" item="item" open="where id in (" close=")" separator=",">
+            #{item}
+        </foreach>
+        union
+        select f.* from folder f
+        inner join temp_folder on temp_folder.id = f.parent_id
+        ) delete from folder where id in (select id from temp_folder);
+    </delete>
 </mapper>

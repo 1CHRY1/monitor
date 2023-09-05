@@ -474,25 +474,28 @@ export const getSandContentValue = async (projectId: string, name: string) => {
 };
 
 export const getFloatPoint = async (projectId: string) => {
-  return await get(
-    `/monitorVisual/getLocusPoint/${projectId}`,
-    false
-  );
-}
+  return await get(`/monitorVisual/getLocusPoint/${projectId}`, false);
+};
 
-export const getFloatPointTable = async (projectId: string, pointName: string) => {
+export const getFloatPointTable = async (
+  projectId: string,
+  pointName: string
+) => {
   return await get(
     `/monitorVisual/getLocusTable/${projectId}/${pointName}`,
     false
   );
-}
+};
 
-export const getFloatPointShape = async (projectId: string, pointName: string) => {
+export const getFloatPointShape = async (
+  projectId: string,
+  pointName: string
+) => {
   return await get(
     `/monitorVisual/getLocusShape/${projectId}/${pointName}`,
     false
   );
-}
+};
 
 // ----------------管理员界面相关------------------------------
 
@@ -507,10 +510,16 @@ export async function addFolder(jsonData: {
   return await post(`/files/addFolder`, true, jsonData);
 }
 
+export async function getVisualFileByVisualId(visualId: string) {
+  return await get(`/files/getVisualFileByVisualId/${visualId}`, true);
+}
+
 export async function deleteFilesOrFolders(jsonData: {
   files: string[];
   folders: string[];
-}) {}
+}) {
+  return await post(`/files/deleteFilesOrFolders`, true, jsonData);
+}
 
 export async function uploadParts(
   uid: string,

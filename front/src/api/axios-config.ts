@@ -93,7 +93,7 @@ export const post = (
 
 export const del = (
   url: string,
-  debounce: boolean
+  debounce: boolean,
 ): Promise<ResponseType | null> => {
   return axiosInstance.delete(url, {
     headers: {

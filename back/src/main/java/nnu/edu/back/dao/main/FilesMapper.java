@@ -2,6 +2,7 @@ package nnu.edu.back.dao.main;
 
 import nnu.edu.back.pojo.Files;
 import nnu.edu.back.pojo.Folder;
+import nnu.edu.back.pojo.VisualFile;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -33,4 +34,11 @@ public interface FilesMapper {
     Folder findFolderById(@Param("id") String id);
 
     void addFolder(@Param("folder") Folder folder);
+
+    VisualFile getVisualFileByVisualId(@Param("visualId") String visualId);
+
+    void recursionDeleteFile(@Param("list") List<String> list);
+
+    void recursionDeleteFolder(@Param("list") List<String> list);
+
 }

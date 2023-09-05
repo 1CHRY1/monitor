@@ -63,4 +63,16 @@ public class FilesController {
         return ResultUtils.success(filesService.addFolder(jsonObject.getString("folderName"), jsonObject.getString("parentId"), role));
     }
 
+    @AuthCheck
+    @RequestMapping(value = "/getVisualFileByVisualId/{visualId}", method = RequestMethod.GET)
+    public JsonResult getVisualFileByVisualId(@PathVariable String visualId) {
+        return ResultUtils.success(filesService.getVisualFileByVisualId(visualId));
+    }
+
+    @AuthCheck
+    @RequestMapping(value = "/deleteFilesOrFolders", method = RequestMethod.POST)
+    public JsonResult deleteFilesOrFolders(@RequestBody JSONObject jsonObject, @JwtTokenParser("role") String role) {
+        filesService.deleteFilesOrFolders(jsonObject, role);
+        return ResultUtils.success();
+    }
 }

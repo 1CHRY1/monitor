@@ -1,6 +1,5 @@
 <template>
   <div class="data-bind-main">
-
     <el-table :data="tableData" height="300px">
       <el-table-column label="名称" prop="name" />
       <el-table-column label="大小" prop="size" />
@@ -121,10 +120,10 @@ type DialogTableType = {
   parentId: string;
   visualType?: string;
   visualId?: string;
-  view?: string;
+  // view?: string;
 };
-import { defineComponent, onMounted, PropType, ref } from "vue";
-import { findByFolderId, getDownloadURL } from "@/api/request";
+import { defineComponent, onMounted, ref } from "vue";
+import { findByFolderId } from "@/api/request";
 import DataPreview from "./DataPreview.vue";
 import { BindDataFileInfo } from "@/type";
 export default defineComponent({
@@ -143,16 +142,6 @@ export default defineComponent({
     const fileInfo = ref<DialogTableType>();
     const dataPreviewFlag = ref(false);
     const visualCompareFlag = ref(false);
-
-    const compareInfo = ref<{
-      id: string;
-      oldVisualId: string;
-      oldVisualType: string;
-      visualType: string;
-      visualId: string;
-      time: string;
-      fileName: string;
-    }>();
 
     const getIcon = (floder: boolean) => {
       if (floder) {
@@ -252,7 +241,7 @@ export default defineComponent({
           parentId: val.folderId,
           visualId: val.visualId,
           visualType: val.visualType,
-          view: val.view,
+
         });
       } else {
         dialogTableData.value.push({
@@ -270,7 +259,7 @@ export default defineComponent({
       if (row.folder) {
         loading.value = true;
         const data = await findByFolderId(row.id);
-        if (data != null && (data as any).code === 0) {
+        if (data != null && data.code === 0) {
           dialogTableData.value = [];
           (data.data as any[]).forEach((item) => {
             transitionData(item);
@@ -316,7 +305,6 @@ export default defineComponent({
           parentId: "",
           visualId: item.visualId,
           visualType: item.visualType,
-          view: item.view,
         });
       });
     };
@@ -382,7 +370,6 @@ export default defineComponent({
       fileInfo,
       dataPreviewFlag,
       visualCompareFlag,
-      compareInfo,
     };
   },
 });
@@ -395,7 +382,7 @@ export default defineComponent({
   border: solid 0.5px #ebeef5;
   padding: 0 5px;
 
-  .title{
+  .title {
     font-size: 25px;
     color: royalblue;
     font-weight: 600;
@@ -407,32 +394,32 @@ export default defineComponent({
     padding-top: 10px;
     margin: 5px 0px;
   }
-  .title::before,.title::after {
-      position: absolute;
-      content: "";
-      height: 16px;
-      width: 16px;
-      border-radius: 50%;
-      left: 10px;
-      background-color: royalblue;
+  .title::before,
+  .title::after {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    left: 10px;
+    background-color: royalblue;
+  }
+  @keyframes pulse {
+    from {
+      transform: scale(0.9);
+      opacity: 1;
     }
-    @keyframes pulse {
-      from {
-        transform: scale(0.9);
-        opacity: 1;
-      }
-      to {
-        transform: scale(1.8);
-        opacity: 0;
-      }
+    to {
+      transform: scale(1.8);
+      opacity: 0;
     }
+  }
 
-    .title::after {
-      width: 18px;
-      height: 18px;
-      animation: pulse 1s linear infinite;
-    }
-
+  .title::after {
+    width: 18px;
+    height: 18px;
+    animation: pulse 1s linear infinite;
+  }
 
   .dialogTable {
     padding: 15px 10px 10px 10px;

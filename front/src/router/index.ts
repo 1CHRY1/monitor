@@ -24,16 +24,11 @@ const constantRoutes: Array<RouteRecordRaw> = [
     path: "/dataViewer",
     name: "dataViewer",
     component: () => import("@/views/DataViewWrapper.vue"),
-  },
-  {
-    path:"/test",
-    name:"test",
-    component:()=>import("@/views/FolderAdminView.vue"),
     meta: {
-          requiresAuth: "member",
-          keepAlive: true,
+      keepAlive: true,
     },
   },
+
   {
     path: "/login",
     name: "login",

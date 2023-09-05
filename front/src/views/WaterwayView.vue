@@ -104,7 +104,6 @@ import MeteorologyInfo from "@/components/waterway/MeteorologyInfo.vue";
 import HeadNotice from "@/components/waterway/HeadNotice.vue";
 import StationInfo from "@/components/waterway/StationInfo.vue";
 import Search from "@/components/waterway/Search.vue";
-import { AxiosResponse } from "axios";
 import proj4 from "proj4";
 import { register } from "ol/proj/proj4";
 import Select from "ol/interaction/Select.js";

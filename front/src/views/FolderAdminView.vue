@@ -1,10 +1,10 @@
 <template>
   <div class="main">
     <el-row :gutter="0" id="main-elrow">
-      <el-col :span="16" :offset="4 "> 
+      <el-col :span="16" :offset="4">
         <div class="resource-main">
           <div class="table-head">
-            <el-icon size="20px" @click="backClick" ><arrow-left /></el-icon>
+            <el-icon size="20px" @click="backClick"><arrow-left /></el-icon>
 
             <div class="path">
               <div class="path-item">user</div>
@@ -42,13 +42,14 @@
             <el-table
               v-else
               :data="tableData"
-              style="width: 100% ;" max-height="calc(90vh - 240px - 5rem)"
+              style="width: 100%"
+              max-height="calc(90vh - 240px - 5rem)"
               stripe
               v-loading="loading"
               @cell-dblclick="dblclick"
               highlight-current-row
             >
-              <el-table-column  width="40">
+              <el-table-column width="40">
                 <template #default="scope">
                   <!-- #default="scope" 插槽，作为参数可以让外面的方法能够访问到scope内部的数据 -->
                   <div class="table-name">
@@ -63,7 +64,6 @@
                     </label>
                   </div>
                 </template>
-
               </el-table-column>
 
               <el-table-column prop="name" label="名称" width="500">
@@ -71,7 +71,7 @@
                   <!-- #default="scope" 插槽，作为参数可以让外面的方法能够访问到scope内部的数据 -->
                   <div class="table-name">
                     <div class="text">
-                      <svg style="width: 28px; height: 28px; ">
+                      <svg style="width: 28px; height: 28px">
                         <use :xlink:href="getIcon(scope.row)"></use>
                       </svg>
                       <div class="name">
@@ -90,29 +90,30 @@
 
               <el-table-column align="right" fixed="right" width="300">
                 <template #header>
-                  <el-button 
-                  type="primary" 
-                  size="small"
-                  @click="selectAll"
-                  round
-                  >全选</el-button>
-                  <el-button 
-                  type="primary" 
-                  size="small"
-                  @click="cancelAll"
-                  round
-                  >重置</el-button>
+                  <el-button
+                    type="primary"
+                    size="small"
+                    @click="selectAll"
+                    round
+                    >全选</el-button
+                  >
+                  <el-button
+                    type="primary"
+                    size="small"
+                    @click="cancelAll"
+                    round
+                    >重置</el-button
+                  >
 
-                  <el-button 
-                  type="danger" 
-                  size="small"
-           
-                  :disabled="selectList.length === 0"
-                  :hide-after="50"
-                  @click="batDelete"
-                  round
-                  >批量删除</el-button>
-
+                  <el-button
+                    type="danger"
+                    size="small"
+                    :disabled="selectList.length === 0"
+                    :hide-after="50"
+                    @click="batDelete"
+                    round
+                    >批量删除</el-button
+                  >
                 </template>
                 <template #default="scope">
                   <el-tooltip
@@ -120,7 +121,7 @@
                     content="预览"
                     placement="top"
                     :hide-after="50"
-                    v-if="!isFolder(scope.row)"
+                    v-if="!isFolder(scope.row) && scope.row.visualType"
                   >
                     <span style="margin-right: 10px">
                       <el-button
@@ -211,29 +212,30 @@
             </FolderDialog>
           </el-dialog>
 
-          <el-dialog
-            v-model="Visible_PreviewDialog"
-            :show-close="false"
-          >
+          <el-dialog v-model="Visible_PreviewDialog" :show-close="false">
             <!-- 一个组件，专门写PreviewDialog -->
-            <DataPreviewDialog
+            <data-preview-dialog
               :fileInfo="fileInfo"
               v-if="Visible_PreviewDialog"
-            ></DataPreviewDialog>
+            ></data-preview-dialog>
           </el-dialog>
 
-          <el-dialog v-model="Visible_BindDialog" width="600px">
+          <el-dialog
+            v-model="Visible_BindDialog"
+            width="600px"
+            :show-close="false"
+          >
             <!-- 一个组件，专门写VisualDataBind -->
-            <!-- <visualBindDialog
+            <visual-bind-dialog
               v-if="Visible_BindDialog"
               :fileInfo="fileInfo"
               @updateVisualFile="updateVisualFile"
-            ></visualBindDialog> -->
+            ></visual-bind-dialog>
           </el-dialog>
         </div>
       </el-col>
     </el-row>
-  <PageCopyright style="bottom: 0px;"/>
+    <PageCopyright style="bottom: 0px" />
   </div>
 </template>
 
@@ -242,20 +244,18 @@ import { ref, onMounted } from "vue";
 import { FolderType, FileType } from "@/type";
 import { notice, uuid, getFileSize } from "@/utils/common";
 import { ElMessageBox, ElMessage, rowContextKey } from "element-plus";
-// import VisualBindDialog from "@/components/admin/VisualBindDialog.vue";
+import VisualBindDialog from "@/components/admin/VisualBindDialog.vue";
 import DataPreviewDialog from "@/components/admin/DataPreviewDialog.vue";
 import FolderDialog from "@/components/admin/FolderDialog.vue";
 import {
   findByFolderId,
-  deleteFilesOrFolders,  
-  getDownloadURL,  
+  deleteFilesOrFolders,
+  getDownloadURL,
   addFolder,
 } from "@/api/request";
 import { UploadFile, UploadFiles } from "element-plus";
 import PageCopyright from "@/layout/PageCopyright.vue";
-// import useStore from 'vuex';
 
-// const store = useStore();
 const tableData = ref<
   ((FolderType & { flag: boolean }) | (FileType & { flag: boolean }))[]
 >([]);
@@ -271,7 +271,6 @@ const upload = ref<HTMLElement>();
 // const Visible_BindDialog = ref(false);
 const input = ref("");
 const loading = ref(false);
-
 
 const getName = (item: FolderType | FileType) => {
   if ("fileName" in item) {
@@ -345,7 +344,7 @@ const deleteClick = (item: FolderType | FileType) => {
       console.log(json);
 
       const data = await deleteFilesOrFolders(json); //后端删除数据,返回的是？
-      if (data != null && (data as any).code === 0) {
+      if (data != null && data.code === 0) {
         //前端删除?
         for (let i = 0; i < tableData.value.length; i++) {
           if (tableData.value[i].id === item.id) {
@@ -389,7 +388,7 @@ const CreateFolder = async (val: string) => {
   } else {
     notice("error", "错误", "文件夹创建失败！");
   }
-}; 
+};
 
 const updateVisualFile = (val: { visualId: string; visualType: string }) => {
   for (let i = 0; i < tableData.value.length; i++) {
@@ -512,7 +511,6 @@ const dblclick = async (item: FolderType | FileType) => {
       });
     }
     loading.value = false;
-
   }
 };
 
@@ -552,7 +550,7 @@ const transitionData = (param: FolderType[] | FileType[]) => {
 onMounted(async () => {
   const tableList = await findByFolderId("-1");
 
-  if (tableList && tableList.code === 0) {   
+  if (tableList && tableList.code === 0) {
     transitionData(tableList.data);
   }
 
@@ -563,33 +561,29 @@ const getIcon = (item: FolderType | FileType) => {
   const flag = isFolder(item);
   if (flag) {
     return "#icon-wenjianjia";
-  }else
-    return "#icon-wenjian";
-}
+  } else return "#icon-wenjian";
+};
 
-const selectAll = ()=>{
+const selectAll = () => {
   // console.log(tableData.value);
   // console.log(selectList.value);
-  for(let item of tableData.value){
-    if(!item.flag){
+  for (let item of tableData.value) {
+    if (!item.flag) {
       item.flag = true;
       selectList.value.push({
-        id:item.id,
-        type:isFolder(item)?'folder':'file',
+        id: item.id,
+        type: isFolder(item) ? "folder" : "file",
       });
     }
   }
-}
+};
 
-const cancelAll = ()=>{
+const cancelAll = () => {
   selectList.value = [];
-  for(let item of tableData.value){
+  for (let item of tableData.value) {
     item.flag = false;
   }
-}
-
-
-
+};
 </script>
 
 <style lang="scss" scoped>
@@ -695,7 +689,7 @@ const cancelAll = ()=>{
   cursor: pointer;
   input {
     position: absolute;
-    opacity: 0; 
+    opacity: 0;
   }
 }
 
@@ -750,13 +744,11 @@ const cancelAll = ()=>{
   display: block;
 }
 
-
 .el-icon {
   font-size: 20px;
 }
 
-#main-elrow{
-  height:calc(100vh - 250px - 5rem);
+#main-elrow {
+  height: calc(100vh - 250px - 5rem);
 }
-
 </style>

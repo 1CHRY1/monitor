@@ -240,4 +240,24 @@ public class FilesServiceImpl implements FilesService {
             return uuid;
         } else throw new MyException(ResultEnum.NO_ACCESS);
     }
+
+    @Override
+    public VisualFile getVisualFileByVisualId(String visualId) {
+        return filesMapper.getVisualFileByVisualId(visualId);
+    }
+
+    @Override
+    public void deleteFilesOrFolders(JSONObject jsonObject, String role) {
+        if (role.equals("admin")) {
+            List<String> files = (List<String>) jsonObject.get("files");
+            List<String> folders = (List<String>) jsonObject.get("folders");
+            if (files.size() > 0) {
+                filesMapper.batchDelete(files);
+            }
+            if (folders.size() > 0) {
+                filesMapper.recursionDeleteFile(folders);
+                filesMapper.recursionDeleteFolder(folders);
+            }
+        } else throw new MyException(ResultEnum.NO_ACCESS);
+    }
 }
