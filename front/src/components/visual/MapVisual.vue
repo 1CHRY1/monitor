@@ -63,6 +63,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import mapBoxGl, { AnySourceData } from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 export default defineComponent({
   props: {
@@ -89,7 +90,7 @@ export default defineComponent({
 
     const layers: string[] = [];
 
-    const drawMap = () => {
+    const drawMap = () => {    
       if (props.rasterTileArray != undefined) {
         (
           props.rasterTileArray as {
@@ -341,7 +342,7 @@ export default defineComponent({
     -o-text-overflow: ellipsis;
   }
   .container {
-    height: 500px;
+    height: 400px;
     width: 100%;
   }
 }

@@ -199,10 +199,9 @@
 
           <el-dialog
             v-model="Visible_CreateFolderDialog"
-            width="15%"
+            width="100%"
             :show-close="false"
           >
-            <!-- 这里是一个组件，专门写CreateFolderDialog -->
             <FolderDialog
               @createFolder="CreateFolder"
               v-if="Visible_CreateFolderDialog"
@@ -215,7 +214,6 @@
             v-model="Visible_PreviewDialog"
             :show-close="false"
           >
-            <!-- 一个组件，专门写PreviewDialog -->
             <DataPreviewDialog
               :fileInfo="fileInfo"
               v-if="Visible_PreviewDialog"
@@ -223,7 +221,6 @@
           </el-dialog>
 
           <el-dialog v-model="Visible_BindDialog" width="600px">
-            <!-- 一个组件，专门写VisualDataBind -->
             <visualBindDialog
               v-if="Visible_BindDialog"
               :fileInfo="fileInfo"
@@ -300,9 +297,6 @@ const isFolder = (item: FolderType | FileType) => {
 };
 
 const flushed = async () => {
-  // console.log('flushed');
-  // 基于path的最后的文件夹的ID 请求数据，transition to TableData
-
   skeletonFlag.value = true;
 
   let id = "";
@@ -342,7 +336,6 @@ const deleteClick = (item: FolderType | FileType) => {
       } else {
         json.files.push(item.id);
       }
-      console.log(json);
 
       const data = await deleteFilesOrFolders(json); //后端删除数据,返回的是？
       if (data != null && (data as any).code === 0) {
@@ -362,7 +355,6 @@ const deleteClick = (item: FolderType | FileType) => {
 };
 
 const visualClick = (param: FolderType | FileType) => {
-  // console.log('visualClick');
   fileInfo.value = param;
   Visible_BindDialog.value = true;
 };
@@ -424,12 +416,9 @@ const batDelete = async () => {
           deleteList.folders.push(selectList.value[i].id);
         }
       }
-      console.log(deleteList);
-
       // 构建后  作为传输传给后端进行删除
 
       const data = await deleteFilesOrFolders(deleteList);
-      console.log(data);
 
       if (data != null && (data as any).code === 0) {
         for (let i = 0; i < selectList.value.length; i++) {
@@ -494,7 +483,6 @@ const changeHandle = (
       }
     }
   }
-  // console.log(selectList.value.length);
 };
 
 const dblclick = async (item: FolderType | FileType) => {
@@ -503,6 +491,7 @@ const dblclick = async (item: FolderType | FileType) => {
   if ("folderName" in item) {
     loading.value = true;
     const data = await findByFolderId(item.id); //拿到item的所有下级文件信息
+    
     if (data && data.code === 0) {
       transitionData(data.data);
       path.value.push({
@@ -512,7 +501,10 @@ const dblclick = async (item: FolderType | FileType) => {
       });
     }
     loading.value = false;
-
+  }
+  else 
+  {
+    console.log(item.visualId);
   }
 };
 
@@ -568,8 +560,6 @@ const getIcon = (item: FolderType | FileType) => {
 }
 
 const selectAll = ()=>{
-  // console.log(tableData.value);
-  // console.log(selectList.value);
   for(let item of tableData.value){
     if(!item.flag){
       item.flag = true;

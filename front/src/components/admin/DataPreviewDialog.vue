@@ -1,8 +1,8 @@
 <template>
     <div>
-      <div class="head">数据预览</div>
+      <div class="head">数据预览</div> 
       <el-skeleton :rows="5" animated v-if="skeletonFlag" />
-      <div style="width: 900px" v-if="mapVisualFlag">
+      <div style="width: 90% ; margin-left: 5%; padding-bottom: 2%;" v-if="mapVisualFlag">
         <map-visual
           :shpArray="shpArray"
           :movePngArray="movePngArray"
@@ -10,7 +10,7 @@
           :rasterTileArray="rasterTileArray"
         />
       </div>
-      <div style="width: 900px" v-if="excelVisualFlag">
+      <div style="width: 100%" v-if="excelVisualFlag">
         <excel-visual
           :tableNameList="tableNameList"
           :sandContentList="sandContentList"
@@ -44,7 +44,6 @@
   import MapVisual from "@/components/visual/MapVisual.vue";
   import ExcelVisual from "@/components/visual/ExcelVisual.vue";
   import { getCoordinates } from "@/api/request";
-  // import { prefix } from "@/prefix";
   import PhotoVisual from "@/components/visual/PhotoVisual.vue";
   import VideoVisual from "@/components/visual/VideoVisual.vue";
   
@@ -64,7 +63,7 @@
       const skeletonFlag = ref(true);
       const mapVisualFlag = ref(false);
       const excelVisualFlag = ref(false);
-      const photoVisualFlag = ref(false);
+      const photoVisualFlag = ref(false); 
       const videoVisualFlag = ref(false);
   
       const videoURLs = ref<{ fileName: string; url: string }[]>([]);
@@ -106,7 +105,10 @@
         let photoFlag = false;
         let excelFlag = false;
         let videoFlag = false;
+        //get props data
         if (props.fileInfo) {
+          //console.log(props.fileInfo.view); //undefined
+          props.fileInfo.view = "{ \"zoom\": 10, \"center\": [120.972137, 31.821921] }"; //just for test
           if (
             props.fileInfo.visualType === "lineVectorTile3D" ||
             props.fileInfo.visualType === "lineVectorTile"

@@ -1,6 +1,6 @@
 <template>
   <div class="excel-main">
-    <el-row
+    <!-- <el-row
       :gutter="20"
       justify="center"
       style="margin-bottom: 20px"
@@ -54,7 +54,7 @@
           </div>
         </el-card>
       </el-col>
-    </el-row>
+    </el-row> -->
 
     <sand-content
       :visualId="sandContentList[centerIndex]"

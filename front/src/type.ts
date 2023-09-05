@@ -286,4 +286,5 @@ export type FileType = {
   size: string;
   parentId: string;
   visualId: string;
+  view?: string;
 };
