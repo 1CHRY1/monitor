@@ -52,4 +52,25 @@
             #{item}
         </foreach>
     </delete>
+
+    <delete id="batchDeleteByFileId">
+        delete from data_relational where file_id in
+        <foreach collection="fileIdList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="recursionDeleteFileId">
+        with recursive temp_folder as (
+        select * from folder
+        <foreach collection="folderList" item="item" open="where id in (" close=")" separator=",">
+            #{item}
+        </foreach>
+        union
+        select f.* from folder f
+        inner join temp_folder on temp_folder.id = f.parent_id
+        ) delete from data_relational where file_id in (
+            select id from files where parent_id in (select id from temp_folder);
+        )
+    </delete>
 </mapper>

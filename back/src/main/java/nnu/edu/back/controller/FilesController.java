@@ -97,6 +97,12 @@ public class FilesController {
     }
 
     @AuthCheck
+    @RequestMapping(value = "/visualFileMerge/{id}/{total}/{type}/{name}", method = RequestMethod.POST)
+    public JsonResult visualFileMerge(@PathVariable String id, @PathVariable int total, @PathVariable String type, @PathVariable String name) {
+        return ResultUtils.success(filesService.visualFileMerge(id, total, type, name));
+    }
+
+    @AuthCheck
     @RequestMapping(value = "/delAllRecord", method = RequestMethod.DELETE)
     public JsonResult delAllRecord(@JwtTokenParser("role") String role) {
         filesService.delAllRecord(role);

@@ -30,4 +30,8 @@ public interface DataRelationalMapper {
     void batchInsert(@Param("list") List<DataRelational> list);
 
     void batchDelete(@Param("list") List<String> list, @Param("dataListId") String dataListId);
+
+    void batchDeleteByFileId(@Param("fileIdList") List<String> list);
+
+    void recursionDeleteFileId(@Param("folderList") List<String> list);
 }

@@ -497,8 +497,6 @@ export const getFloatPointShape = async (
   );
 };
 
-// ----------------管理员界面相关------------------------------
-
 export async function findByFolderId(parentId: string) {
   return await get(`/files/findByFolderId/${parentId}`, true);
 }
@@ -546,27 +544,20 @@ export const delRecord = async (id: string) => {
   return del(`/files/delRecord/${id}`, true);
 };
 
-export async function uploadParts(
-  uid: string,
-  number: number,
-  formData: FormData
-) {
-  // return await post(`/visual/uploadParts/${uid}/${number}`, formData);
-  return {
-    data: "123",
-  };
+export async function cancelVisualBind(id: string) {
+  return del(`/files/cancelVisualBind/${id}`, true);
 }
 
-export async function mergeParts(
-  uid: string,
+export async function visualFileMerge(
+  id: string,
   total: number,
   type: string,
   name: string
 ) {
-  // return await post(`/visual/mergeParts/${uid}/${total}/${type}/${name}`);
-  return {
-    data: "123",
-  };
+  return await post(
+    `/files/visualFileMerge/${id}/${total}/${type}/${name}`,
+    true
+  );
 }
 
 export async function bindVisualData(jsonData: {
@@ -580,19 +571,5 @@ export async function bindVisualData(jsonData: {
     center: number[];
   } | null;
 }) {
-  // return await post(`/file/bindVisualData`, jsonData);
-  return {
-    data: "123",
-  };
-}
-
-export async function cancelVisualBind(id: string) {
-  // return await del(`/file/cancelVisualBind/${id}`);
-  return {
-    data: "123",
-  };
-}
-
-export async function getDownloadURL(id: string) {
-  return "downloadURL";
+  return await post(`/files/bindVisualData`, true, jsonData);
 }

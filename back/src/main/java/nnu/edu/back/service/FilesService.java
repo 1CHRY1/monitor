@@ -40,6 +40,8 @@ public interface FilesService {
 
     UploadRecord mergeChunks(String parentId, String id, int total, String fileName);
 
+    String visualFileMerge(String id, int total, String type, String name);
+
     void delAllRecord(String role);
 
     void delRecord(String id, String role);

@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -121,14 +122,7 @@ public class FilesServiceImpl implements FilesService {
             viewStr = JSONObject.toJSONString(view);
         }
         String content = "";
-        List<String> list = dataRelationalMapper.findDataListIdsByFileId(fileId);
-//        Files files = filesMapper.findInfoById(fileId);
-//        boolean flag;
-//        if (list.size() > 0) {
-//            flag = true;
-//        } else {
-//            flag = false;
-//        }
+
         if (type.equals("png") || type.equals("movePng")) {
             JSONObject json = new JSONObject();
             json.put("address", "png/" + fileName);
@@ -179,23 +173,14 @@ public class FilesServiceImpl implements FilesService {
                 throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
             }
         } else if (type.equals("photo") || type.equals("video")) {
-//            if (flag) {
-//                throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
-//            }
             filesMapper.updateVisualIdAndType(fileId, "", type);
             return "";
         } else {
-            // excel表格形式的数据上传
             throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
         }
         String id = UUID.randomUUID().toString();
         VisualFile visualFile = new VisualFile(id, fileName, type, content, viewStr);
         visualFileMapper.addVisualFile(visualFile);
-//        if (flag) {
-//            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
-//        } else {
-//            filesMapper.updateVisualIdAndType(fileId, id, type);
-//        }
         filesMapper.updateVisualIdAndType(fileId, id, type);
         return id;
     }
@@ -219,25 +204,8 @@ public class FilesServiceImpl implements FilesService {
     @Override
     public String addFolder(String folderName, String parentId, String role) {
         if (role.equals("admin")) {
-            String temp = parentId;
-            String address;
-            if (parentId.equals("-1")) {
-                parentId = "";
-                address = Paths.get(baseDir, folderName).toString();
-            } else {
-                String path = folderName;
-                while (!parentId.equals("")) {
-                    Folder folder = filesMapper.findFolderById(parentId);
-                    path = folder.getFolderName() + "/" + path;
-                    parentId = folder.getParentId();
-                }
-                address = Paths.get(baseDir, path).toString();
-            }
-            File file = new File(address);
-            if (file.exists()) throw new MyException(-99, "文件夹已存在!");
             String uuid = UUID.randomUUID().toString();
-            file.mkdirs();
-            Folder folder = new Folder(uuid, folderName, temp);
+            Folder folder = new Folder(uuid, folderName, parentId);
             filesMapper.addFolder(folder);
             return uuid;
         } else throw new MyException(ResultEnum.NO_ACCESS);
@@ -255,8 +223,10 @@ public class FilesServiceImpl implements FilesService {
             List<String> folders = (List<String>) jsonObject.get("folders");
             if (files.size() > 0) {
                 filesMapper.batchDelete(files);
+                dataRelationalMapper.batchDeleteByFileId(files);
             }
             if (folders.size() > 0) {
+                dataRelationalMapper.recursionDeleteFileId(folders);
                 filesMapper.recursionDeleteFile(folders);
                 filesMapper.recursionDeleteFolder(folders);
             }
@@ -306,6 +276,51 @@ public class FilesServiceImpl implements FilesService {
             filesMapper.addUploadRecord(uploadRecord);
             return uploadRecord;
         } else throw new MyException(-99, "数据缺损!");
+    }
+
+    @Override
+    public String visualFileMerge(String id, int total, String type, String name) {
+        String address = Paths.get(tempDir, id).toString();
+        File folder = new File(address);
+        if (!folder.exists()) {
+            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+        } else {
+            if (folder.list().length != total) {
+                throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+            }
+        }
+        if (type.equals("png") || type.equals("movePng")) {
+            String suffix = name.substring(name.lastIndexOf("."));
+            String fileName = UUID.randomUUID() + suffix;
+            String to = Paths.get(visualDir, "png", fileName).toString();
+            FileUtil.mergeFile(address, to, total);
+            return fileName;
+        } else if (type.equals("rasterTile")) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            long number = timestamp.getTime();
+            String suffix = name.substring(name.lastIndexOf("."));
+            String to = Paths.get(tempDir, "rasterTile", number + suffix).toString();
+            FileUtil.mergeFile(address, to, total);
+            return "rasterTile" + number + suffix;
+        } else if (type.equals("polygonVectorTile3D") || type.equals("pointVectorTile3D") || type.equals("lineVectorTile3D") || type.equals("polygonVectorTile") || type.equals("pointVectorTile") || type.equals("lineVectorTile")) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            long number = timestamp.getTime();
+            String suffix = name.substring(name.lastIndexOf("."));
+            String to = Paths.get(tempDir, "shp", number + suffix).toString();
+            FileUtil.mergeFile(address, to, total);
+            return "shp" + number + ".shp";
+        } else {
+            String suffix = name.substring(name.lastIndexOf("."));
+            String fileName = UUID.randomUUID() + suffix;
+            String to;
+            if (type.equals("flowSand_Z")) {
+                to = Paths.get(tempDir, "flowSand", fileName).toString();
+            } else {
+                to = Paths.get(tempDir, type, fileName).toString();
+            }
+            FileUtil.mergeFile(address, to, total);
+            return fileName;
+        }
     }
 
     @Override

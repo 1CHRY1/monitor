@@ -8,7 +8,7 @@
         <result property="size" column="size"/>
         <result property="visualType" column="visual_type"/>
         <result property="visualId" column="visual_id"/>
-        <result property="parentId" column="parentId"/>
+        <result property="parentId" column="parent_id"/>
     </resultMap>
 
     <resultMap id="FolderMap" type="nnu.edu.back.pojo.Folder">
@@ -87,7 +87,7 @@
             union
             select f.* from folder f
             inner join temp_folder on temp_folder.id = f.parent_id
-        ) delete from files where parent_id in (select id from temp_folder);delete from folder where id in (select id from temp_folder1);
+        ) delete from files where parent_id in (select id from temp_folder);
     </delete>
 
     <delete id="recursionDeleteFolder">

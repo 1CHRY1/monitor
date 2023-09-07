@@ -207,12 +207,12 @@
             :show-close="false"
           >
             <!-- 这里是一个组件，专门写CreateFolderDialog -->
-            <FolderDialog
+            <folder-dialog
               @createFolder="CreateFolder"
               v-if="Visible_CreateFolderDialog"
               :folderNames="folderNames"
             >
-            </FolderDialog>
+            </folder-dialog>
           </el-dialog>
 
           <el-dialog v-model="Visible_PreviewDialog" :show-close="false">
@@ -254,12 +254,7 @@ import VisualBindDialog from "@/components/admin/VisualBindDialog.vue";
 import DataPreviewDialog from "@/components/admin/DataPreviewDialog.vue";
 import FolderDialog from "@/components/admin/FolderDialog.vue";
 import UploadRecord from "@/components/admin/UploadRecord.vue";
-import {
-  findByFolderId,
-  deleteFilesOrFolders,
-  getDownloadURL,
-  addFolder,
-} from "@/api/request";
+import { findByFolderId, deleteFilesOrFolders, addFolder } from "@/api/request";
 import { UploadFile, UploadFiles } from "element-plus";
 import PageCopyright from "@/layout/PageCopyright.vue";
 import { useUploadFileStore } from "@/store/upload-file-store";
@@ -373,6 +368,7 @@ const deleteClick = (item: FolderType | FileType) => {
 
 const visualClick = (param: FolderType | FileType) => {
   // console.log('visualClick');
+  console.log(param);
   fileInfo.value = param;
   Visible_BindDialog.value = true;
 };
