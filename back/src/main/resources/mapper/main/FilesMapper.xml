@@ -25,8 +25,15 @@
         <result property="view" column="view"/>
     </resultMap>
 
+    <resultMap id="UploadRecordMap" type="nnu.edu.back.pojo.UploadRecord">
+        <id property="id" column="id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="uploadTime" column="upload_time"/>
+        <result property="size" column="size"/>
+    </resultMap>
+
     <insert id="addFile">
-        insert into files values(#{files.id}, #{files.fileName}, #{files.size}, #{files.address}, #{files.visualType}, #{files.visualId})
+        insert into files values(#{files.id}, #{files.fileName}, #{files.size}, #{files.address}, #{files.visualType}, #{files.visualId}, #{files.parentId})
     </insert>
 
     <delete id="batchDelete">
@@ -93,5 +100,21 @@
         select f.* from folder f
         inner join temp_folder on temp_folder.id = f.parent_id
         ) delete from folder where id in (select id from temp_folder);
+    </delete>
+
+    <select id="getUploadRecord" resultMap="UploadRecordMap">
+        select * from upload_record order by upload_time ASC
+    </select>
+
+    <insert id="addUploadRecord">
+        insert into upload_record values (#{uploadRecord.id}, #{uploadRecord.fileName}, #{uploadRecord.uploadTime}, #{uploadRecord.size})
+    </insert>
+
+    <delete id="delAllRecord">
+        delete from upload_record
+    </delete>
+
+    <delete id="delRecord">
+        delete from upload_record where id = #{id}
     </delete>
 </mapper>

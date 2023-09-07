@@ -2,6 +2,7 @@ package nnu.edu.back.dao.main;
 
 import nnu.edu.back.pojo.Files;
 import nnu.edu.back.pojo.Folder;
+import nnu.edu.back.pojo.UploadRecord;
 import nnu.edu.back.pojo.VisualFile;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -41,4 +42,11 @@ public interface FilesMapper {
 
     void recursionDeleteFolder(@Param("list") List<String> list);
 
+    List<UploadRecord> getUploadRecord();
+
+    void addUploadRecord(@Param("uploadRecord") UploadRecord uploadRecord);
+
+    void delAllRecord();
+
+    void delRecord(@Param("id") String id);
 }

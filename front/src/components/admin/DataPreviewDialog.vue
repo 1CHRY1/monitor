@@ -171,17 +171,17 @@ export default defineComponent({
           MapFlag = true;
         }
 
-        // if (props.fileInfo.visualType === "photo") {
-        //   photoList.value.push(`${prefix}visual/getPhoto/${props.fileInfo.id}`);
-        //   photoFlag = true;
-        // }
-        // if (props.fileInfo.visualType === "video") {
-        //   videoURLs.value.push({
-        //     url: `${prefix}visual/video/${props.fileInfo.id}`,
-        //     fileName: props.fileInfo.fileName,
-        //   });
-        //   videoFlag = true;
-        // }
+        if (props.fileInfo.visualType === "photo") {
+          photoList.value.push(`/monitor/visual/getPhoto/${props.fileInfo.id}`);
+          photoFlag = true;
+        }
+        if (props.fileInfo.visualType === "video") {
+          videoURLs.value.push({
+            url: `/monitor/visual/video/${props.fileInfo.id}`,
+            fileName: props.fileInfo.fileName,
+          });
+          videoFlag = true;
+        }
         if (props.fileInfo.visualType === "sandContent") {
           sandContentList.value.push(props.fileInfo.visualId);
           tableNameList.value.push(props.fileInfo.fileName);

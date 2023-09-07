@@ -287,3 +287,11 @@ export type FileType = {
   parentId: string;
   visualId: string;
 };
+
+
+export type UploadRecord = {
+  id: string
+  fileName: string
+  uploadTime: string
+  size: string
+}

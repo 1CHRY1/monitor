@@ -12,11 +12,13 @@ import nnu.edu.back.dao.main.FilesMapper;
 import nnu.edu.back.dao.main.VisualFileMapper;
 import nnu.edu.back.pojo.Files;
 import nnu.edu.back.pojo.Folder;
+import nnu.edu.back.pojo.UploadRecord;
 import nnu.edu.back.pojo.VisualFile;
 import nnu.edu.back.service.FilesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -258,6 +260,65 @@ public class FilesServiceImpl implements FilesService {
                 filesMapper.recursionDeleteFile(folders);
                 filesMapper.recursionDeleteFolder(folders);
             }
+        } else throw new MyException(ResultEnum.NO_ACCESS);
+    }
+
+    @Override
+    public List<UploadRecord> getUploadRecord(String role) {
+        if (role.equals("admin")) {
+            return filesMapper.getUploadRecord();
+        } throw new MyException(ResultEnum.NO_ACCESS);
+
+    }
+
+    @Override
+    public void uploadChunks(MultipartFile file, String number, String id) {
+        String address = Paths.get(tempDir, id).toString();
+        int code = FileUtil.uploadFile(file, number, address);
+        if (code == -1) throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+    }
+
+    @Override
+    public UploadRecord mergeChunks(String parentId, String id, int total, String fileName) {
+        String name = fileName.substring(0, fileName.lastIndexOf(".")) + UUID.randomUUID().toString().substring(0, 8);
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        String address = Paths.get(tempDir, id).toString();
+        String to = Paths.get(baseDir, name + suffix).toString();
+        FileUtil.mergeFile(address, to, total);
+        File file = new File(address);
+        if (!file.exists()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        String[] fileNames = file.list();
+        if (fileNames.length == total) {
+            FileUtil.mergeFile(address, to, total);
+            Files f = new Files();
+            f.setId(UUID.randomUUID().toString());
+            f.setFileName(fileName);
+            f.setAddress(name);
+            f.setSize(FileUtil.formatFileSize(new File(to).length()));
+            f.setVisualId("");
+            f.setVisualType("");
+            f.setParentId(parentId);
+            filesMapper.addFile(f);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            UploadRecord uploadRecord = new UploadRecord(UUID.randomUUID().toString(), fileName, format.format(new Date()), f.getSize());
+            filesMapper.addUploadRecord(uploadRecord);
+            return uploadRecord;
+        } else throw new MyException(-99, "数据缺损!");
+    }
+
+    @Override
+    public void delAllRecord(String role) {
+        if (role.equals("admin")) {
+            filesMapper.delAllRecord();
+        } else throw new MyException(ResultEnum.NO_ACCESS);
+    }
+
+    @Override
+    public void delRecord(String id, String role) {
+        if (role.equals("admin")) {
+            filesMapper.delRecord(id);
         } else throw new MyException(ResultEnum.NO_ACCESS);
     }
 }

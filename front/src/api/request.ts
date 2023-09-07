@@ -521,6 +521,31 @@ export async function deleteFilesOrFolders(jsonData: {
   return await post(`/files/deleteFilesOrFolders`, true, jsonData);
 }
 
+export const getUploadRecord = async () => {
+  return await get(`/files/getUploadRecord`, true);
+};
+
+export const uploadChunks = async (formData: FormData) => {
+  return await post(`/files/uploadChunks`, false, formData);
+};
+
+export const mergeChunks = async (jsonDta: {
+  parentId: string;
+  id: string;
+  total: number;
+  fileName: string;
+}) => {
+  return post(`/files/mergeChunks`, false, jsonDta);
+};
+
+export const delAllRecord = async () => {
+  return del(`/files/delAllRecord`, true);
+};
+
+export const delRecord = async (id: string) => {
+  return del(`/files/delRecord/${id}`, true);
+};
+
 export async function uploadParts(
   uid: string,
   number: number,

@@ -9,6 +9,7 @@ import nnu.edu.back.pojo.Files;
 import nnu.edu.back.service.FilesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -75,4 +76,38 @@ public class FilesController {
         filesService.deleteFilesOrFolders(jsonObject, role);
         return ResultUtils.success();
     }
+
+    @AuthCheck
+    @RequestMapping(value = "/getUploadRecord", method = RequestMethod.GET)
+    public JsonResult getUploadRecord(@JwtTokenParser("role") String role) {
+        return ResultUtils.success(filesService.getUploadRecord(role));
+    }
+
+    @AuthCheck
+    @RequestMapping(value = "/uploadChunks", method = RequestMethod.POST)
+    public JsonResult uploadChunks(@RequestParam MultipartFile file, @RequestParam String number, @RequestParam String id) {
+        filesService.uploadChunks(file, number, id);
+        return ResultUtils.success();
+    }
+
+    @AuthCheck
+    @RequestMapping(value = "/mergeChunks", method = RequestMethod.POST)
+    public JsonResult mergeChunks(@RequestBody JSONObject jsonObject) {
+        return ResultUtils.success(filesService.mergeChunks(jsonObject.getString("parentId"), jsonObject.getString("id"), jsonObject.getIntValue("total"), jsonObject.getString("fileName")));
+    }
+
+    @AuthCheck
+    @RequestMapping(value = "/delAllRecord", method = RequestMethod.DELETE)
+    public JsonResult delAllRecord(@JwtTokenParser("role") String role) {
+        filesService.delAllRecord(role);
+        return ResultUtils.success();
+    }
+
+    @AuthCheck
+    @RequestMapping(value = "/delRecord/{id}", method = RequestMethod.DELETE)
+    public JsonResult delRecord(@PathVariable String id, @JwtTokenParser("role") String role) {
+        filesService.delRecord(id, role);
+        return ResultUtils.success();
+    }
+
 }

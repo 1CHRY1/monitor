@@ -31,6 +31,9 @@
                   >上传</el-button
                 >
               </el-upload>
+              <el-button size="default" @click="uploadPageFlag = true"
+                >上传记录</el-button
+              >
             </div>
           </div>
 
@@ -235,7 +238,10 @@
         </div>
       </el-col>
     </el-row>
-    <PageCopyright style="bottom: 0px" />
+    <el-drawer v-model="uploadPageFlag" size="400px" :with-header="false">
+      <upload-record class="upload"></upload-record>
+    </el-drawer>
+    <page-copyright style="bottom: 0px" />
   </div>
 </template>
 
@@ -247,6 +253,7 @@ import { ElMessageBox, ElMessage, rowContextKey } from "element-plus";
 import VisualBindDialog from "@/components/admin/VisualBindDialog.vue";
 import DataPreviewDialog from "@/components/admin/DataPreviewDialog.vue";
 import FolderDialog from "@/components/admin/FolderDialog.vue";
+import UploadRecord from "@/components/admin/UploadRecord.vue";
 import {
   findByFolderId,
   deleteFilesOrFolders,
@@ -255,6 +262,7 @@ import {
 } from "@/api/request";
 import { UploadFile, UploadFiles } from "element-plus";
 import PageCopyright from "@/layout/PageCopyright.vue";
+import { useUploadFileStore } from "@/store/upload-file-store";
 
 const tableData = ref<
   ((FolderType & { flag: boolean }) | (FileType & { flag: boolean }))[]
@@ -271,6 +279,9 @@ const upload = ref<HTMLElement>();
 // const Visible_BindDialog = ref(false);
 const input = ref("");
 const loading = ref(false);
+const uploadPageFlag = ref(false);
+
+const store = useUploadFileStore();
 
 const getName = (item: FolderType | FileType) => {
   if ("fileName" in item) {
@@ -454,8 +465,20 @@ const downloadClick = async (item: FolderType | FileType) => {
   window.location.href = `${process.env.VUE_APP_BACK_ADDRESS}files/downloadFile/${item.id}`;
 };
 
-const upLoadChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
-  console.log(uploadFile, uploadFiles);
+const upLoadChange = (uploadFile: UploadFile) => {
+  let parentId = "";
+  if (path.value.length) {
+    parentId = path.value[path.value.length - 1].id;
+  }
+
+  store.addFileList({
+    file: uploadFile.raw!,
+    finished: 0,
+    parentId: parentId,
+  });
+  if (!store.uploading) {
+    store.executeUpload();
+  }
   // (upload.value as any).clearFiles();
   // store.commit("ADD_WAIT_ITEM", {
   //   id: uuid(),
@@ -628,6 +651,7 @@ const cancelAll = () => {
 
       .upload-btn {
         margin-left: 10px;
+        margin-right: 10px;
       }
     }
   }
