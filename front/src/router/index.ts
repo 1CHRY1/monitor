@@ -164,6 +164,10 @@ export const asyncRouters: Array<RouteRecordRaw> = [
     ],
   },
   {
+    path:"/waterforecast",
+    component : ()=>import ("@/views/WaterForecastView.vue"),
+  },
+  {
     path: "/:catchAll(.*)",
     name: "Redirect404",
     redirect: "/404",

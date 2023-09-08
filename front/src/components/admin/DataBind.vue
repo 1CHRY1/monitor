@@ -32,7 +32,7 @@
     </el-table>
 
     <el-dialog v-model="dialogFlag" width="800px" :show-close="false">
-      <p class="title">创建文件夹</p>
+      <p class="title">数据绑定</p>
       <div class="dialogTable">
         <div class="table-head">
           <el-icon size="20px" @click="backClick"><arrow-left /></el-icon>

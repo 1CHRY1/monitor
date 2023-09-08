@@ -288,3 +288,12 @@ export type FileType = {
   visualId: string;
   view?: string;
 };
+
+export type WaterStation={
+  name:string,
+  pos:{
+      lng:number,
+      lat:number,
+  },
+  water?:number
+}

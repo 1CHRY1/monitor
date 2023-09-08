@@ -1,9 +1,12 @@
 <template>
-    <div :index='chartOptId' class="double-chart-container" :styleId="styleId" :order="order">
-        <div class="table-container left" ref="chartLeft">
-            <dataTable />
+    <div class="part-container"  :styleId="styleId" :order="order" :index='chartOptId'>
+        <div class="double-chart-container">
+            <div class="table-container left" ref="chartLeft">
+                <dataTable :project-id="$props.projectId"/>
+            </div>
+            <div class="chart right"  ref="chartLeft"></div>
         </div>
-        <div class="chart right"  ref="chartLeft"></div>
+        <div class="play-button" :class="{paused: isPaused}" v-if="dynamicControl" :index='chartOptId' @click="changePlayStatus"></div>
     </div>
 </template>
   
@@ -38,8 +41,14 @@ let projectId = ref(props.projectId);
 const chartLeft = ref<HTMLElement>();
 const chartRight = ref<HTMLElement>();
 
-const chartPreparer = new ChartDataPreparer(+chartOptId.value.substring(0, 1));
+const chartDatapreparer = new ChartDataPreparer(+chartOptId.value.substring(0, 1));
 
+let isPaused = ref(true);
+let dynamicControl = ref(false);
+let dynamicInterval = -1;
+let changePlayStatus = () => {
+    isPaused.value = !isPaused.value;
+}
 //   let noShown = ref(props.notShown);
 
 //   watch(()=>props.notShown, (oldShown, newShown)=> {
@@ -54,17 +63,70 @@ onMounted(async () => {
     // let echartLeft = echarts.init(chartLeft.value as HTMLElement);
     let chartRight = echarts.init(chartLeft.value as HTMLElement);
 
-    const chartOption = await chartPreparer.buildChartOption(projectId.value);
+    const chartOption = await chartDatapreparer.buildChartOption(projectId.value);
     // console.log(chartOption);
+    // if (Array.isArray(chartOption)) {
+    //     chartRight.setOption(chartOption[0]);
+    //     setInterval(() => {
+    //         chartRight.setOption(chartOption[optionIndex+1]);
+    //         optionIndex = (optionIndex+1)%(chartOption.length-1);
+    //     }, 2000)
+    // }
+    // else{
+    //     chartRight.setOption(chartOption)
+    // }
+
+    function arrayDynamic() {
+        chartRight.setOption((chartOption as EChartsOption[])[optionIndex+1]);
+        optionIndex = (optionIndex+1)%((chartOption as EChartsOption[]).length-1);
+    }
+
+    let reqeustDynamic = async () => {
+        chartDatapreparer.dynamicIndex += 1;
+        const newSeries = await chartDatapreparer.buildChartOption(projectId.value);
+        chartRight.clear();
+        for(let key in newSeries) {
+            (chartOption as EChartsOption)[key] = (newSeries as EChartsOption)[key]
+        }
+        // chartOption.series = (newSeries as EChartsOption).series;
+        // console.log(chartOption);
+        chartRight.setOption(chartOption as EChartsOption);
+    }
     if (Array.isArray(chartOption)) {
+        // console.log("options", chartOption)
+        dynamicControl.value = false;
         chartRight.setOption(chartOption[0]);
-        setInterval(() => {
-            chartRight.setOption(chartOption[optionIndex+1]);
-            optionIndex = (optionIndex+1)%(chartOption.length-1);
-        }, 2000)
+        dynamicInterval = setInterval(arrayDynamic, 2000)
+        changePlayStatus = () => {
+            isPaused.value = !isPaused.value;
+            if (dynamicInterval != -1) {
+                clearInterval(dynamicInterval);
+                dynamicInterval = -1;
+            }
+            else {
+                dynamicInterval = setInterval(arrayDynamic, 2000)
+            }
+        
+        }
     }
     else{
+        // console.log("option", chartOption)
         chartRight.setOption(chartOption)
+        if (chartDatapreparer.isDynamic === true) {
+            dynamicControl.value = false;
+            dynamicInterval = setInterval(reqeustDynamic, 2000)
+            changePlayStatus = () => {
+                isPaused.value = !isPaused.value;
+                if (dynamicInterval != -1) {
+                    clearInterval(dynamicInterval);
+                    dynamicInterval = -1;
+                }
+                else {
+                    dynamicInterval = setInterval(reqeustDynamic, 2000)
+                }
+            
+            }
+        }
     }
     // let chartConfig = chartOptionTest[+(chartOptId.value.substring(0, 1))-1];
     
@@ -77,9 +139,9 @@ onMounted(async () => {
   
 <style lang='scss' scoped>
 $orders: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10;
+$playButtonSize: calc(0.75vw + 0.8vh);
 
-div.double-chart-container {
-    transition: transform 1s ease-in-out;
+div.part-container {
     width: 30%;
     height: 32%;
     border-radius: 3px;
@@ -87,10 +149,6 @@ div.double-chart-container {
     overflow: hidden;
     // backdrop-filter: blur(4px);
     flex-grow: 0;
-
-    display: flex;
-    flex-flow: row no wrap;
-    justify-content: space-around;
 
     &[styleId='1'] {
         width: 28%;
@@ -113,35 +171,78 @@ div.double-chart-container {
         }
     }
 
-    div {
-        canvas {
+    div.double-chart-container {
+        width: 100%;
+        height: 100%;
+        border-radius: 3px;
+        transition: transform 1s ease-in-out;
+        display: flex;
+        overflow: hidden;
+        flex-flow: row no wrap;
+        justify-content: space-around;
+    
+        div {
+            canvas {
+                border-radius: 3px;
+            }
+        }
+
+        div.chart {
+            width: 49%;
+            height: 100%;
+            background-color: rgba(0, 1, 67, 0.5);
             border-radius: 3px;
+
+            div {
+                canvas {
+                    border-radius: 3px;
+                }
+            }
         }
-    }
 
-    div.chart {
-        width: 49%;
-        height: 100%;
-        background-color: rgba(0, 1, 67, 0.5);
-        border-radius: 3px;
+        div.table-container {
+            width: 49%;
+            height: 100%;
+            background-color: rgba(0, 1, 67, 0.5);
+            border-radius: 3px;
+            margin-right: 0;
 
-        div {
-            canvas {
-                border-radius: 3px;
+            div {
+                canvas {
+                    border-radius: 3px;
+                }
             }
         }
     }
+    div.play-button {
+        position: absolute;
+        right: 5%;
+        top: 2%;
+        border: 0;
+        background: transparent;
+        box-sizing: border-box;
+        width: $playButtonSize;
+        height: $playButtonSize;
+        // background-color: aqua;
+        border-color: transparent transparent transparent #4a8cfd;
+        transition: 100ms all ease;
+        cursor: pointer;
 
-    div.table-container {
-        width: 49%;
-        height: 100%;
-        background-color: rgba(0, 1, 67, 0.5);
-        border-radius: 3px;
+        border-style: solid;
+        border-width: calc($playButtonSize/2) 0 calc($playButtonSize/2) calc($playButtonSize*0.8);
 
-        div {
-            canvas {
-                border-radius: 3px;
-            }
+        &.paused {
+            border-style: double;
+            border-width: 0px 0 0px calc($playButtonSize*0.8);
+        }
+
+        &:hover {
+            border-color: transparent transparent transparent #60ffdf;
+        }
+
+        &[index='9'] {
+            right: 32%;
         }
     }
-}</style>
+}
+</style>

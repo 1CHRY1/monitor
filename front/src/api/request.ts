@@ -432,7 +432,7 @@ export const getSubstrate = async (projectId: string) => {
 export const getSpeedOrientationNameAndType = async (projectId: string) => {
   return await get(
     `/monitorVisual/getSpeedOrientationNameAndType/${projectId}`,
-    true
+    false
   );
 };
 
@@ -458,6 +458,10 @@ export const getOrientation = async (
   );
 };
 
+export const getSandTansport = async (projectId: string) => {
+  return await get(`/monitorVisual/getSandTransport/${projectId}`, true);
+};
+
 export const getSandContentClass = async (projectId: string) => {
   return await get(`/monitorVisual/getSandContentClass/${projectId}`, true);
 };
@@ -468,6 +472,27 @@ export const getSandContentValue = async (projectId: string, name: string) => {
     true
   );
 };
+
+export const getFloatPoint = async (projectId: string) => {
+  return await get(
+    `/monitorVisual/getLocusPoint/${projectId}`,
+    false
+  );
+}
+
+export const getFloatPointTable = async (projectId: string, pointName: string) => {
+  return await get(
+    `/monitorVisual/getLocusTable/${projectId}/${pointName}`,
+    false
+  );
+}
+
+export const getFloatPointShape = async (projectId: string, pointName: string) => {
+  return await get(
+    `/monitorVisual/getLocusShape/${projectId}/${pointName}`,
+    false
+  );
+}
 
 // ----------------管理员界面相关------------------------------
 
