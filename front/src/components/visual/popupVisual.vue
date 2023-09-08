@@ -6,9 +6,6 @@
         </div>
 
         <div class="back-shadow">
-
-
-        
             <div class="Position">
                 <div class="card">
                     <div class="flex1">

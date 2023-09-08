@@ -124,7 +124,7 @@ type DialogTableType = {
 };
 import { defineComponent, onMounted, ref } from "vue";
 import { findByFolderId } from "@/api/request";
-import DataPreview from "./DataPreview.vue";
+import DataPreview from "./DataPreviewDialog.vue";
 import { BindDataFileInfo } from "@/type";
 export default defineComponent({
   components: { DataPreview },

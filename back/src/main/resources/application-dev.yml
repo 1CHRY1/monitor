@@ -1,32 +1,32 @@
 spring:
   datasource:
     default:
-      jdbc-url: jdbc:sqlite:E:/monitor/main.db
+      jdbc-url: jdbc:sqlite:D:/UyNauhL/Assignments/monitor_data/monitor/main.db
       driver-class-name: org.sqlite.JDBC
     shp:
       jdbc-url: jdbc:postgresql://localhost:5432/shp_dataset?stringtype=unspecified
       driver-class-name: org.postgresql.Driver
       username: postgres
-      password: 123
+      password: QWERBOOM123
     ship:
-      jdbc-url: jdbc:sqlite:D:/UyNauhL/Assignments/monitor_data/monitor/ais.db
+      jdbc-url: jdbc:sqlite:D:/UyNauhL/Assignments/monitor_data/monitor/resources/ais.db
       driver-class-name: org.sqlite.JDBC
     waterway:
-      jdbc-url: jdbc:sqlite:D:/UyNauhL/Assignments/monitor_data/monitor/waterway.db
+      jdbc-url: jdbc:sqlite:D:/UyNauhL/Assignments/monitor_data/monitor/resources/waterway.db
       driver-class-name: org.sqlite.JDBC
 
 #D:/UyNauhL/Assignments/monitor_data/monitor
 
-baseDir: D:/UyNauhL/Assignments/monitor_data/monitor/raw/
-avatarDir: D:/UyNauhL/Assignments/monitor_data/monitor/avatar/
-tempDir: E:/monitor/temp/
-visualDir: D:/UyNauhL/Assignments/monitor_data/monitor/visual/
+baseDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/raw/
+avatarDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/avatar/
+tempDir: D:/UyNauhL/Assignments/monitor_data/monitor/temp/
+visualDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/visual/
 pgPath: C:/UyNauhL/ProgramFile/PostgreSQL/11/bin/
-mapDir: D:/UyNauhL/Assignments/monitor_data/monitor/map/
-resourceDir: D:/UyNauhL/Assignments/monitor_data/monitor/
-analysisDir: D:/UyNauhL/Assignments/monitor_data/monitor/analysis/
-analysisParameterDir: D:/UyNauhL/Assignments/monitor_data/monitor/analysisParameter/
-projectDir: D:/UyNauhL/Assignments/monitor_data/project/
+mapDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/map/
+resourceDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/
+analysisDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/analysis/
+analysisParameterDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/analysisParameter/
+projectDir: D:/UyNauhL/Assignments/monitor_data/resources/raw/project/
 
 meteorologyUrl: https://weather.cma.cn/api/map/alarm
 meteorologyPngUrl:
