@@ -45,6 +45,14 @@ const changeData = () => {
     console.log(curProjectId.value);
 }
 
+let dynamicInterval = -1;
+
+let isPaused = ref(true);
+let dynamicControl = ref(false);
+
+let changePlayStatus = () => {
+    isPaused.value = !isPaused.value;
+}
 //   let noShown = ref(props.notShown);
 
 //   watch(()=>props.notShown, (oldShown, newShown)=> {

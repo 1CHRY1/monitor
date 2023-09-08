@@ -474,27 +474,28 @@ export const getSandContentValue = async (projectId: string, name: string) => {
 };
 
 export const getFloatPoint = async (projectId: string) => {
-  return await get(
-    `/monitorVisual/getLocusPoint/${projectId}`,
-    false
-  );
-}
+  return await get(`/monitorVisual/getLocusPoint/${projectId}`, false);
+};
 
-export const getFloatPointTable = async (projectId: string, pointName: string) => {
+export const getFloatPointTable = async (
+  projectId: string,
+  pointName: string
+) => {
   return await get(
     `/monitorVisual/getLocusTable/${projectId}/${pointName}`,
     false
   );
-}
+};
 
-export const getFloatPointShape = async (projectId: string, pointName: string) => {
+export const getFloatPointShape = async (
+  projectId: string,
+  pointName: string
+) => {
   return await get(
     `/monitorVisual/getLocusShape/${projectId}/${pointName}`,
     false
   );
-}
-
-// ----------------管理员界面相关------------------------------
+};
 
 export async function findByFolderId(parentId: string) {
   return await get(`/files/findByFolderId/${parentId}`, true);
@@ -507,32 +508,56 @@ export async function addFolder(jsonData: {
   return await post(`/files/addFolder`, true, jsonData);
 }
 
+export async function getVisualFileByVisualId(visualId: string) {
+  return await get(`/files/getVisualFileByVisualId/${visualId}`, true);
+}
+
 export async function deleteFilesOrFolders(jsonData: {
   files: string[];
   folders: string[];
-}) {}
-
-export async function uploadParts(
-  uid: string,
-  number: number,
-  formData: FormData
-) {
-  // return await post(`/visual/uploadParts/${uid}/${number}`, formData);
-  return {
-    data: "123",
-  };
+}) {
+  return await post(`/files/deleteFilesOrFolders`, true, jsonData);
 }
 
-export async function mergeParts(
-  uid: string,
+export const getUploadRecord = async () => {
+  return await get(`/files/getUploadRecord`, true);
+};
+
+export const uploadChunks = async (formData: FormData) => {
+  return await post(`/files/uploadChunks`, false, formData);
+};
+
+export const mergeChunks = async (jsonDta: {
+  parentId: string;
+  id: string;
+  total: number;
+  fileName: string;
+}) => {
+  return post(`/files/mergeChunks`, false, jsonDta);
+};
+
+export const delAllRecord = async () => {
+  return del(`/files/delAllRecord`, true);
+};
+
+export const delRecord = async (id: string) => {
+  return del(`/files/delRecord/${id}`, true);
+};
+
+export async function cancelVisualBind(id: string) {
+  return del(`/files/cancelVisualBind/${id}`, true);
+}
+
+export async function visualFileMerge(
+  id: string,
   total: number,
   type: string,
   name: string
 ) {
-  // return await post(`/visual/mergeParts/${uid}/${total}/${type}/${name}`);
-  return {
-    data: "123",
-  };
+  return await post(
+    `/files/visualFileMerge/${id}/${total}/${type}/${name}`,
+    true
+  );
 }
 
 export async function bindVisualData(jsonData: {
@@ -546,19 +571,5 @@ export async function bindVisualData(jsonData: {
     center: number[];
   } | null;
 }) {
-  // return await post(`/file/bindVisualData`, jsonData);
-  return {
-    data: "123",
-  };
-}
-
-export async function cancelVisualBind(id: string) {
-  // return await del(`/file/cancelVisualBind/${id}`);
-  return {
-    data: "123",
-  };
-}
-
-export async function getDownloadURL(id: string) {
-  return "downloadURL";
+  return await post(`/files/bindVisualData`, true, jsonData);
 }

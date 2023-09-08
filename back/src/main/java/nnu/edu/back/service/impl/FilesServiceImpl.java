@@ -12,11 +12,13 @@ import nnu.edu.back.dao.main.FilesMapper;
 import nnu.edu.back.dao.main.VisualFileMapper;
 import nnu.edu.back.pojo.Files;
 import nnu.edu.back.pojo.Folder;
+import nnu.edu.back.pojo.UploadRecord;
 import nnu.edu.back.pojo.VisualFile;
 import nnu.edu.back.service.FilesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +29,7 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -119,14 +122,7 @@ public class FilesServiceImpl implements FilesService {
             viewStr = JSONObject.toJSONString(view);
         }
         String content = "";
-        List<String> list = dataRelationalMapper.findDataListIdsByFileId(fileId);
-//        Files files = filesMapper.findInfoById(fileId);
-//        boolean flag;
-//        if (list.size() > 0) {
-//            flag = true;
-//        } else {
-//            flag = false;
-//        }
+
         if (type.equals("png") || type.equals("movePng")) {
             JSONObject json = new JSONObject();
             json.put("address", "png/" + fileName);
@@ -177,23 +173,14 @@ public class FilesServiceImpl implements FilesService {
                 throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
             }
         } else if (type.equals("photo") || type.equals("video")) {
-//            if (flag) {
-//                throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
-//            }
             filesMapper.updateVisualIdAndType(fileId, "", type);
             return "";
         } else {
-            // excel表格形式的数据上传
             throw new MyException(ResultEnum.QUERY_TYPE_ERROR);
         }
         String id = UUID.randomUUID().toString();
         VisualFile visualFile = new VisualFile(id, fileName, type, content, viewStr);
         visualFileMapper.addVisualFile(visualFile);
-//        if (flag) {
-//            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
-//        } else {
-//            filesMapper.updateVisualIdAndType(fileId, id, type);
-//        }
         filesMapper.updateVisualIdAndType(fileId, id, type);
         return id;
     }
@@ -217,27 +204,136 @@ public class FilesServiceImpl implements FilesService {
     @Override
     public String addFolder(String folderName, String parentId, String role) {
         if (role.equals("admin")) {
-            String temp = parentId;
-            String address;
-            if (parentId.equals("-1")) {
-                parentId = "";
-                address = Paths.get(baseDir, folderName).toString();
-            } else {
-                String path = folderName;
-                while (!parentId.equals("")) {
-                    Folder folder = filesMapper.findFolderById(parentId);
-                    path = folder.getFolderName() + "/" + path;
-                    parentId = folder.getParentId();
-                }
-                address = Paths.get(baseDir, path).toString();
-            }
-            File file = new File(address);
-            if (file.exists()) throw new MyException(-99, "文件夹已存在!");
             String uuid = UUID.randomUUID().toString();
-            file.mkdirs();
-            Folder folder = new Folder(uuid, folderName, temp);
+            Folder folder = new Folder(uuid, folderName, parentId);
             filesMapper.addFolder(folder);
             return uuid;
+        } else throw new MyException(ResultEnum.NO_ACCESS);
+    }
+
+    @Override
+    public VisualFile getVisualFileByVisualId(String visualId) {
+        return filesMapper.getVisualFileByVisualId(visualId);
+    }
+
+    @Override
+    public void deleteFilesOrFolders(JSONObject jsonObject, String role) {
+        if (role.equals("admin")) {
+            List<String> files = (List<String>) jsonObject.get("files");
+            List<String> folders = (List<String>) jsonObject.get("folders");
+            if (files.size() > 0) {
+                filesMapper.batchDelete(files);
+                dataRelationalMapper.batchDeleteByFileId(files);
+            }
+            if (folders.size() > 0) {
+                dataRelationalMapper.recursionDeleteFileId(folders);
+                filesMapper.recursionDeleteFile(folders);
+                filesMapper.recursionDeleteFolder(folders);
+            }
+        } else throw new MyException(ResultEnum.NO_ACCESS);
+    }
+
+    @Override
+    public List<UploadRecord> getUploadRecord(String role) {
+        if (role.equals("admin")) {
+            return filesMapper.getUploadRecord();
+        } throw new MyException(ResultEnum.NO_ACCESS);
+
+    }
+
+    @Override
+    public void uploadChunks(MultipartFile file, String number, String id) {
+        String address = Paths.get(tempDir, id).toString();
+        int code = FileUtil.uploadFile(file, number, address);
+        if (code == -1) throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+    }
+
+    @Override
+    public UploadRecord mergeChunks(String parentId, String id, int total, String fileName) {
+        String name = fileName.substring(0, fileName.lastIndexOf(".")) + UUID.randomUUID().toString().substring(0, 8);
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        String address = Paths.get(tempDir, id).toString();
+        String to = Paths.get(baseDir, name + suffix).toString();
+        FileUtil.mergeFile(address, to, total);
+        File file = new File(address);
+        if (!file.exists()) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        String[] fileNames = file.list();
+        if (fileNames.length == total) {
+            FileUtil.mergeFile(address, to, total);
+            Files f = new Files();
+            f.setId(UUID.randomUUID().toString());
+            f.setFileName(fileName);
+            f.setAddress(name);
+            f.setSize(FileUtil.formatFileSize(new File(to).length()));
+            f.setVisualId("");
+            f.setVisualType("");
+            f.setParentId(parentId);
+            filesMapper.addFile(f);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            UploadRecord uploadRecord = new UploadRecord(UUID.randomUUID().toString(), fileName, format.format(new Date()), f.getSize());
+            filesMapper.addUploadRecord(uploadRecord);
+            return uploadRecord;
+        } else throw new MyException(-99, "数据缺损!");
+    }
+
+    @Override
+    public String visualFileMerge(String id, int total, String type, String name) {
+        String address = Paths.get(tempDir, id).toString();
+        File folder = new File(address);
+        if (!folder.exists()) {
+            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+        } else {
+            if (folder.list().length != total) {
+                throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+            }
+        }
+        if (type.equals("png") || type.equals("movePng")) {
+            String suffix = name.substring(name.lastIndexOf("."));
+            String fileName = UUID.randomUUID() + suffix;
+            String to = Paths.get(visualDir, "png", fileName).toString();
+            FileUtil.mergeFile(address, to, total);
+            return fileName;
+        } else if (type.equals("rasterTile")) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            long number = timestamp.getTime();
+            String suffix = name.substring(name.lastIndexOf("."));
+            String to = Paths.get(tempDir, "rasterTile", number + suffix).toString();
+            FileUtil.mergeFile(address, to, total);
+            return "rasterTile" + number + suffix;
+        } else if (type.equals("polygonVectorTile3D") || type.equals("pointVectorTile3D") || type.equals("lineVectorTile3D") || type.equals("polygonVectorTile") || type.equals("pointVectorTile") || type.equals("lineVectorTile")) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            long number = timestamp.getTime();
+            String suffix = name.substring(name.lastIndexOf("."));
+            String to = Paths.get(tempDir, "shp", number + suffix).toString();
+            FileUtil.mergeFile(address, to, total);
+            return "shp" + number + ".shp";
+        } else {
+            String suffix = name.substring(name.lastIndexOf("."));
+            String fileName = UUID.randomUUID() + suffix;
+            String to;
+            if (type.equals("flowSand_Z")) {
+                to = Paths.get(tempDir, "flowSand", fileName).toString();
+            } else {
+                to = Paths.get(tempDir, type, fileName).toString();
+            }
+            FileUtil.mergeFile(address, to, total);
+            return fileName;
+        }
+    }
+
+    @Override
+    public void delAllRecord(String role) {
+        if (role.equals("admin")) {
+            filesMapper.delAllRecord();
+        } else throw new MyException(ResultEnum.NO_ACCESS);
+    }
+
+    @Override
+    public void delRecord(String id, String role) {
+        if (role.equals("admin")) {
+            filesMapper.delRecord(id);
         } else throw new MyException(ResultEnum.NO_ACCESS);
     }
 }

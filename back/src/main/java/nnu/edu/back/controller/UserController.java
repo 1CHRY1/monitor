@@ -41,4 +41,9 @@ public class UserController {
     public JsonResult getUserInfo(@JwtTokenParser("email") String email) {
         return ResultUtils.success(userService.getUserInfo(email));
     }
+
+    @RequestMapping(value = "/ha", method = RequestMethod.GET)
+    public JsonResult ha() {
+        return ResultUtils.success("hah");
+    }
 }

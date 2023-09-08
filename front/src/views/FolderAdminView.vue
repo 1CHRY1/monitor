@@ -245,7 +245,7 @@
   import {
     findByFolderId,
     deleteFilesOrFolders,  
-    getDownloadURL,  
+    // getDownloadURL,  
     addFolder,
   } from "@/api/request";
   import { UploadFile, UploadFiles } from "element-plus";
@@ -735,18 +735,34 @@
     border-width: 0 2.5px 2.5px 0;
     transform: rotate(45deg);
   }
-  
-  .container input:checked ~ .checkmark:after {
-    display: block;
-  }
-  
-  
-  .el-icon {
-    font-size: 20px;
-  }
-  
-  #main-elrow{
-    height:calc(100vh - 250px - 5rem);
-  }
-  
-  </style>
+
+
+.container input:checked ~ .checkmark {
+  background-color: var(--input-focus);
+}
+
+.checkmark:after {
+  content: "";
+  width: 5px;
+  height: 13px;
+  position: absolute;
+  top: 1px;
+  left: 8px;
+  display: none;
+  border: solid var(--bg-color);
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.el-icon {
+  font-size: 20px;
+}
+
+#main-elrow {
+  height: calc(100vh - 250px - 5rem);
+}
+</style>

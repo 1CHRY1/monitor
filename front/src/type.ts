@@ -297,3 +297,10 @@ export type WaterStation={
   },
   water?:number
 }
+
+export type UploadRecord = {
+  id: string
+  fileName: string
+  uploadTime: string
+  size: string
+}

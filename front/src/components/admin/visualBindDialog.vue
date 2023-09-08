@@ -142,16 +142,18 @@
 import { notice, uuid } from "@/utils/common";
 import { createFileChunk } from "@/utils/file";
 import {
-  uploadParts,
-  mergeParts,
+  uploadChunks,
+  visualFileMerge,
   bindVisualData,
   cancelVisualBind,
 } from "@/api/request";
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref, PropType } from "vue";
+import { FileType } from "@/type";
+
 export default defineComponent({
   props: {
     fileInfo: {
-      type: Object,
+      type: Object as PropType<FileType>,
     },
   },
   emits: ["updateVisualFile"],
@@ -362,17 +364,18 @@ export default defineComponent({
         progressFlag.value = true;
         const uid = uuid();
         let flag = false;
+        let count = 0;
         const handle = async () => {
           if (fileList.length > 0 && !flag) {
             const file = fileList.shift();
-            const number = total - fileList.length - 1;
             const formData = new FormData();
+            formData.append("number", count.toString());
+            formData.append("id", uid);
             formData.append("file", file!);
-            const data = await uploadParts(uid, number, formData);
-            if (data != null && (data as any).code === 0) {
-              percentage.value = parseFloat(
-                (((number + 1) * 100) / total).toFixed(2)
-              );
+            count++;
+            const data = await uploadChunks(formData);
+            if (data != null && data.code === 0) {
+              percentage.value = Math.floor(count / total);
               handle();
             } else {
               flag = true;
@@ -382,8 +385,8 @@ export default defineComponent({
         for (let i = 0; i < 5; i++) {
           await handle();
         }
-        if (fileList.length == 0 && !flag) {
-          const data = await mergeParts(
+        if (fileList.length === 0 && !flag) {
+          const data = await visualFileMerge(
             uid,
             total,
             typeValue.value,
@@ -512,7 +515,7 @@ export default defineComponent({
 
     const cancelClick = async () => {
       const data = await cancelVisualBind(fileInfo.value!.id);
-      if (data != null && (data as any).code === 0) {
+      if (data != null && data.code === 0) {
         notice("success", "成功", "取消可视化数据绑定");
         context.emit("updateVisualFile", { visualType: "", visualId: "" });
       }
