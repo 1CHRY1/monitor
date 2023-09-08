@@ -106,7 +106,7 @@
     </el-dialog>
 
     <el-dialog v-model="dataPreviewFlag" width="900px">
-      <data-preview :fileInfo="fileInfo" v-if="dataPreviewFlag"></data-preview>
+      <DataPreview :fileInfo="fileInfo" v-if="dataPreviewFlag"></DataPreview>
     </el-dialog>
   </div>
 </template>
@@ -383,6 +383,7 @@ export default defineComponent({
       dataPreviewFlag,
       visualCompareFlag,
       compareInfo,
+      DataPreview,
     };
   },
 });
