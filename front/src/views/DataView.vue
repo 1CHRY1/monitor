@@ -1,6 +1,6 @@
 <template>
     <div class="viewer-header">
-        <div class="logo-text">NHRI</div>
+        <div class="logo-text" @click="routeHome">NHRI</div>
         <div class="clock">
             <p class="time">{{ curTime.toLocaleTimeString() }}</p>
         </div>
@@ -56,6 +56,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import centerMap from '@/components/dataViewer/centerMap.vue';
+import router from "@/router";
 import chartContainer from '@/components/dataViewer/chartContainer.vue';
 import doubleChartContainer from '@/components/dataViewer/doubleChartContainer.vue';
 import { type ProjectOption } from '@/utils/viewerData';
@@ -68,7 +69,7 @@ console.log('projects', projects?.data);
 
 let projectOptions = ref(projects?.data);
 
-const chartConatinerRefs = ref<InstanceType<typeof chartContainer>[]>([]);
+const chartConatinerRefs = ref<InstanceType<typeof chartContainer>[]>([]); 
 
 let currentProject = ref<ProjectOption>(projectOptions.value[0]);
 
@@ -107,6 +108,10 @@ let doubleChartObjects = [
     // {chartId: '23', order:'2', styleType:"1"},
     {chartId: '78', order:'7', styleType:"1"}
 ]
+
+let routeHome = () => {
+    router.push({path: '/'});
+}
 
 onMounted(() => {
     setInterval(updataTime, 1000);
