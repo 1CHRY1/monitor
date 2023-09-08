@@ -6,17 +6,11 @@
     
 </template>
   
-<script lang="ts">
-export default {
-    name: "chartContainer",
-};
-</script>
-  
 <script setup lang='ts'>
 import * as echarts from 'echarts';
 import { EChartsOption } from 'echarts';
 import { onMounted, ref, toRef } from 'vue';
-import { chartOptionTest, ChartDataPreparer } from '@/utils/viewerData';
+import { ChartDataPreparer } from '@/utils/viewerData';
 // import { getSectionElevation } from '@/api/request';
 
 interface Props {
@@ -53,21 +47,9 @@ let dynamicControl = ref(false);
 let changePlayStatus = () => {
     isPaused.value = !isPaused.value;
 }
-//   let noShown = ref(props.notShown);
 
-//   watch(()=>props.notShown, (oldShown, newShown)=> {
-//       noShown.value = !newShown;
-//       console.log(noShown.value);
-//   });
-let optionIndex = 0;
-onMounted(async () => {
-    // console.log(chartDom.value);
-    let chart = echarts.init(chartDom.value as HTMLElement);
-    const chartOption = await chartDatapreparer.buildChartOption(projectId.value);
-    // if (chartOption is EChartsOption) {
-
-    // }
-
+const loadChartOfCurPorject = async (chart: echarts.ECharts, projectIdStr: string) => {
+    const chartOption = await chartDatapreparer.buildChartOption(projectIdStr);
     function arrayDynamic() {
         chart.setOption((chartOption as EChartsOption[])[optionIndex+1]);
         optionIndex = (optionIndex+1)%((chartOption as EChartsOption[]).length-1);
@@ -75,7 +57,7 @@ onMounted(async () => {
 
     let reqeustDynamic = async () => {
         chartDatapreparer.dynamicIndex += 1;
-        const newSeries = await chartDatapreparer.buildChartOption(projectId.value);
+        const newSeries = await chartDatapreparer.buildChartOption(projectIdStr);
         chart.clear();
         for(let key in newSeries) {
             (chartOption as EChartsOption)[key] = (newSeries as EChartsOption)[key]
@@ -88,7 +70,7 @@ onMounted(async () => {
         // console.log("options", chartOption)
         dynamicControl.value = true;
         chart.setOption(chartOption[0]);
-        dynamicInterval = setInterval(arrayDynamic, 2000)
+        dynamicInterval = setInterval(arrayDynamic, 4000)
         changePlayStatus = () => {
             isPaused.value = !isPaused.value;
             if (dynamicInterval != -1) {
@@ -96,7 +78,7 @@ onMounted(async () => {
                 dynamicInterval = -1;
             }
             else {
-                dynamicInterval = setInterval(arrayDynamic, 2000)
+                dynamicInterval = setInterval(arrayDynamic, 4000)
             }
         
         }
@@ -106,7 +88,7 @@ onMounted(async () => {
         chart.setOption(chartOption)
         if (chartDatapreparer.isDynamic === true) {
             dynamicControl.value = true;
-            dynamicInterval = setInterval(reqeustDynamic, 2000)
+            dynamicInterval = setInterval(reqeustDynamic, 4000)
             changePlayStatus = () => {
                 isPaused.value = !isPaused.value;
                 if (dynamicInterval != -1) {
@@ -114,12 +96,20 @@ onMounted(async () => {
                     dynamicInterval = -1;
                 }
                 else {
-                    dynamicInterval = setInterval(reqeustDynamic, 2000)
+                    dynamicInterval = setInterval(reqeustDynamic, 4000)
                 }
             
             }
         }
     }
+}
+
+let optionIndex = 0;
+onMounted(async () => {
+    // console.log(chartDom.value);
+    let chart = echarts.init(chartDom.value as HTMLElement);
+    await loadChartOfCurPorject(chart, projectId.value);
+
     // TODO: window.onsize doesn't work on components
     // window.onresize = function () {
     //     chart.resize();

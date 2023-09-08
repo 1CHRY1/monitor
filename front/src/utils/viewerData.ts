@@ -1244,6 +1244,7 @@ class ChartDataPreparer {
                     color: 'rgba(255, 255, 255, 0.8)'
                 }
             },
+            dataZoom: {type: 'inside'},
             legend: {
                 show: true,
                 orient: 'vertical',
@@ -1389,6 +1390,7 @@ class ChartDataPreparer {
                         color: 'rgba(255, 255, 255, 0.8)'
                     }
                 },
+                animation: false,
                 visualMap: {
                     show: false,
                     type: 'continuous',
@@ -1707,6 +1709,7 @@ class ChartDataPreparer {
                         color: 'rgba(255, 255, 255, 0.8)'
                     }
                 },
+                animation: false,
                 visualMap: {
                     show: false,
                     type: 'continuous',

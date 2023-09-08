@@ -35,7 +35,7 @@ let curTableData = await chartDatapreparer.buildChartOption(props.projectId);
 
 // const data = await 
 
-const tableData = ref({
+let tableData = ref({
     'name': (curTableData as StringKeyObject)["name"]+'表面流轨迹',
     'tHead': [
       '时间', 'X', 'Y', '流速'
@@ -56,12 +56,28 @@ let scrollTable = (() => {
   // tableBody.value?.style.setProperty('--upRowNum', upRowNum.toString());
 })
 
+let tableInterval = -1;
+
+const changeTableData = async (curProjectId: string) => {
+  clearInterval(tableInterval);
+  curTableData = await chartDatapreparer.buildChartOption(curProjectId);
+  tableData = ref({
+    'name': (curTableData as StringKeyObject)["name"]+'表面流轨迹',
+    'tHead': [
+      '时间', 'X', 'Y', '流速'
+    ],
+    'tBody': (curTableData as StringKeyObject)["data"]
+  })
+  tableInterval = setInterval(scrollTable, 1000);
+}
 
 onMounted(() => {
-    setInterval(scrollTable, 1000)
+  tableInterval = setInterval(scrollTable, 1000)
     
 })
 
+
+defineExpose({changeTableData});
 </script>
 
 
