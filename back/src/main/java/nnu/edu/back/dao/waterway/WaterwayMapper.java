@@ -48,5 +48,5 @@ public interface WaterwayMapper {
 
     Object getPhoto(@Param("fileName") String fileName);
 
-
+    List<Station> getPredictionStation();
 }

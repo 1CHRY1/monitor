@@ -220,4 +220,7 @@
         select file from photos where file_name = #{fileName}
     </select>
 
+    <select id="getPredictionStation" resultMap="StationMap">
+        select * from stations where prediction = 1
+    </select>
 </mapper>

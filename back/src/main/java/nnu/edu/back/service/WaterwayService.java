@@ -41,4 +41,10 @@ public interface WaterwayService {
     List<Ship> getShipInfoByBoxAndTime(double top, double right, double bottom, double left, String startTime, String endTime);
 
     List<Ship> queryBoxShip(double top, double right, double bottom, double left);
+
+    List<Station> getPredictionStation();
+
+    JSONObject getPredictionValue(String name);
+
+    JSONArray getAllPredictionValue();
 }

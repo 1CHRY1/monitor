@@ -39,3 +39,6 @@ AISUrl:
   https://www.cjienc.cn/rest/es/getBoxShips?left={0}&bottom={1}&right={2}&top={3}
 AISListUrl:
   https://www.cjienc.cn/rest/es/getBoxShips?from={0}&name={1}&size={2}
+
+fileViewUrl:
+  http://localhost:8012/fileUpload

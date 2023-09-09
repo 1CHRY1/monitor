@@ -507,17 +507,17 @@ export default defineComponent({
     };
 
     const updateShip = async () => {
-      function getSize(length: string, width: string) {
-        const l = parseInt(length);
-        const w = parseInt(width);
-        if (l < 20 || w < 15) {
-          return [20, 20];
-        } else if (l > 100 || w > 50) {
-          return [100, 50];
-        } else {
-          return [l, w];
-        }
-      }
+      // function getSize(length: string, width: string) {
+      //   const l = parseInt(length);
+      //   const w = parseInt(width);
+      //   if (l < 20 || w < 15) {
+      //     return [20, 20];
+      //   } else if (l > 100 || w > 50) {
+      //     return [100, 50];
+      //   } else {
+      //     return [l, w];
+      //   }
+      // }
       function filter() {
         if ((map.getView().getZoom() as number) < 13) {
           return 200;
@@ -558,10 +558,12 @@ export default defineComponent({
               f.setStyle(
                 new Style({
                   image: new Icon({
-                    src: "/ship-from-above-cut.png",
-                    width: getSize(item["length"], item["width"])[1],
-                    height: getSize(item["length"], item["width"])[0],
+                    src: `/ship${item.classType}.png`,
+                    width: 20,
+                    height: 30,
                     rotation: parseFloat(item.course),
+                    // color: [13, 173, 72, 1],
+                    
                   }),
                 })
               );

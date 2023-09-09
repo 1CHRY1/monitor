@@ -9,7 +9,7 @@
       v-if="
         uploadedList.length === 0 &&
         fileList.length === 0 &&
-        Object.keys(uploadingObj)
+        Object.keys(uploadingObj).length === 0
       "
     />
     <div class="scroll" v-else>
@@ -129,8 +129,12 @@ export default defineComponent({
       }
     };
 
+    // watch(uploadingObj.value, (newVal) => {
+    //   console.log(newVal);
+    // });
+
     onMounted(async () => {
-      console.log(store.uploadingObj);
+      console.log(store.uploadingObj, Object.keys(uploadingObj.value));
       skeleton.value = true;
       console.log("123");
       //   await store.dispatch("initUploadedList", undefined);

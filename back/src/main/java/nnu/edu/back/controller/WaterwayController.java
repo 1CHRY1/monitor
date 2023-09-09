@@ -108,4 +108,18 @@ public class WaterwayController {
         return ResultUtils.success(waterwayService.queryBoxShip(top, right, bottom, left));
     }
 
+    @RequestMapping(value = "/getPredictionStation", method = RequestMethod.GET)
+    public JsonResult getPredictionStation() {
+        return ResultUtils.success(waterwayService.getPredictionStation());
+    }
+
+    @RequestMapping(value = "/getPredictionValue/{name}", method = RequestMethod.GET)
+    public JsonResult getPredictionValue(@PathVariable String name) {
+        return ResultUtils.success(waterwayService.getPredictionValue(name));
+    }
+
+    @RequestMapping(value = "/getAllPredictionValue", method = RequestMethod.GET)
+    public JsonResult getAllPredictionValue() {
+        return ResultUtils.success(waterwayService.getAllPredictionValue());
+    }
 }

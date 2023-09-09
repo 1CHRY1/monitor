@@ -424,7 +424,7 @@ const batDelete = async () => {
       };
 
       for (let i = 0; i < selectList.value.length; i++) {
-        if ("fileName" in selectList.value[i]) {
+        if (selectList.value[i].type === 'file') {
           deleteList.files.push(selectList.value[i].id);
         } else {
           deleteList.folders.push(selectList.value[i].id);
@@ -472,6 +472,7 @@ const upLoadChange = (uploadFile: UploadFile) => {
     finished: 0,
     parentId: parentId,
   });
+  console.log(store.uploading)
   if (!store.uploading) {
     store.executeUpload();
   }

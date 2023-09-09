@@ -46,27 +46,41 @@ export const useUploadFileStore = defineStore("uploadFile", () => {
   };
 
   const executeUpload = () => {
+    uploading.value = true;
     const handle = () => {
-      uploading.value = true;
-      if (fileList.value.length) {
-        const id = uuidv4();
-        const file = { ...fileList.value.shift()!, finished: 0, cancel: false };
-        uploadingObj[id] = file;
-        uploadChunksHandle(file, id)
-          .then((res) => {
-            if (res && res.code === 0) {
+      return new Promise((resolve, reject) => {
+        if (fileList.value.length) {
+          const id = uuidv4();
+          const file = {
+            ...fileList.value.shift()!,
+            finished: 0,
+            cancel: false,
+          };
+          uploadingObj[id] = file;
+          uploadChunksHandle(file, id)
+            .then(async (res) => {
+              if (res && res.code === 0) {
+                delete uploadingObj[id];
+                uploadedList.value.unshift(res.data);
+              }
+              const result = await handle();
+              if (result === 1) resolve(result);
+              else reject();
+            })
+            .catch(() => {
               delete uploadingObj[id];
-              uploadedList.value.unshift(res.data);
-            }
-            handle();
-          })
-          .catch(() => {
-            delete uploadingObj[id];
-          });
-      }
+              reject();
+            });
+        } else {
+          resolve(1);
+        }
+      });
     };
-    for (let i = 0; i < 5; i++) handle();
-    uploading.value = false;
+    const promiseList = [];
+    for (let i = 0; i < 5; i++) promiseList.push(handle());
+    Promise.all(promiseList).then(() => {
+      uploading.value = false;
+    });
   };
 
   function createFileChunk(file: File) {
@@ -129,6 +143,6 @@ export const useUploadFileStore = defineStore("uploadFile", () => {
     addFileList,
     executeUpload,
     deleteUploaded,
-    deleteUploading
+    deleteUploading,
   };
 });

@@ -216,6 +216,7 @@ export type ShipType = {
   draft: string;
   length: string;
   width: string;
+  classType: string;
 };
 
 export type Meteorology = {
@@ -288,10 +289,9 @@ export type FileType = {
   visualId: string;
 };
 
-
 export type UploadRecord = {
-  id: string
-  fileName: string
-  uploadTime: string
-  size: string
-}
+  id: string;
+  fileName: string;
+  uploadTime: string;
+  size: string;
+};
