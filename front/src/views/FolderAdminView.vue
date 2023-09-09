@@ -285,54 +285,28 @@
     } else {
       return "";
     }
-    // return '666 MB';
-  };
-  
-  const isFolder = (item: FolderType | FileType) => {
-    if ("fileName" in item) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-  
-  const flushed = async () => {
-    skeletonFlag.value = true;
-  
-    let id = "";
-    if (path.value.length === 0) {
-      id = "-1";
-    } else {
-      id = path.value[path.value.length - 1].id;
-    }
-    const data = await findByFolderId(id);
-    if (data != null && data.code === 0) {
-      transitionData(data.data);
-      skeletonFlag.value = false;
-    } else {
-      transitionData([]);
-      skeletonFlag.value = false;
-    }
-  };
-  
-  const previewClick = (param: FolderType | FileType) => {
-    fileInfo.value = param;
-    Visible_PreviewDialog.value = true;
-  };
-  
-  const deleteClick = (item: FolderType | FileType) => {
-    ElMessageBox.confirm("确定删除文件夹及文件夹以下内容", "警告", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning",
-    })
-      .then(async () => {
-        const json: { files: string[]; folders: string[] } = {
-          files: [],
-          folders: [],
-        };
-        if ("folderName" in item) {
-          json.folders.push(item.id);
+  }
+  Visible_BindDialog.value = false;
+};
+
+const batDelete = async () => {
+  //还是Delete的思想，但是是基于selectList的items删除
+
+  ElMessageBox.confirm("确定删除文件夹及文件夹以下内容", "警告", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(async () => {
+      //构建一个待删除数据的json对象
+      let deleteList: { files: string[]; folders: string[] } = {
+        files: [],
+        folders: [],
+      };
+
+      for (let i = 0; i < selectList.value.length; i++) {
+        if (selectList.value[i].type === 'file') {
+          deleteList.files.push(selectList.value[i].id);
         } else {
           json.files.push(item.id);
         }
@@ -350,31 +324,57 @@
         } else {
           notice("error", "错误", "删除失败");
         }
-      })
-      .catch(() => {});
-  };
-  
-  const visualClick = (param: FolderType | FileType) => {
-    fileInfo.value = param;
-    Visible_BindDialog.value = true;
-  };
-  
-  const OpenCreateFolder = async () => {
-    Visible_CreateFolderDialog.value = true;
-  };
-  
-  const CreateFolder = async (val: string) => {
-    const jsonData = {
-      folderName: val,
-      parentId: path.value.length > 0 ? path.value[path.value.length - 1].id : "",
-    };
-    const data = await addFolder(jsonData); //后端创建文件夹数据，返回
-    if (data && data.code === 0) {
-      tableData.value.push({
-        id: data.data.id,
-        folderName: jsonData.folderName,
-        parentId: jsonData.parentId,
-        flag: false,
+        selectList.value = [];
+        notice("success", "成功", "删除成功");
+      }
+    })
+    .catch(() => {
+      notice("error", "错误", "删除失败");
+    });
+};
+
+const downloadClick = async (item: FolderType | FileType) => {
+  //基于ID 获取文件下载URL
+  window.location.href = `${process.env.VUE_APP_BACK_ADDRESS}files/downloadFile/${item.id}`;
+};
+
+const upLoadChange = (uploadFile: UploadFile) => {
+  let parentId = "";
+  if (path.value.length) {
+    parentId = path.value[path.value.length - 1].id;
+  }
+
+  store.addFileList({
+    file: uploadFile.raw!,
+    finished: 0,
+    parentId: parentId,
+  });
+  console.log(store.uploading)
+  if (!store.uploading) {
+    store.executeUpload();
+  }
+  // (upload.value as any).clearFiles();
+  // store.commit("ADD_WAIT_ITEM", {
+  //   id: uuid(),
+  //   name: uploadFile.name,
+  //   file: uploadFile.raw!,
+  //   size: getFileSize(uploadFile.size!),
+  // });
+  // store.dispatch("uploadFiles", {
+  //   parentId:
+  //     path.value.length === 0 ? "" : path.value[path.value.length - 1].id,
+  // });
+};
+
+const changeHandle = (
+  item: (FolderType & { flag: boolean }) | (FileType & { flag: boolean })
+) => {
+  //checkBox  to  select List
+  if (item.flag) {
+    if ("folderName" in item) {
+      selectList.value.push({
+        id: item.id,
+        type: "folder",
       });
       notice("success", "成功", "文件夹创建成功！");
       Visible_CreateFolderDialog.value = false;

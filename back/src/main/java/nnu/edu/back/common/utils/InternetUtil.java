@@ -116,10 +116,9 @@ public class InternetUtil {
         return b.toString().replaceAll("\\+", "%20");
     }
 
-    public static <T>T httpHandle(String url, MultiValueMap<String, Object> param, Class<T> c, String method) throws Exception {
+    public static <T>T httpHandle(String url, HttpEntity httpEntity, Class<T> c, String method) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity httpEntity = new HttpEntity(param, headers);
+
         ResponseEntity<T> result;
         if (method.equals("post")) {
             result = restTemplate.exchange(url, HttpMethod.POST, httpEntity, c);

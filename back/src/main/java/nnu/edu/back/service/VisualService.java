@@ -61,6 +61,7 @@ public interface VisualService {
 
     JSONObject getTianDiTuImage();
 
-
     void video(String id, HttpServletRequest request, HttpServletResponse response);
+
+    void uploadFileView(String id) throws Exception;
 }

@@ -218,4 +218,16 @@ public class VisualFileController {
     public void video(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
         visualService.video(id, request, response);
     }
+
+    /**
+    * @Description:kkfileview上传文件
+    * @Author: Yiming
+    * @Date: 2023/9/8
+    */
+
+    @RequestMapping(value = "/uploadFileView/{id}", method = RequestMethod.POST)
+    public JsonResult uploadFileView(@PathVariable String id) throws Exception {
+        visualService.uploadFileView(id);
+        return ResultUtils.success();
+    }
 }

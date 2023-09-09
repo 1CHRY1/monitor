@@ -139,7 +139,7 @@ export default defineComponent({
     const propLabelMap = {
       ship: [
         { prop: "mmsi", label: "mmsi" },
-        { prop: "name", label: "船舶名称" },
+        { prop: "nameCn", label: "船舶名称" },
       ],
       buoy: [
         { prop: "waterway", label: "所属航道" },
