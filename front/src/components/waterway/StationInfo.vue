@@ -216,12 +216,13 @@ export default defineComponent({
         timestamp
       );
       const name_en = props.stationInfo?.nameEn;
-      timeList1.forEach((item) => {
-        fileList.value.push(name_en + item + ".txt");
-      });
-      timeList2.forEach((item) => {
-        fileList.value.push(name_en + "UTC+8" + item + ".txt");
-      });
+      for (let i = timeList1.length - 1; i >= 0; i--) {
+        fileList.value.push(name_en + timeList1[i] + ".txt");
+      }
+      for (let i = timeList2.length - 1; i >= 0; i--) {
+        fileList.value.push(name_en + "UTC+8" + timeList2[i] + ".txt");
+      }
+
     };
 
     const downloadClick = (name: string) => {

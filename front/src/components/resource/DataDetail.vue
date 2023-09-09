@@ -192,6 +192,7 @@
                 :rateDirectionList="rateDirectionList"
                 :salinityList="salinityList"
                 :flowSandZList="flowSandZList"
+                :waterLevelChartInfo="waterLevelInfo"
               />
             </div>
             <div v-if="!mapShow && !photoShow && !excelShow && !videoShow">
@@ -253,21 +254,19 @@
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  PropType,
-  ref,
-  watch,
-} from "vue";
+import { computed, defineComponent, PropType, ref, watch } from "vue";
 import DataDescription from "@/components/resource/DataDescription.vue";
 import DataHead from "@/components/resource/DataHead.vue";
-import { dateFormat, imgBase64 } from "@/utils/common";
+import { dateFormat, imgBase64, traverseDate } from "@/utils/common";
 import { usePermissionStore } from "@/store/permission-store";
-import { getCoordinates, findFiles, getSimilarData } from "@/api/request";
+import {
+  getCoordinates,
+  findFiles,
+  getSimilarData,
+  getStationInfoByDataListId,
+  getWaterLevelByStationAndTime,
+} from "@/api/request";
 import "@/assets/css/wangeditor.css";
-import { notice } from "@/utils/common";
 import LocationMap from "@/components/resource/LocationMap.vue";
 import router from "@/router";
 import MapVisual from "@/components/visual/MapVisual.vue";
@@ -276,7 +275,7 @@ import ExcelVisual from "@/components/visual/ExcelVisual.vue";
 import VideoVisual from "@/components/visual/VideoVisual.vue";
 import Statistics from "@/components/visual/Statistics.vue";
 import PageCopyright from "@/layout/PageCopyright.vue";
-import { DataListType } from "@/type";
+import { DataListType, StationType, WaterLevelChartType } from "@/type";
 export default defineComponent({
   components: {
     DataHead,
@@ -295,6 +294,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const colors = ["#5470C6", "#91CC75", "#EE6666", "#E5DB4B"];
     const store = usePermissionStore();
     const visualSkeleton = ref(true);
     const fileSkeleton = ref(true);
@@ -336,10 +336,17 @@ export default defineComponent({
     const rateDirectionList = ref<string[]>([]);
     const salinityList = ref<string[]>([]);
     const flowSandZList = ref<string[]>([]);
+    const waterLevelInfo = ref<WaterLevelChartType>({
+      timeList: [],
+      legend: [],
+      yAxis: [],
+      series: [],
+    });
     const fileList = ref<any[]>([]);
     const similarDataList = ref<[]>();
     const similarTotal = ref(0);
     const currentPageSimilar = ref(1);
+    let stationName = "";
 
     const location = computed(() => {
       return props.fileInfo?.location;
@@ -369,14 +376,26 @@ export default defineComponent({
 
     //下载
     const downloadOrigin = async (val: number) => {
-      window.location.href = `${process.env.VUE_APP_BACK_ADDRESS}files/downloadFile/${fileList.value[val].id}`;
+      if (props.fileInfo?.type === "实时水位") {
+        if (fileList.value[val].fileName.indexOf("UTC+") === -1) {
+          window.location.href = `${process.env.VUE_APP_WATERLEVEL_ADDRESS}download/downloadOne1/${fileList.value[val].fileName}`;
+        } else {
+          window.location.href = `${process.env.VUE_APP_WATERLEVEL_ADDRESS}download/downloadOne2/${fileList.value[val].fileName}`;
+        }
+      } else {
+        window.location.href = `${process.env.VUE_APP_BACK_ADDRESS}files/downloadFile/${fileList.value[val].id}`;
+      }
     };
 
     // 下载所有
     const downloadAll = async () => {
-      window.location.href = `${
-        process.env.VUE_APP_BACK_ADDRESS
-      }dataList/downloadAll/${fileInfo.value!.id}/${store.email}`;
+      if (props.fileInfo?.type === "实时水位") {
+        window.location.href = `${process.env.VUE_APP_WATERLEVEL_ADDRESS}download/downloadByStation/${stationName}`;
+      } else {
+        window.location.href = `${
+          process.env.VUE_APP_BACK_ADDRESS
+        }dataList/downloadAll/${fileInfo.value!.id}/${store.email}`;
+      }
     };
 
     const similarClick = (val: string) => {
@@ -401,137 +420,256 @@ export default defineComponent({
       }
     };
 
-    const initVisual = async (id: string) => {
-      //  获取file文件
-      fileSkeleton.value = true;
-      const fileData = await findFiles(id);
-      if (fileData != null && (fileData as any).code === 0) {
-        fileList.value = fileData.data;
-      }
-      fileSkeleton.value = false;
-      //获取file文件的可视化方法
-      shpArray.value = [];
-      pngArray.value = [];
-      movePngArray.value = [];
-      rasterTileArray.value = [];
-      let MapFlag = false;
-      let photoFlag = false;
-      let excelFlag = false;
-      let videoFlag = false;
-      visualSkeleton.value = true;
-      for (let i = 0; i < fileList.value.length; i++) {
-        let visualType: string, visualId: string;
-        visualType = fileList.value[i].visualType;
-        visualId = fileList.value[i].visualId;
-        if (visualType != "") {
-          if (
-            visualType === "lineVectorTile3D" ||
-            visualType === "lineVectorTile"
-          ) {
-            shpArray.value.push({
-              visualId: visualId,
-              type: "line",
-              view: JSON.parse(fileList.value[i].view),
+    const dataHandle = async (stationInfo: StationType) => {
+      if (stationInfo) {
+        waterLevelInfo.value = {
+          timeList: [],
+          yAxis: [],
+          series: [],
+          legend: [],
+        };
+        const station = stationInfo.name;
+        const type = stationInfo.type;
+        let start = 50;
+        stationInfo.keysCn.key.forEach((key, index) => {
+          if (index >= 2) {
+            waterLevelInfo.value!.yAxis.push({
+              alignTicks: true,
+              axisLine: {
+                show: true,
+                lineStyle: {
+                  color: colors[index],
+                },
+              },
+
+              type: "value",
+              offset: start,
             });
-            MapFlag = true;
-          }
-          if (
-            visualType === "pointVectorTile" ||
-            visualType === "pointVectorTile3D"
-          ) {
-            shpArray.value.push({
-              visualId: visualId,
-              type: "circle",
-              view: JSON.parse(fileList.value[i].view),
+            start += 50;
+          } else {
+            waterLevelInfo.value!.yAxis.push({
+              alignTicks: true,
+              type: "value",
+              axisLine: {
+                show: true,
+                lineStyle: {
+                  color: colors[index],
+                },
+              },
             });
-            MapFlag = true;
           }
-          if (
-            visualType === "polygonVectorTile" ||
-            visualType === "polygonVectorTile3D"
-          ) {
-            shpArray.value.push({
-              visualId: visualId,
-              type: "fill",
-              view: JSON.parse(fileList.value[i].view),
+          waterLevelInfo.value!.legend.push(key);
+          waterLevelInfo.value!.series.push({
+            name: key,
+            data: [],
+            type: "line",
+            smooth: true,
+            yAxisIndex: index,
+            itemStyle: {
+              normal: {
+                color: colors[index],
+                lineStyle: {
+                  color: colors[index],
+                },
+              },
+            },
+          });
+        });
+        const startDate = new Date();
+        const endDate = new Date();
+        startDate.setTime(endDate.getTime() - 24 * 3600000);
+
+        const data = await getWaterLevelByStationAndTime(
+          type,
+          station,
+          dateFormat(
+            new Date(
+              dateFormat(startDate.toString(), "yyyy-MM-dd hh") + ":00:00"
+            ).toString(),
+            "yyyy-MM-dd hh"
+          ) + ":00:00",
+          dateFormat(
+            new Date(
+              dateFormat(endDate.toString(), "yyyy-MM-dd hh") + ":00:00"
+            ).toString(),
+            "yyyy-MM-dd hh"
+          ) + ":00:00"
+        );
+        if (data != null && (data as any).code === 0) {
+          (data.data as any).forEach((item: any) => {
+            waterLevelInfo.value.timeList.push(item.time.substring(10, 16));
+            stationInfo.keys.key.forEach((key, index) => {
+              waterLevelInfo.value.series[index].data.push(item[key]);
             });
-            MapFlag = true;
-          }
-          if (visualType == "rasterTile") {
-            rasterTileArray.value.push({
-              visualId: visualId,
-              view: JSON.parse(fileList.value[i].view),
-            });
-            MapFlag = true;
-          }
-          if (visualType == "png") {
-            const coordinates = await getCoordinates(visualId);
-            if (coordinates != null && (coordinates as any).code === 0) {
-              pngArray.value.push({
-                visualId: visualId,
-                coordinates: coordinates.data,
-                view: JSON.parse(fileList.value[i].view),
-              });
-            }
-            MapFlag = true;
-          }
-          if (visualType == "movePng") {
-            const coordinates = await getCoordinates(visualId);
-            if (coordinates != null && (coordinates as any).code === 0) {
-              movePngArray.value.push({
-                name: fileList.value[i].fileName,
-                visualId: visualId,
-                coordinates: coordinates.data,
-                view: JSON.parse(fileList.value[i].view),
-              });
-            }
-            MapFlag = true;
-          }
-          if (visualType === "photo") {
-            photoList.value.push(
-              `/monitor/visual/getPhoto/${fileList.value[i].id}`
-            );
-            photoFlag = true;
-          }
-          if (visualType === "video") {
-            videoList.value.push({
-              fileName: fileList.value[i].fileName,
-              url: `/monitor/visual/video/${fileList.value[i].id}`,
-            });
-            videoFlag = true;
-          }
-          if (visualType === "sandContent") {
-            sandContentList.value.push(visualId);
-            tableNameList.value.push(fileList.value[i].fileName);
-            excelFlag = true;
-          }
-          if (visualType === "suspension") {
-            suspensionList.value.push(visualId);
-            tableNameList.value.push(fileList.value[i].fileName);
-            excelFlag = true;
-          }
-          if (visualType === "rateDirection") {
-            rateDirectionList.value.push(visualId);
-            tableNameList.value.push(fileList.value[i].fileName);
-            excelFlag = true;
-          }
-          if (visualType === "salinity") {
-            salinityList.value.push(visualId);
-            tableNameList.value.push(fileList.value[i].fileName);
-            excelFlag = true;
-          }
-          if (visualType === "flowSand_Z") {
-            flowSandZList.value.push(visualId);
-            tableNameList.value.push(fileList.value[i].fileName);
-            excelFlag = true;
-          }
+          });
         }
       }
-      mapShow.value = MapFlag;
-      photoShow.value = photoFlag;
-      excelShow.value = excelFlag;
-      videoShow.value = videoFlag;
-      visualSkeleton.value = false;
+    };
+
+    const initVisual = async (id: string) => {
+      if (props.fileInfo?.type === "实时水位") {
+        fileSkeleton.value = true;
+        const res = await getStationInfoByDataListId(id);
+        stationName = res?.data.nameEn;
+        fileList.value = [];
+        const timestamp = Date.now();
+        if (res && res.code === 0) {
+          const timeList1 = traverseDate(res.data.startTime.key[0], timestamp);
+          const timeList2 = traverseDate(res.data.startTime.key[1], timestamp);
+          const name_en = res.data.nameEn;
+          for (let i = timeList1.length - 1; i >= 0; i--) {
+            fileList.value.push({
+              fileName: name_en + timeList1[i] + ".txt",
+              size: "",
+            });
+          }
+          for (let i = timeList2.length - 1; i >= 0; i--) {
+            fileList.value.push({
+              fileName: name_en + "UTC+8" + timeList2[i] + ".txt",
+              size: "",
+            });
+          }
+        }
+        fileSkeleton.value = false;
+        visualSkeleton.value = true;
+        await dataHandle(res?.data);
+        mapShow.value = false;
+        photoShow.value = false;
+        excelShow.value = true;
+        videoShow.value = false;
+        visualSkeleton.value = false;
+      } else {
+        //  获取file文件
+        fileSkeleton.value = true;
+        const fileData = await findFiles(id);
+        if (fileData != null && (fileData as any).code === 0) {
+          fileList.value = fileData.data;
+        }
+        fileSkeleton.value = false;
+        //获取file文件的可视化方法
+        shpArray.value = [];
+        pngArray.value = [];
+        movePngArray.value = [];
+        rasterTileArray.value = [];
+        let MapFlag = false;
+        let photoFlag = false;
+        let excelFlag = false;
+        let videoFlag = false;
+        visualSkeleton.value = true;
+        for (let i = 0; i < fileList.value.length; i++) {
+          let visualType: string, visualId: string;
+          visualType = fileList.value[i].visualType;
+          visualId = fileList.value[i].visualId;
+          if (visualType != "") {
+            if (
+              visualType === "lineVectorTile3D" ||
+              visualType === "lineVectorTile"
+            ) {
+              shpArray.value.push({
+                visualId: visualId,
+                type: "line",
+                view: JSON.parse(fileList.value[i].view),
+              });
+              MapFlag = true;
+            }
+            if (
+              visualType === "pointVectorTile" ||
+              visualType === "pointVectorTile3D"
+            ) {
+              shpArray.value.push({
+                visualId: visualId,
+                type: "circle",
+                view: JSON.parse(fileList.value[i].view),
+              });
+              MapFlag = true;
+            }
+            if (
+              visualType === "polygonVectorTile" ||
+              visualType === "polygonVectorTile3D"
+            ) {
+              shpArray.value.push({
+                visualId: visualId,
+                type: "fill",
+                view: JSON.parse(fileList.value[i].view),
+              });
+              MapFlag = true;
+            }
+            if (visualType == "rasterTile") {
+              rasterTileArray.value.push({
+                visualId: visualId,
+                view: JSON.parse(fileList.value[i].view),
+              });
+              MapFlag = true;
+            }
+            if (visualType == "png") {
+              const coordinates = await getCoordinates(visualId);
+              if (coordinates != null && (coordinates as any).code === 0) {
+                pngArray.value.push({
+                  visualId: visualId,
+                  coordinates: coordinates.data,
+                  view: JSON.parse(fileList.value[i].view),
+                });
+              }
+              MapFlag = true;
+            }
+            if (visualType == "movePng") {
+              const coordinates = await getCoordinates(visualId);
+              if (coordinates != null && (coordinates as any).code === 0) {
+                movePngArray.value.push({
+                  name: fileList.value[i].fileName,
+                  visualId: visualId,
+                  coordinates: coordinates.data,
+                  view: JSON.parse(fileList.value[i].view),
+                });
+              }
+              MapFlag = true;
+            }
+            if (visualType === "photo") {
+              photoList.value.push(
+                `/monitor/visual/getPhoto/${fileList.value[i].id}`
+              );
+              photoFlag = true;
+            }
+            if (visualType === "video") {
+              videoList.value.push({
+                fileName: fileList.value[i].fileName,
+                url: `/monitor/visual/video/${fileList.value[i].id}`,
+              });
+              videoFlag = true;
+            }
+            if (visualType === "sandContent") {
+              sandContentList.value.push(visualId);
+              tableNameList.value.push(fileList.value[i].fileName);
+              excelFlag = true;
+            }
+            if (visualType === "suspension") {
+              suspensionList.value.push(visualId);
+              tableNameList.value.push(fileList.value[i].fileName);
+              excelFlag = true;
+            }
+            if (visualType === "rateDirection") {
+              rateDirectionList.value.push(visualId);
+              tableNameList.value.push(fileList.value[i].fileName);
+              excelFlag = true;
+            }
+            if (visualType === "salinity") {
+              salinityList.value.push(visualId);
+              tableNameList.value.push(fileList.value[i].fileName);
+              excelFlag = true;
+            }
+            if (visualType === "flowSand_Z") {
+              flowSandZList.value.push(visualId);
+              tableNameList.value.push(fileList.value[i].fileName);
+              excelFlag = true;
+            }
+          }
+        }
+        mapShow.value = MapFlag;
+        photoShow.value = photoFlag;
+        excelShow.value = excelFlag;
+        videoShow.value = videoFlag;
+        visualSkeleton.value = false;
+      }
     };
 
     const initSimilarData = async (id: string, type: string) => {
@@ -586,6 +724,7 @@ export default defineComponent({
       similarDataList,
       similarTotal,
       currentPageSimilar,
+      waterLevelInfo,
       pageChangeSimilar,
       similarClick,
       downloadAll,

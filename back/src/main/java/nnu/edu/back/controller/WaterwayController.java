@@ -56,6 +56,11 @@ public class WaterwayController {
         return ResultUtils.success(waterwayService.getWaterLevelByStationAndTime(type, station, startTime, endTime));
     }
 
+    @RequestMapping(value = "/getAllStation", method = RequestMethod.GET)
+    public JsonResult getAllStation() {
+        return ResultUtils.success(waterwayService.getAllStation());
+    }
+
     @RequestMapping(value = "/getAllBridgeInfo", method = RequestMethod.GET)
     public JsonResult getBridgeInfo() {
         return ResultUtils.success(waterwayService.getAllBridgeInfo());

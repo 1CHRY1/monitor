@@ -216,11 +216,19 @@
         </if>
     </select>
 
+    <select id="getAllStation" resultMap="StationMap">
+        select * from stations
+    </select>
+
     <select id="getPhoto" resultType="java.lang.Object">
         select file from photos where file_name = #{fileName}
     </select>
 
     <select id="getPredictionStation" resultMap="StationMap">
         select * from stations where prediction = 1
+    </select>
+
+    <select id="getStationInfoByStationId" resultMap="StationMap">
+        select * from stations where id = #{stationId}
     </select>
 </mapper>

@@ -19,4 +19,8 @@ export const classList = [
     label: "遥感影像",
     value: ["遥感影像"],
   },
+  {
+    label: "实时水位",
+    value: ["实时水位"],
+  },
 ];

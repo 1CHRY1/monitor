@@ -1,6 +1,7 @@
 package nnu.edu.back.service;
 
 import nnu.edu.back.pojo.DataList;
+import nnu.edu.back.pojo.Station;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,4 +42,6 @@ public interface DataListService {
     List<Map<String, Object>> getIdAndDataListName(int size);
 
     void deleteDataList(String id, String role);
+
+    Station getStationInfoByDataListId(String id);
 }

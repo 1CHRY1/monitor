@@ -28,6 +28,8 @@ public interface WaterwayService {
 
     JSONArray getWaterLevelByStationAndTime(String type, String station, String startTime, String endTime);
 
+    List<Station> getAllStation();
+
     List<Bridge> getAllBridgeInfo();
 
     JSONArray getMeteorology();

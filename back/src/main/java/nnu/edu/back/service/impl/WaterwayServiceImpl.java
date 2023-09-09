@@ -212,6 +212,11 @@ public class WaterwayServiceImpl implements WaterwayService {
     }
 
     @Override
+    public List<Station> getAllStation() {
+        return waterwayMapper.getAllStation();
+    }
+
+    @Override
     public List<Bridge> getAllBridgeInfo() {
         return waterwayMapper.getAllBridgeInfo();
     }
