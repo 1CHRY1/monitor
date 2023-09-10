@@ -291,10 +291,9 @@ export type FileType = {
 
 export type WaterStation={
   name:string,
-  pos:{
-      lng:number,
-      lat:number,
-  },
+  lng:number,
+  lat:number,
+
   water?:number
 }
 
