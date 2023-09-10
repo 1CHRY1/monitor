@@ -294,7 +294,6 @@ export type WaterStation={
   name:string,
   lng:number,
   lat:number,
-
   water?:number
 }
 

@@ -86,7 +86,6 @@ const initMap = async () => {
             })
 
             map.on('mouseleave', 'CJLayer', () => {
-                console.log('mouse leave the CJLayer.');
                 pop.remove();
             });
 
