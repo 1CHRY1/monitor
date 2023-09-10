@@ -42,11 +42,15 @@ public interface WaterwayMapper {
 
     List<Station> getStationByBox(@Param("top") double top, @Param("right") double right, @Param("bottom") double bottom, @Param("left") double left);
 
+    List<Station> getAllStation();
+
     List<Station> pageQueryStation(@Param("size") int size, @Param("start") int start, @Param("keyword") String keyword);
 
     int countStation(@Param("keyword") String keyword);
 
     Object getPhoto(@Param("fileName") String fileName);
 
+    List<Station> getPredictionStation();
 
+    Station getStationInfoByStationId(@Param("stationId") String stationId);
 }

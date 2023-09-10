@@ -106,11 +106,8 @@ export const deleteDataList = async (dataListId: string) => {
   return await del(`/dataList/deleteDataList/${dataListId}`, true);
 };
 
-export const addRelational = async (jsonDta: {
-  dataListId: string;
-  fileIdList: string[];
-}) => {
-  return await post(`/relational/addRelational`, true, jsonDta);
+export const getStationInfoByDataListId = async (dataListId: string) => {
+  return await get(`/dataList/getStationInfoByDataListId/${dataListId}`, true);
 };
 
 export const getSimilarData = async (
@@ -123,6 +120,20 @@ export const getSimilarData = async (
     `/dataList/getSimilarData/${type}/${id}/${size}/${page}`,
     true
   );
+};
+
+export const addRelational = async (jsonDta: {
+  dataListId: string;
+  fileIdList: string[];
+}) => {
+  return await post(`/relational/addRelational`, true, jsonDta);
+};
+
+export const updateRelational = async (jsonData: {
+  dataListId: string;
+  fileIdList: string[];
+}) => {
+  return await patch(`/relational/updateRelational`, true, jsonData);
 };
 
 export const getSandContent = async (id: string) => {
@@ -274,6 +285,10 @@ export async function getStationByBox(
     false
   );
 }
+
+export const getAllStation = async () => {
+  return await get(`/waterway/getAllStation`, true);
+};
 
 export async function pageQueryAnalysis(jsonData: {
   page: number;

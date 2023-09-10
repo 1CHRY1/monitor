@@ -9,6 +9,7 @@ import { createPinia } from "pinia";
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 import "@/permission";
 import '@/assets/iconfont/iconfont.css'
+import '@/assets/iconfont/iconfont.js'
 
 const pinia = createPinia();
 const app = createApp(App);

@@ -169,15 +169,6 @@
             </div>
           </div>
         </div>
-
-        <div class="real-time">
-          <div class="title"><strong>实时数据</strong></div>
-          <div class="content">
-            <ul>
-              <li class="text">实时水情</li>
-            </ul>
-          </div>
-        </div>
       </div>
     </div>
     <el-backtop :right="100" :bottom="100" />
@@ -561,16 +552,6 @@ export default defineComponent({
           margin-left: calc(100% - 90px);
           display: flex;
         }
-      }
-    }
-    .real-time {
-      margin-bottom: 30px;
-      border: solid 1px #d6d6d6;
-      box-sizing: border-box;
-      cursor: pointer;
-      .text:hover {
-        text-decoration: underline;
-        color: #409eff;
       }
     }
   }

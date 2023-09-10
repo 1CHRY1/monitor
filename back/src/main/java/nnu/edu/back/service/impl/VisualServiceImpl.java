@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import nnu.edu.back.common.exception.MyException;
 import nnu.edu.back.common.result.ResultEnum;
 import nnu.edu.back.common.utils.FileUtil;
+import nnu.edu.back.common.utils.InternetUtil;
 import nnu.edu.back.common.utils.TileUtil;
 import nnu.edu.back.dao.main.AnalysisResultMapper;
 import nnu.edu.back.dao.main.FilesMapper;
@@ -19,13 +20,20 @@ import nnu.edu.back.pojo.VisualFile;
 import nnu.edu.back.service.VisualService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -56,6 +64,9 @@ public class VisualServiceImpl implements VisualService {
 
     @Value("${analysisDir}")
     String analysisDir;
+
+    @Value("${fileViewUrl}")
+    String fileViewUrl;
 
     @Autowired
     VisualFileMapper visualFileMapper;
@@ -495,5 +506,18 @@ public class VisualServiceImpl implements VisualService {
             log.error(e.getMessage());
             throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
         }
+    }
+
+    @Override
+    public void uploadFileView(String id) throws Exception {
+        Files files = filesMapper.findInfoById(id);
+        String address = Paths.get(baseDir, files.getAddress()).toString();
+        MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+        map.add("file", new FileSystemResource(address));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
+        JSONObject jsonObject = InternetUtil.httpHandle(fileViewUrl, requestEntity, JSONObject.class, "post");
+        if (!jsonObject.getBoolean("success")) throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
     }
 }

@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -211,6 +212,11 @@ public class WaterwayServiceImpl implements WaterwayService {
     }
 
     @Override
+    public List<Station> getAllStation() {
+        return waterwayMapper.getAllStation();
+    }
+
+    @Override
     public List<Bridge> getAllBridgeInfo() {
         return waterwayMapper.getAllBridgeInfo();
     }
@@ -304,7 +310,7 @@ public class WaterwayServiceImpl implements WaterwayService {
                 String draft = m.get("cbcs") == null ? "" : m.get("cbcs").toString();
                 String length = m.get("cd") == null ? "" : m.get("cd").toString();
                 String width = m.get("kd") == null ? "" : m.get("kd").toString();
-                Ship ship = new Ship(mmsi, name, nameCn, updateTime, longitude, latitude, speed, course, draft, length, width);
+                Ship ship = new Ship(mmsi, name, nameCn, updateTime, longitude, latitude, speed, course, draft, length, width, "0");
                 result.add(ship);
             }
             map.put("list", result);
@@ -347,7 +353,8 @@ public class WaterwayServiceImpl implements WaterwayService {
                     String draft = json.getDouble("draft") == null ? "" : json.getDouble("draft").toString();
                     String length = json.getDouble("length") == null ? "" : json.getDouble("length").toString();
                     String width = json.getDouble("width") == null ? "" : json.getDouble("width").toString();
-                    Ship ship = new Ship(mmsi, name, nameCn, updateTime, longitude, latitude, speed, course, draft, length, width);
+                    String classType = json.getString("classType") == null ? "0" : json.getString("classType");
+                    Ship ship = new Ship(mmsi, name, nameCn, updateTime, longitude, latitude, speed, course, draft, length, width, classType);
                     list.add(ship);
                 }
                 map.put("list", list);
@@ -418,7 +425,7 @@ public class WaterwayServiceImpl implements WaterwayService {
             String draft = map.get("cbcs") == null ? "" : map.get("cbcs").toString();
             String length = map.get("length") == null ? "" : map.get("length").toString();
             String width = map.get("width") == null ? "" : map.get("width").toString();
-            Ship ship = new Ship(mmsi, name, nameCn, updateTime, longitude, latitude, speed, course, draft, length, width);
+            Ship ship = new Ship(mmsi, name, nameCn, updateTime, longitude, latitude, speed, course, draft, length, width, "0");
             result.add(ship);
         }
         return result;
@@ -455,7 +462,8 @@ public class WaterwayServiceImpl implements WaterwayService {
                 String draft = json.getDouble("draft") == null ? "" : json.getDouble("draft").toString();
                 String length = json.getDouble("length") == null ? "" : json.getDouble("length").toString();
                 String width = json.getDouble("width") == null ? "" : json.getDouble("width").toString();
-                Ship ship = new Ship(mmsi, name, nameCn, updateTime, longitude, latitude, speed, course, draft, length, width);
+                String classType = json.getString("classType") == null ? "0" : json.getString("classType");
+                Ship ship = new Ship(mmsi, name, nameCn, updateTime, longitude, latitude, speed, course, draft, length, width, classType);
                 list.add(ship);
             }
         } else {
@@ -463,5 +471,28 @@ public class WaterwayServiceImpl implements WaterwayService {
         }
 
         return list;
+    }
+
+    @Override
+    public List<Station> getPredictionStation() {
+        return waterwayMapper.getPredictionStation();
+    }
+
+    @Override
+    public JSONObject getPredictionValue(String name) {
+        String url = waterLevelAddress + "/prediction/getPrediction/" + name;
+        JSONObject jsonObject = InternetUtil.doGet(url);
+        if (jsonObject.getIntValue("code") == 0) {
+            return jsonObject.getJSONObject("data");
+        } throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
+    }
+
+    @Override
+    public JSONArray getAllPredictionValue() {
+        String url = waterLevelAddress + "/prediction/getAllPrediction";
+        JSONObject jsonObject = InternetUtil.doGet(url);
+        if (jsonObject.getIntValue("code") == 0) {
+            return jsonObject.getJSONArray("data");
+        } throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
     }
 }

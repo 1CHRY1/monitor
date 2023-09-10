@@ -1,6 +1,8 @@
 <template>
     <div class="scene-map-wrapper" :order="$props.order">
-        <div id="map"></div>
+        <div id="map">
+            <div id="popUp" style="width:100px; height: 100px; z-index: 99; position: relative;"></div>
+        </div>
     </div>
 </template>
   
@@ -40,6 +42,8 @@ const dashArraySequence = [
 ];
 let step = 0;
 
+
+
 onMounted(async () => {
     // mapbox key
     mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obm55dCIsImEiOiJja2xxNXplNjYwNnhzMm5uYTJtdHVlbTByIn0.f1GfZbFLWjiEayI6hb_Qvg';
@@ -54,6 +58,8 @@ onMounted(async () => {
             bearing: 20
         }
     )
+    
+    // const popUp = new mapboxgl.Popup().setDOMContent(testPopIns.$el);
     let floatLineData = await mapDataPreparer.prepareFloatLineDataSource(props.projectId);
 
     let sectionData = await mapDataPreparer.prepareSectionDataSource(props.projectId);

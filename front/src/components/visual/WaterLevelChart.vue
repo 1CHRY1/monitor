@@ -5,12 +5,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, PropType, ref } from "vue";
 import * as echarts from "echarts";
+import { WaterLevelChartType } from "@/type";
 export default defineComponent({
   props: {
     info: {
-      type: Object,
+      type: Object as PropType<WaterLevelChartType>,
     },
   },
   setup(props) {
@@ -24,7 +25,7 @@ export default defineComponent({
         option = {
           title: {
             padding: [10, 0, 0, 160],
-            text: props.info.text,
+            text: "实时水位",
             textStyle: {
               fontFamily: "Microsoft YaHei",
             },
@@ -69,7 +70,7 @@ export default defineComponent({
       }
     };
 
-    const refreshData = async () => {
+    const refreshData = () => {
       init();
       myChart.setOption(option);
     };

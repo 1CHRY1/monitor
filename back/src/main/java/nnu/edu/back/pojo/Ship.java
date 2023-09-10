@@ -26,4 +26,5 @@ public class Ship {
     String draft;
     String length;
     String width;
+    String classType;
 }

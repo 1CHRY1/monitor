@@ -94,6 +94,21 @@
             </el-option-group>
           </el-select>
         </el-form-item>
+        <el-form-item label="绑定水位站：" v-if="form.type === '实时水位'">
+          <el-select
+            v-model="stationId"
+            placeholder="绑定水位站"
+            size="large"
+            style="width: 300px"
+          >
+            <el-option
+              v-for="(item, index) in stationList"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
 
         <el-form-item label="数据时间：">
           <el-input v-model="form.timeStamp" />
@@ -106,7 +121,7 @@
           <div ref="container" class="container"></div>
         </el-form-item>
 
-        <el-form-item label="数据绑定：">
+        <el-form-item label="数据绑定：" v-if="form.type !== '实时水位'">
           <data-bind @changeData="changeData" ref="dataBind" />
         </el-form-item>
 
@@ -153,7 +168,13 @@ import "@wangeditor/editor/dist/css/style.css"; // 引入 css
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import { IDomEditor } from "@wangeditor/editor";
 import { ElInput } from "element-plus";
-import { getFileInfo, findFiles, updateDataList } from "@/api/request";
+import {
+  getFileInfo,
+  findFiles,
+  updateDataList,
+  getAllStation,
+  updateRelational,
+} from "@/api/request";
 import { notice } from "@/utils/common";
 import type { FormInstance } from "element-plus";
 import AvatarUpload from "@/components/upload/UploadAvatar.vue";
@@ -164,7 +185,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { classList } from "@/common-config";
-import { DataListType } from "@/type";
+import { DataListType, StationType } from "@/type";
 import router from "@/router";
 export default defineComponent({
   components: {
@@ -205,6 +226,9 @@ export default defineComponent({
       providerAddress: "",
       timeStamp: "",
     });
+
+    const stationId = ref("");
+    const stationList = ref<StationType[]>([]);
 
     const editorRef = shallowRef<IDomEditor>();
     const toolbarConfig = {};
@@ -247,8 +271,13 @@ export default defineComponent({
         await formEl2.validate(async (valid2) => {
           if (valid1 && valid2) {
             const res = await updateDataList(form);
-            if (res && res.code === 0)
+            if (res && res.code === 0) {
+              await updateRelational({
+                dataListId: router.currentRoute.value.params.id as string,
+                fileIdList: fileList.value,
+              });
               notice("success", "成功", "数据修改成功");
+            }
           }
         });
       });
@@ -390,9 +419,13 @@ export default defineComponent({
               },
             });
           }
-          const files = res[1].data;
-          dataBind.value.updateData(files);
-          avatarUpload.value?.updateImage(form.avatar);
+          if (form.type !== "实时水位") {
+            const files = res[1].data;
+            dataBind.value.updateData(files);
+            avatarUpload.value?.updateImage(form.avatar);
+          } else {
+            stationId.value = res[1].data[0].stationId;
+          }
         } else router.push({ name: "404" });
       });
     };
@@ -406,8 +439,17 @@ export default defineComponent({
       }
     );
 
-    onMounted(() => {
+    const initStationList = async () => {
+      const res = await getAllStation();
+      if (res && res.code === 0) {
+        stationList.value = res.data;
+      }
+    };
+
+    onMounted(async () => {
       initMap();
+      await initStationList();
+
       initData(router.currentRoute.value.params.id as string);
     });
 
@@ -429,6 +471,8 @@ export default defineComponent({
       metaRules,
       fileRef,
       metaRef,
+      stationList,
+      stationId,
       changeData,
       dataBind,
       handleClose,

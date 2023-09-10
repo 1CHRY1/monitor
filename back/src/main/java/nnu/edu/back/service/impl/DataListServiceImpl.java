@@ -7,10 +7,8 @@ import nnu.edu.back.common.result.ResultEnum;
 import nnu.edu.back.common.utils.CommonUtils;
 import nnu.edu.back.common.utils.FileUtil;
 import nnu.edu.back.dao.main.*;
-import nnu.edu.back.pojo.BrowseHistory;
-import nnu.edu.back.pojo.DataList;
-import nnu.edu.back.pojo.DownloadHistory;
-import nnu.edu.back.pojo.Files;
+import nnu.edu.back.dao.waterway.WaterwayMapper;
+import nnu.edu.back.pojo.*;
 import nnu.edu.back.service.DataListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,6 +57,9 @@ public class DataListServiceImpl implements DataListService {
 
     @Autowired
     BrowseHistoryMapper browseHistoryMapper;
+
+    @Autowired
+    WaterwayMapper waterwayMapper;
 
     @Override
     public void addDataList(DataList dataList) {
@@ -153,14 +154,26 @@ public class DataListServiceImpl implements DataListService {
 
     @Override
     public List<Map<String, Object>> findFiles(String dataListId) throws IllegalAccessException {
+        DataList dataList = dataListMapper.getFileInfo(dataListId);
         List<Map<String, Object>> list = new ArrayList<>();
-        List<Files> filesList = dataRelationalMapper.findFilesByDataListId(dataListId);
-        for (Files files : filesList) {
-            Map<String, Object> map = CommonUtils.objectToMap(files);
-            if (!files.getVisualType().equals("")) {
-                map.put("view", visualFileMapper.getView(map.get("visualId").toString()));
+        if (dataList.getType().equals("实时水位")) {
+            List<String> fileIds = dataRelationalMapper.findFileIdByDataListId(dataListId);
+            if (fileIds.size() > 1) throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+            else {
+                Map<String, Object> map = new HashMap<>();
+                map.put("stationId", fileIds.get(0));
+                list.add(map);
             }
-            list.add(map);
+        } else {
+            List<Files> filesList = dataRelationalMapper.findFilesByDataListId(dataListId);
+            for (Files files : filesList) {
+                Map<String, Object> map = CommonUtils.objectToMap(files);
+                if (!files.getVisualType().equals("")) {
+                    map.put("view", visualFileMapper.getView(map.get("visualId").toString()));
+                }
+                list.add(map);
+            }
+
         }
         return list;
     }
@@ -187,5 +200,13 @@ public class DataListServiceImpl implements DataListService {
             dataListMapper.deleteById(id);
             dataRelationalMapper.deleteByDataListId(id);
         }
+    }
+
+    @Override
+    public Station getStationInfoByDataListId(String id) {
+        List<String> list = dataRelationalMapper.findFileIdByDataListId(id);
+        if (list.size() > 1) throw new MyException(ResultEnum.DEFAULT_EXCEPTION);
+
+        return waterwayMapper.getStationInfoByStationId(list.get(0));
     }
 }

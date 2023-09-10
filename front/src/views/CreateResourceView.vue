@@ -94,6 +94,21 @@
             </el-option-group>
           </el-select>
         </el-form-item>
+        <el-form-item label="绑定水位站：" v-if="form.type === '实时水位'">
+          <el-select
+            v-model="stationId"
+            placeholder="绑定水位站"
+            size="large"
+            style="width: 300px"
+          >
+            <el-option
+              v-for="(item, index) in stationList"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
 
         <el-form-item label="数据时间：">
           <el-input v-model="form.timeStamp" />
@@ -106,7 +121,7 @@
           <div ref="container" class="container"></div>
         </el-form-item>
 
-        <el-form-item label="数据绑定：">
+        <el-form-item label="数据绑定：" v-if="form.type !== '实时水位'">
           <data-bind @changeData="changeData" ref="dataBind" />
         </el-form-item>
 
@@ -152,7 +167,7 @@ import "@wangeditor/editor/dist/css/style.css"; // 引入 css
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import { IDomEditor } from "@wangeditor/editor";
 import { ElInput } from "element-plus";
-import { addDataList, addRelational } from "@/api/request";
+import { addDataList, addRelational, getAllStation } from "@/api/request";
 import { notice } from "@/utils/common";
 import type { FormInstance } from "element-plus";
 import AvatarUpload from "@/components/upload/UploadAvatar.vue";
@@ -164,7 +179,7 @@ import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { uuid } from "@/utils/common";
 import { classList } from "@/common-config";
-import { DataListType } from "@/type";
+import { DataListType, StationType } from "@/type";
 export default defineComponent({
   components: {
     Editor,
@@ -204,6 +219,8 @@ export default defineComponent({
       providerAddress: "",
       timeStamp: "",
     });
+    const stationId = ref("");
+    const stationList = ref<StationType[]>([]);
 
     const editorRef = shallowRef<IDomEditor>();
     const toolbarConfig = {};
@@ -248,7 +265,8 @@ export default defineComponent({
             const data = await addDataList(form);
             const data1 = await addRelational({
               dataListId: form.id,
-              fileIdList: fileList.value,
+              fileIdList:
+                form.type !== "实时水位" ? fileList.value : [stationId.value],
             });
             if (
               data != null &&
@@ -379,7 +397,15 @@ export default defineComponent({
       editor.destroy();
     });
 
+    const initStationList = async () => {
+      const res = await getAllStation();
+      if (res && res.code === 0) {
+        stationList.value = res.data;
+      }
+    };
+
     onMounted(() => {
+      initStationList();
       initMap();
     });
 
@@ -403,6 +429,8 @@ export default defineComponent({
       metaRef,
       changeData,
       dataBind,
+      stationId,
+      stationList,
       handleClose,
       handleInputConfirm,
       showInput,

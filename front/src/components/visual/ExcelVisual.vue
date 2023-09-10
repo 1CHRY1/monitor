@@ -81,16 +81,23 @@
       ref="flowSandZ"
       v-if="flowSandZList.length != 0"
     />
+    <water-level-chart
+      :info="waterLevelChartInfo"
+      v-if="waterLevelChartInfo"
+      ref="waterLevelChart"
+    ></water-level-chart>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, PropType, ref } from "vue";
 import SandContent from "./SandContent.vue";
 import Suspension from "./Suspension.vue";
 import RateAndDirection from "./RateAndDirection.vue";
 import Salinity from "./Salinity.vue";
 import FlowSandZ from "./FlowSandZ.vue";
+import WaterLevelChart from "./WaterLevelChart.vue";
+import { WaterLevelChartType } from "@/type";
 export default defineComponent({
   components: {
     SandContent,
@@ -98,6 +105,7 @@ export default defineComponent({
     RateAndDirection,
     Salinity,
     FlowSandZ,
+    WaterLevelChart,
   },
   props: {
     sandContentList: {
@@ -118,6 +126,9 @@ export default defineComponent({
     tableNameList: {
       type: Array,
     },
+    waterLevelChartInfo: {
+      type: Object as PropType<WaterLevelChartType>,
+    },
   },
   setup(props) {
     const sandContent = ref();
@@ -125,6 +136,7 @@ export default defineComponent({
     const rateAndDirection = ref();
     const salinity = ref();
     const flowSandZ = ref();
+    const waterLevelChart = ref();
     const centerIndex = ref(0);
     const leftIndex = computed(() => {
       return (
@@ -152,6 +164,10 @@ export default defineComponent({
     });
     const flowSandZList = computed(() => {
       return props.flowSandZList;
+    });
+
+    const waterLevelChartInfo = computed(() => {
+      return props.waterLevelChartInfo;
     });
 
     const changeExcel = async (handle: string) => {
@@ -184,6 +200,8 @@ export default defineComponent({
         await flowSandZ.value.refreshData(
           (flowSandZList.value as string[])[centerIndex.value]
         );
+      } else if (waterLevelChart) {
+        waterLevelChart.value.refreshData();
       }
     };
 
@@ -202,6 +220,8 @@ export default defineComponent({
       centerIndex,
       leftIndex,
       rightIndex,
+      waterLevelChartInfo,
+      waterLevelChart,
       changeExcel,
     };
   },
@@ -236,6 +256,10 @@ export default defineComponent({
     white-space: nowrap;
     text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
+  }
+  .water-level-info {
+    width: 900px;
+    height: 400px;
   }
 }
 </style>
