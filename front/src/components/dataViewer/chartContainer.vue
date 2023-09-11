@@ -9,7 +9,7 @@
 <script setup lang='ts'>
 import * as echarts from 'echarts';
 import { EChartsOption } from 'echarts';
-import { onMounted, ref, toRef } from 'vue';
+import { onActivated, onDeactivated, onMounted, ref, toRef } from 'vue';
 import { ChartDataPreparer } from '@/utils/viewerData';
 // import { getSectionElevation } from '@/api/request';
 
@@ -105,9 +105,11 @@ const loadChartOfCurPorject = async (chart: echarts.ECharts, projectIdStr: strin
 }
 
 let optionIndex = 0;
+let chart: echarts.ECharts;
 onMounted(async () => {
+    console.log("mounted")
     // console.log(chartDom.value);
-    let chart = echarts.init(chartDom.value as HTMLElement);
+    chart = echarts.init(chartDom.value as HTMLElement);
     await loadChartOfCurPorject(chart, projectId.value);
 
     // TODO: window.onsize doesn't work on components
@@ -115,6 +117,18 @@ onMounted(async () => {
     //     chart.resize();
     // };
 });
+
+onActivated(async() => {
+    console.log("activated")
+    await loadChartOfCurPorject(chart, projectId.value);
+})
+
+onDeactivated(() => {
+    if(dynamicInterval != -1) {
+        clearInterval(dynamicInterval);
+    }
+})
+
 
 defineExpose({changeData});
 </script>
