@@ -1,32 +1,33 @@
 spring:
   datasource:
     default:
-      jdbc-url: jdbc:sqlite:D:/UyNauhL/Assignments/monitor_data/monitor/main.db
+      jdbc-url: jdbc:sqlite:E:/monitor/main.db
       driver-class-name: org.sqlite.JDBC
     shp:
       jdbc-url: jdbc:postgresql://localhost:5432/shp_dataset?stringtype=unspecified
       driver-class-name: org.postgresql.Driver
       username: postgres
-      password: QWERBOOM123
+      password: 123
     ship:
-      jdbc-url: jdbc:sqlite:D:/UyNauhL/Assignments/monitor_data/monitor/resources/ais.db
+      jdbc-url: jdbc:sqlite:E:/monitor/resources/ais.db
       driver-class-name: org.sqlite.JDBC
     waterway:
-      jdbc-url: jdbc:sqlite:D:/UyNauhL/Assignments/monitor_data/monitor/resources/waterway.db
+      jdbc-url: jdbc:sqlite:E:/monitor/resources/waterway.db
       driver-class-name: org.sqlite.JDBC
 
 #D:/UyNauhL/Assignments/monitor_data/monitor
 
-baseDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/raw/
-avatarDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/avatar/
-tempDir: D:/UyNauhL/Assignments/monitor_data/monitor/temp/
-visualDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/visual/
-pgPath: C:/UyNauhL/ProgramFile/PostgreSQL/11/bin/
-mapDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/map/
-resourceDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/
-analysisDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/analysis/
-analysisParameterDir: D:/UyNauhL/Assignments/monitor_data/monitor/resources/analysisParameter/
-projectDir: D:/UyNauhL/Assignments/monitor_data/resources/raw/project/
+
+baseDir: E:/monitor/resources/raw/
+avatarDir: E:/monitor/resources/avatar/
+tempDir: E:/monitor/temp/
+visualDir: E:/monitor/resources/visual/
+pgPath: D:/App/postgresql/bin/
+mapDir: E:/monitor/resources/map/
+resourceDir: E:/monitor/resources/
+analysisDir: E:/monitor/resources/analysis/
+analysisParameterDir: E:/monitor/resources/analysisParameter/
+projectDir: E:/monitor/project/
 
 meteorologyUrl: https://weather.cma.cn/api/map/alarm
 meteorologyPngUrl:
@@ -40,4 +41,5 @@ AISUrl:
 AISListUrl:
   https://www.cjienc.cn/rest/es/getBoxShips?from={0}&name={1}&size={2}
 
-fileViewUrl: http://localhost:8020
+fileViewUrl:
+  http://localhost:8012/fileUpload
