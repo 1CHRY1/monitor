@@ -13,9 +13,7 @@ import axios from 'axios';
 import * as turf from '@turf/turf';
 import PopupVisual from '@/components/visual/popupVisual.vue';
 import { WaterStation } from '@/type';
-import { number } from 'echarts';
-
-
+import { getPredictionStation,getAllPredictionValue } from '@/api/request';
 
 
 const lng = ref(0)
@@ -32,22 +30,42 @@ let apd: ComponentPublicInstance | null = null;
 
 
 let CJ_Layerdata: any = null;
-//站点数据
-const stations = new Map([
-    ["anqing", { lng: 117.133573, lat: 30.5504 }],
-    ["wuhu", { lng: 118.342176, lat: 30.5504 }],
-    ["nanjing", { lng: 118.774702, lat: 30.5504 }],
-    ["zhenjiang", { lng: 119.419657, lat: 30.5504 }],
-    ["jiangyin", { lng: 120.27385, lat: 30.5504 }],
-    ["xiashigang", { lng: 120.436864, lat: 30.5504 }],
-    ["tianshenggang", { lng: 120.755695, lat: 30.5504 }],
-    ["xuliujing", { lng: 120.992422, lat: 30.5504 }],
-    ["yanglin", { lng: 121.269822, lat: 30.5504 }],
-    ["wusong", { lng: 121.520963, lat: 30.5504 }],
-]);
+
+const stations:Map<string,WaterStation> = new Map();
+
+
+const initStationData = async() => {
+    const backend_stations = await getPredictionStation();
+    const backend_values   = await getAllPredictionValue();
+    
+    const stDATA = backend_stations?.data;
+    
+    for (let i = 0; i < stDATA.length; i++) {
+        stations!.set(stDATA[i].nameEn, {
+            name:stDATA[i].name,
+            nameEn:stDATA[i].nameEn,
+            lng:stDATA[i].longitude,
+            lat:stDATA[i].latitude,
+            water:0,
+        });
+        
+    }
+    const waterData = backend_values?.data;
+    for (let i =0;i<waterData.length;i++){
+        //console.log(waterData[i].name);//this name is nameEn
+        stations!.get(waterData[i].name)!.water = waterData[i].res.value[0];
+    }
+}
+
+
+
+
+
 
 
 const initMap = async () => {
+    await initStationData();
+
     const map = new mapboxgl.Map({
         container: 'container',
         style: 'mapbox://styles/johnnyt/clld6armr00f901q0dyqh7452',
@@ -56,6 +74,7 @@ const initMap = async () => {
         accessToken: 'pk.eyJ1Ijoiam9obm55dCIsImEiOiJja2xxNXplNjYwNnhzMm5uYTJtdHVlbTByIn0.f1GfZbFLWjiEayI6hb_Qvg'
     });
 
+    
     map.on('load', async () => {
         // 添加长江面图层    
         axios.get('/resource/changjiang2.geojson').then((res) => {
@@ -75,8 +94,6 @@ const initMap = async () => {
                     "fill-opacity": 0.5
                 }
             });
-
-
 
             map.on('mousemove', "CJLayer", e => {
                 const nearStation = findNearStation(e.lngLat.lng, e.lngLat.lat);
@@ -107,7 +124,11 @@ const findNearStation = (lng: number, lat: number) => {
     let minDis1 = 100000, minDis2 = 100000;
     let minName1, minName2;
     from = turf.point([lng, lat]);
+    console.log(stations.size);
+    
     for (let item of stations) {
+        console.log(item);
+        
         to = turf.point([item[1].lng, item[1].lat]);
         let dis = turf.distance(from, to);
         if (dis < minDis1) {
@@ -126,16 +147,18 @@ const findNearStation = (lng: number, lat: number) => {
     }
     //request station water
     let station1: WaterStation = {
-        name: minName1!,
+        nameEn: minName1!,
+        name:stations.get(minName1!)!.name,
         lng :stations.get(minName1!)!.lng,
         lat :stations.get(minName1!)!.lat,
-        water: 1
+        water: stations.get(minName1!)!.water
     }
     let station2: WaterStation = {
-        name: minName2!,
+        nameEn: minName2!,
+        name:stations.get(minName2!)!.name,
         lng :stations.get(minName2!)!.lng,
         lat :stations.get(minName2!)!.lat,
-        water: 2
+        water: stations.get(minName2!)?.water
     }
     return [station1, station2];
 }
@@ -161,12 +184,12 @@ const showInfoWindow = (map: mapboxgl.Map, elng: number, elat: number, ewater: n
     lng.value = Number(elng.toFixed(6));
     lat.value = Number(elat.toFixed(6));
     WaterVarying.value = Number(ewater.toFixed(6));
-    nearStation_1.name = enearStations[0].name;
+    nearStation_1.name = enearStations[0].name!;
     nearStation_1.lng = Number(enearStations[0].lng.toFixed(6));
     nearStation_1.lat = Number(enearStations[0].lat.toFixed(6));
     nearStation_1.water = Number(enearStations[0].water!.toFixed(6));
 
-    nearStation_2.name = enearStations[1].name;
+    nearStation_2.name = enearStations[1].name!;
     nearStation_2.lng = Number(enearStations[1].lng.toFixed(6));
     nearStation_2.lat = Number(enearStations[1].lat.toFixed(6));
     nearStation_2.water = Number(enearStations[1].water!.toFixed(6));

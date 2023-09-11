@@ -588,3 +588,11 @@ export async function bindVisualData(jsonData: {
 }) {
   return await post(`/files/bindVisualData`, true, jsonData);
 }
+
+export async function getPredictionStation(){
+  return await get(`/waterway/getPredictionStation`, true);
+}
+
+export async function getAllPredictionValue() {
+  return await get(`/waterway/getAllPredictionValue`, true);
+}
