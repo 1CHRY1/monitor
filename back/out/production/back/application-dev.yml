@@ -15,6 +15,7 @@ spring:
       jdbc-url: jdbc:sqlite:E:/monitor/resources/waterway.db
       driver-class-name: org.sqlite.JDBC
 
+#D:/UyNauhL/Assignments/monitor_data/monitor
 
 
 baseDir: E:/monitor/resources/raw/

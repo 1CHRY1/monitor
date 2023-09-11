@@ -18,7 +18,7 @@ export default {
   
 <script setup lang='ts'>
 import * as echarts from 'echarts';
-import { onMounted, ref, watch } from 'vue';
+import { onActivated, onDeactivated, onMounted, ref, watch } from 'vue';
 import { chartOptionTest, ChartDataPreparer } from '@/utils/viewerData';
 import dataTable from './dataTable.vue';
 
@@ -57,46 +57,30 @@ let changePlayStatus = () => {
 //   });
 
 let optionIndex = 0;
-
-onMounted(async () => {
-    // console.log(chartDom.value);
-    // let echartLeft = echarts.init(chartLeft.value as HTMLElement);
-    let chartRight = echarts.init(chartLeft.value as HTMLElement);
-
-    const chartOption = await chartDatapreparer.buildChartOption(projectId.value);
-    // console.log(chartOption);
-    // if (Array.isArray(chartOption)) {
-    //     chartRight.setOption(chartOption[0]);
-    //     setInterval(() => {
-    //         chartRight.setOption(chartOption[optionIndex+1]);
-    //         optionIndex = (optionIndex+1)%(chartOption.length-1);
-    //     }, 2000)
-    // }
-    // else{
-    //     chartRight.setOption(chartOption)
-    // }
-
+let echartRight: echarts.ECharts;
+const loadChartOfCurPorject = async (chart: echarts.ECharts, projectIdStr: string) => {
+    const chartOption = await chartDatapreparer.buildChartOption(projectIdStr);
     function arrayDynamic() {
-        chartRight.setOption((chartOption as EChartsOption[])[optionIndex+1]);
+        chart.setOption((chartOption as EChartsOption[])[optionIndex+1]);
         optionIndex = (optionIndex+1)%((chartOption as EChartsOption[]).length-1);
     }
 
     let reqeustDynamic = async () => {
         chartDatapreparer.dynamicIndex += 1;
-        const newSeries = await chartDatapreparer.buildChartOption(projectId.value);
-        chartRight.clear();
+        const newSeries = await chartDatapreparer.buildChartOption(projectIdStr);
+        chart.clear();
         for(let key in newSeries) {
             (chartOption as EChartsOption)[key] = (newSeries as EChartsOption)[key]
         }
         // chartOption.series = (newSeries as EChartsOption).series;
         // console.log(chartOption);
-        chartRight.setOption(chartOption as EChartsOption);
+        chart.setOption(chartOption as EChartsOption);
     }
     if (Array.isArray(chartOption)) {
         // console.log("options", chartOption)
-        dynamicControl.value = false;
-        chartRight.setOption(chartOption[0]);
-        dynamicInterval = setInterval(arrayDynamic, 2000)
+        dynamicControl.value = true;
+        chart.setOption(chartOption[0]);
+        dynamicInterval = setInterval(arrayDynamic, 4000)
         changePlayStatus = () => {
             isPaused.value = !isPaused.value;
             if (dynamicInterval != -1) {
@@ -104,17 +88,17 @@ onMounted(async () => {
                 dynamicInterval = -1;
             }
             else {
-                dynamicInterval = setInterval(arrayDynamic, 2000)
+                dynamicInterval = setInterval(arrayDynamic, 4000)
             }
         
         }
     }
     else{
         // console.log("option", chartOption)
-        chartRight.setOption(chartOption)
+        chart.setOption(chartOption)
         if (chartDatapreparer.isDynamic === true) {
-            dynamicControl.value = false;
-            dynamicInterval = setInterval(reqeustDynamic, 2000)
+            dynamicControl.value = true;
+            dynamicInterval = setInterval(reqeustDynamic, 4000)
             changePlayStatus = () => {
                 isPaused.value = !isPaused.value;
                 if (dynamicInterval != -1) {
@@ -122,19 +106,36 @@ onMounted(async () => {
                     dynamicInterval = -1;
                 }
                 else {
-                    dynamicInterval = setInterval(reqeustDynamic, 2000)
+                    dynamicInterval = setInterval(reqeustDynamic, 4000)
                 }
             
             }
         }
     }
-    // let chartConfig = chartOptionTest[+(chartOptId.value.substring(0, 1))-1];
+}
+
+onMounted(async () => {
+    // console.log(chartDom.value);
+    // let echartLeft = echarts.init(chartLeft.value as HTMLElement);
+    echartRight = echarts.init(chartLeft.value as HTMLElement);
+    await loadChartOfCurPorject(echartRight, projectId.value);
     
     // TODO: window.onsize doesn't work on components
     // window.onresize = function () {
     //     chart.resize();
     // };
 });
+
+onActivated(async() => {
+    console.log("activated")
+    await loadChartOfCurPorject(echartRight, projectId.value);
+})
+
+onDeactivated(() => {
+    if(dynamicInterval != -1) {
+        clearInterval(dynamicInterval);
+    }
+})
 </script>
   
 <style lang='scss' scoped>
