@@ -2298,6 +2298,32 @@ function ConvertSectionData2Geojson(sectionData: Array<StringKeyObject>): Array<
 }
 
 
+function convertRegionTideStationData2Geojson(regionTideStationData: Array<StringKeyObject>): StringKeyObject {
+    const ptCollection = {
+        'type': 'FeatureCollection',
+        'features': <Array<StringKeyObject>>[]
+    }
+    for (const station of regionTideStationData) {
+        const aPtFeat = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    station["longitude"], station["latitude"],
+                ],
+            },
+            "properties": {
+                "name": station["name"],
+                "type": station["type"]
+            }
+        }
+        ptCollection.features.push(aPtFeat)
+    }
+    return ptCollection;
+}
+
+
+
 const average = (arr: Array<number>) => arr.reduce((p, c) => p + c, 0) / arr.length;
 
 function simplifyFloatLineGeosjon(lineGeojson: StringKeyObject): StringKeyObject {
@@ -2505,5 +2531,6 @@ export {
     chartOptionTest,
     ChartDataPreparer,
     StringKeyObject,
-    MapDataPreparer
+    MapDataPreparer,
+    convertRegionTideStationData2Geojson
 };

@@ -596,3 +596,7 @@ export async function getPredictionStation(){
 export async function getAllPredictionValue() {
   return await get(`/waterway/getAllPredictionValue`, true);
 }
+
+export async function getRegionTideStation() {
+  return await get(`/waterway/getStationByBox/32.382/122.236/30.848/118.460`, true);
+}
