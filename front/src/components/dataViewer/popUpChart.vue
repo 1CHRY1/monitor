@@ -62,6 +62,11 @@ type StringKeyNumArray = {
 type SeriesMinMax = {
     [key: string]: [number, number]
 }
+const nameMap: StringKeyObject = {
+    'upstreamWaterLevel': '上游水位',
+    'downstreamWaterLevel': '下游水位',
+    'waterLevel': '水位'
+}
 const visualMapColors = [['#6F04D9', '#05C7F2'], ['#F24638', '#F3A950']]
 const buildData2ChartOption = (reqData: StringKeyObject[], dataKeys: string[]): EChartsOption => {
     const dataSeries: echarts.LineSeriesOption[] = [];
@@ -84,7 +89,7 @@ const buildData2ChartOption = (reqData: StringKeyObject[], dataKeys: string[]): 
     let seriesIndex = 0;
     for (let dataKey of dataKeys) {
         dataSeries.push({
-            name: dataKey,
+            name: nameMap[dataKey],
             symbolSize: 2,
             data: seriesData[dataKey],
             type: 'line',
@@ -120,10 +125,30 @@ const buildData2ChartOption = (reqData: StringKeyObject[], dataKeys: string[]): 
                 color: 'rgba(255, 255, 255, 0.8)'
             }
         },
+        color: ['#1C58A6', '#F29F05', '#5AC9B5'],
         animation: false,
-        visualMap: visualMaps,
+        // visualMap: visualMaps,
         dataZoom: {
             type: 'inside'
+        },
+        legend: {
+            show: true,
+            orient: 'horizontal',
+            left: 'center',
+            top: '2%',
+            height: '12%',
+            itemGap: 0,
+            // itemWidth: 5,
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+            borderRadius: 6,
+            padding: 10,
+            textStyle: {
+                fontWeight: 'bold',
+                color: 'rgba(0, 29, 91, 0.9)'
+            },
+            lineStyle: {
+                width: 4
+            }
         },
         tooltip: { show: true, trigger: 'axis' },
         xAxis: {
@@ -191,7 +216,7 @@ const buildData2ChartOption = (reqData: StringKeyObject[], dataKeys: string[]): 
             },
         },
         grid: {
-            top: '4%',
+            top: '12%',
             bottom: '2%',
             left: '2%',
             right: '2%',

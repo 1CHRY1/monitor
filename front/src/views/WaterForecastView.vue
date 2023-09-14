@@ -3,7 +3,15 @@
         <div id="pop" v-show="false"></div>
         <div v-for="station in regionStationData" :id="station.name" v-show="false"></div>
         <div id="container"></div>
-        <div class="legend" ></div>
+        <div class="legend" v-show="!chartInited">
+            <div class="legend-sub legend-one">
+                <span>上游水位</span>
+            </div>
+            <div class="legend-sub legend-two">
+                <span>下游水位</span>
+            </div>
+        </div>
+        <div class="over-look" @click="zoomOut"></div>
     </div>
 </template>
 <script lang="ts" setup>
@@ -99,6 +107,7 @@ const popupOffsets = {
     'left': [markerRadius, (markerHeight - markerRadius) * -1],
     'right': [-markerRadius, (markerHeight - markerRadius) * -1]
 };
+let zoomOut = () => {};
 
 const initMap = async (map: mapboxgl.Map) => {
 
@@ -148,11 +157,12 @@ const initMap = async (map: mapboxgl.Map) => {
     })
 }
 
+
 const regionStation = await getRegionTideStation();
 const regionStationData = regionStation?.data;
 // console.log('stations', regionStation)
 
-let chartInited = false;
+let chartInited = ref(false);
 const initStationsLayer = (map: mapboxgl.Map) => {
 
     const regionStationGeojson = convertRegionTideStationData2Geojson(regionStationData);
@@ -277,12 +287,12 @@ const initStationsLayer = (map: mapboxgl.Map) => {
                     popUpChartsPropRefs[station.name].chartHeight.value = zoom * 6;
                     // console.log(zoom, popUpChartsPropRefs[station.name].chartWidth.value)
                 }
-                if((chartInited) && (popUpChartsPropRefs[regionStationData[0].name].chartWidth.value < 240)) {
+                if((chartInited.value) && (popUpChartsPropRefs[regionStationData[0].name].chartWidth.value < 240)) {
                     // console.log("remove")
                     for (let station of regionStationData) {
                         popUpChartsAppIns.get(station.name)?.toggleChartStatus();
                     }
-                    chartInited = false;
+                    chartInited.value = false;
                 }
             }
             else if(zoom < 12){
@@ -291,19 +301,19 @@ const initStationsLayer = (map: mapboxgl.Map) => {
                     popUpChartsPropRefs[station.name].chartHeight.value = zoom * 16;
                     // console.log(zoom, popUpChartsPropRefs[station.name].chartWidth.value)
                 }
-                if((chartInited) && (popUpChartsPropRefs[regionStationData[0].name].chartWidth.value < 240)) {
+                if((chartInited.value) && (popUpChartsPropRefs[regionStationData[0].name].chartWidth.value < 240)) {
                     // console.log("remove")
 
                     for (let station of regionStationData) {
                         popUpChartsAppIns.get(station.name)?.toggleChartStatus();
                     }
-                    chartInited = false;
+                    chartInited.value = false;
                 }
-                else if((!chartInited) && (popUpChartsPropRefs[regionStationData[0].name].chartWidth.value >= 240)) {
+                else if((!chartInited.value) && (popUpChartsPropRefs[regionStationData[0].name].chartWidth.value >= 240)) {
                     for (let station of regionStationData) {
                         popUpChartsAppIns.get(station.name)?.toggleChartStatus();
                     }
-                    chartInited = true;
+                    chartInited.value = true;
                 }
             }
             else {
@@ -312,15 +322,15 @@ const initStationsLayer = (map: mapboxgl.Map) => {
                     popUpChartsPropRefs[station.name].chartHeight.value = zoom * 28;
                     // console.log(zoom, popUpChartsPropRefs[station.name].chartWidth.value)
                 }
-                if(!chartInited) {
+                if(!chartInited.value) {
                     for (let station of regionStationData) {
                         popUpChartsAppIns.get(station.name)?.toggleChartStatus();
                     }
-                    chartInited = true;
+                    chartInited.value = true;
                 }
             }
         }
-        if (chartInited) {
+        if (chartInited.value) {
             for (let station of regionStationData) {
                 popUpChartsAppIns.get(station.name)?.resizeEchart();
             }
@@ -420,6 +430,13 @@ onMounted(async () => {
         zoom: 9.05,
         accessToken: 'pk.eyJ1Ijoiam9obm55dCIsImEiOiJja2xxNXplNjYwNnhzMm5uYTJtdHVlbTByIn0.f1GfZbFLWjiEayI6hb_Qvg'
     });
+    zoomOut = () => {
+        map.flyTo({
+            center: [120.001, 31.8813],
+            zoom: 9.05,
+            essential: true
+        })
+    }
     await initMap(map);
     let info = {
         lng: lng,
@@ -467,6 +484,61 @@ onMounted(async () => {
             }
         }
 
+    }
+
+    div.legend {
+        position: absolute;
+        right: calc(6vw + 2vh);
+        bottom: 4.5vh;
+        width: 8vw;
+        height: 5vh;
+        display: flex;
+        flex-flow: row;
+        border-radius: 6px;
+        
+
+        div.legend-sub {
+            display: flex;
+            width: 50%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            font-size: calc(0.5vw + 0.55vh);
+            font-weight: 600;
+
+            &.legend-one {
+                background-color: rgb(21, 60, 168);
+                color: rgb(234, 252, 255);
+                border-top-left-radius: 6px;
+                border-bottom-left-radius: 6px;
+            }
+
+            &.legend-two {
+                background-color: rgb(73, 202, 231);
+                color: rgb(0, 13, 42);
+                border-top-right-radius: 6px;
+                border-bottom-right-radius: 6px;
+            }
+        }
+
+    }
+
+    div.over-look {
+        position: absolute;
+        width: calc(2vw + 2vh);
+        height: calc(2vw + 2vh);
+        right: 2vw;
+        bottom: 4vh;
+        background-image: url("../assets/zoom-blue.png");
+        background-size: cover;
+
+        transition: all 0.5s ease-in-out;
+
+        &:hover {
+            cursor: pointer;
+            width: calc(2.5vw + 2.5vh);
+            height: calc(2.5vw + 2.5vh);
+        }
     }
 
 }
