@@ -86,14 +86,14 @@
 </template>
 <script setup lang="ts">
 import { WaterStation } from '@/type';
-import { PropType, computed, onMounted, ref, watch } from 'vue';
+import { PropType, onMounted} from 'vue';
 
 const props = defineProps({
-    lng:Number,
-    lat:Number,
-    water:Number,
-    station_1:Object as PropType<WaterStation>,
-    station_2:Object as PropType<WaterStation>,
+    lng: Object as PropType<Number>,
+    lat: Object as PropType<Number>,
+    water: Object as PropType<Number>,
+    station_1: Object as PropType<WaterStation>,
+    station_2: Object as PropType<WaterStation>,
 })
 
 onMounted(() => {
