@@ -22,16 +22,16 @@
                         </text>
                         <div class="one-line-info">
                             <text class="default">经度:</text>
-                            <div class="data">{{ props.lng }}</div>
+                            <div class="data" style="width: 60%;">{{ props.lng }}</div>
                         </div>
                         <div class="one-line-info">
                             <text class="default">纬度:</text>
-                            <div class="data">{{ props.lat }}</div>
+                            <div class="data" style="width: 60%;">{{ props.lat }}</div>
                         </div>
 
                         <div style="display: flex;margin-top: 10px;">
                             <text class="larger">预报水位：</text>
-                            <div class="data">{{ props.water }}</div>
+                            <div class="data" style="width: 40%; font-weight: 600;">{{ props.water }}</div>
                         </div>
                     </div>
 
@@ -47,46 +47,36 @@
             </div>
 
             <div class="Water">
-                <div class="card">
-                    <text class="larger">
-                        临近站点：
-                    </text>
+                <text class="larger">
+                    临近站点：</text><br>
+                <div class="card2">
 
-                    <div class="flex">
-                        <div class="flex_1">
-                            <div class="one-Satation-info">
-                                <div style="display: flex;"><text class="default">站点:</text>
-                                    <div class="data">{{ props.station_1!.name }}</div>
-                                </div>
-                                <div style="display: flex;"><text class="default">实测水位:</text>
-                                    <div class="data">{{ props.station_1!.water }}</div>
-                                </div>
-                            </div>
+                    <div class="one-Satation-info">
+                        <div style="display: flex;"><text class="default" style="flex: 2;text-align: center;">站点名:</text>
+                            <div class="data" style="flex: 3;">{{ props.station_1!.name }}</div>
                         </div>
-
-
-                        <div class="flex_2">
-                            <div class="one-Satation-info">
-                                <div style="display: flex;"><text class="default">站点:</text>
-                                    <div class="data">{{ props.station_2!.name }}</div>
-                                </div>
-                                <div style="display: flex;"><text class="default">实测水位:</text>
-                                    <div class="data">{{ props.station_2!.water }}</div>
-                                </div>
-                            </div>
+                        <div style="display: flex;"><text class="default" style="flex: 2;">实测水位:</text>
+                            <div class="data" style="flex: 3;">{{ props.station_1!.water }}</div>
                         </div>
-
                     </div>
-
+            
+                    <div class="one-Satation-info">
+                        <div style="display: flex;"><text class="default" style="flex: 2;text-align: center;">站点名:</text>
+                            <div class="data" style="flex: 3;">{{ props.station_2!.name }}</div>
+                        </div>
+                        <div style="display: flex;"><text class="default" style="flex: 2;">实测水位:</text>
+                            <div class="data" style="flex: 3;">{{ props.station_2!.water }}</div>
+                        </div>
+                    </div>
+            
                 </div>
             </div>
-
         </div>
     </div>
 </template>
 <script setup lang="ts">
 import { WaterStation } from '@/type';
-import { PropType, onMounted} from 'vue';
+import { PropType, onMounted } from 'vue';
 
 const props = defineProps({
     lng: Object as PropType<Number>,
@@ -98,21 +88,22 @@ const props = defineProps({
 
 onMounted(() => {
     // console.log('创建了实例');
-})                                       
+})
 
 
 </script>
 <style lang="scss" scoped>
 .d {
-    width: 400px;
+    width: 370px;
     height: auto;
+    margin-top: 4px;
 
     .back-shadow {
-        width: 95%;
+        width: calc(100% - 2px);
         border: #dbdbdb50 1px solid;
+        border-radius: 7px;
         // border-radius: 25px;
-        background: #ecf5ffaf;
-
+        background: rgb(194, 227, 255);
 
         box-shadow: 0px 0px 5px rgba(65, 105, 225, 0.315);
     }
@@ -120,7 +111,10 @@ onMounted(() => {
     .header {
         line-height: 30px;
         display: flex;
-        width: 90%;
+        width: 100%;
+        background-color: aliceblue;
+        border-radius: 7px;
+        margin-bottom: 5px;
 
         text {
             font-size: 22px;
@@ -135,7 +129,7 @@ onMounted(() => {
         svg {
             width: 2rem;
             height: 2rem;
-            fill: royalblue;
+            fill: rgb(21, 60, 168);
             padding: 5px;
         }
     }
@@ -144,11 +138,12 @@ onMounted(() => {
         padding-left: 10px;
 
         .card {
-            width: 95%;
+            width: 100%;
             display: flex;
 
             .flex1 {
                 flex: 2;
+
                 .one-line-info {
                     display: flex;
                     width: 200px;
@@ -157,11 +152,11 @@ onMounted(() => {
 
             .flex2 {
                 flex: 1;
-                margin-left: 20px;
+                margin-left: 10px;
 
                 ._svg {
-                    width: 5rem;
-                    height: 5rem;
+                    width: 6rem;
+                    height: 6rem;
                 }
             }
 
@@ -170,20 +165,14 @@ onMounted(() => {
 
     .Water {
         padding-left: 10px;
+        padding-bottom: 10px;
 
-        .card {
-            width: 95%;
+        .card2 {
+            width: 100%;
+            display: flex;
 
-            .flex {
-                display: flex;
-                .flex_1 {
-                    flex: 1;
-                }
-                .flex_2 {
-                    flex: 1;
-                }
-            }
             .one-Satation-info {
+                flex: 1;
                 width: 200px;
 
             }
@@ -202,8 +191,10 @@ text.default {
 }
 
 .data {
-    width: 30%;
     font-size: 16px;
+    border: 2px solid #b1dcf3;
+    background-color: aliceblue;
+    text-align: center;
 }
 
 .card {

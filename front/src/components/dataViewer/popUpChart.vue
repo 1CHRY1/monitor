@@ -247,10 +247,10 @@ const toggleChartStatus = () => {
         // console.log("init");
         chartInited = true;
         chartShown.value = true;
-        console.log(chartDom.value?.clientWidth, chartDom.value?.clientHeight);
+        // console.log(chartDom.value?.clientWidth, chartDom.value?.clientHeight);
         if (chartOption) {
             echart = echarts.init(chartDom.value as HTMLElement);
-            console.log(props.stationName, chartOption);
+            // console.log(props.stationName, chartOption);
             echart.setOption(chartOption);
         }
     }
@@ -297,7 +297,7 @@ onMounted(async () => {
             upStreamData.value = res[res.length - 1].waterLevel.toFixed(2);
             dataKeyList.push("waterLevel");
         }
-        console.log(props.stationName, dataKeyList);
+        // console.log(props.stationName, dataKeyList);
         chartOption = buildData2ChartOption(res, dataKeyList);
         // const echart = echarts.init(chartDom.value as HTMLElement);
         // echart.setOption(chartOption);

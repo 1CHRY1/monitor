@@ -25,6 +25,7 @@ import popUpChart from '@/components/dataViewer/popUpChart.vue';
 import { WaterStation } from '@/type';
 import { getPredictionStation, getAllPredictionValue, getRegionTideStation, getWaterLevelByStationAndTime } from '@/api/request';
 import { type StringKeyObject, convertRegionTideStationData2Geojson } from '@/utils/viewerData';
+import LoginView from './LoginView.vue';
 
 
 type PopupChartProps = {
@@ -51,6 +52,7 @@ const nearStation_1 = reactive({ name: 'null', lng: 0, lat: 0, water: 0 })
 const nearStation_2 = reactive({ name: 'null', lng: 0, lat: 0, water: 0 })
 // const info = reactive({ lnglat: { lng: 0, lat: 0 }, water: 0, nearStations: [] })
 const pop = new mapboxgl.Popup({ maxWidth: '400px' })
+pop.addClassName('pop-up')
 
 
 let ap: App | null = null;
@@ -85,7 +87,6 @@ const initStationData = async () => {
         //console.log(waterData[i].name);//this name is nameEn
         stations!.get(waterData[i].name)!.water = waterData[i].res.value[0];
     }
-    // console.log("water data", waterData)
 }
 
 const getTimeStr = (curTime: Date) => curTime.getFullYear() + '-0' + (curTime.getMonth() + 1) + '-' + curTime.getDate() + ' ' + curTime.getHours() + ':' + curTime.getMinutes() + ':' + curTime.getSeconds();
@@ -135,9 +136,10 @@ const initMap = async (map: mapboxgl.Map) => {
 
             map.on('mousemove', "CJLayer", e => {
                 const nearStation = findNearStation(e.lngLat.lng, e.lngLat.lat);
-                const hereWater = Interpolate(nearStation, e.lngLat.lng, e.lngLat.lat);
-
-                showInfoWindow(map, e.lngLat.lng, e.lngLat.lat, hereWater, nearStation);
+                
+                const hereWater = Interpolate(nearStation!, e.lngLat.lng, e.lngLat.lat);
+                
+                showInfoWindow(map, e.lngLat.lng, e.lngLat.lat, hereWater!, nearStation!);
             })
             map.on('mouseenter', 'CJLayer', () => {
                 map.getCanvas().style.cursor = 'crosshair'
@@ -260,7 +262,6 @@ const initStationsLayer = (map: mapboxgl.Map) => {
         popUpChartsApps.set(aStation.properties.name, createApp(popUpChart, popUpChartsPropRefs[aStation.properties.name]))
         popUpChartsAppIns.set(aStation.properties.name, popUpChartsApps.get(aStation.properties.name)?.mount("#" + aStation.properties.name) as InstanceType<typeof popUpChart>)
         let popChart = new mapboxgl.Popup({ maxWidth: '1000px', closeOnClick: false, offset: popupOffsets as any })
-        // console.log(aStation.geometry.coordinates)
         popChart.addClassName('pop-chart');
         popChart.setLngLat(aStation.geometry.coordinates).setDOMContent(popUpChartsAppIns.get(aStation.properties.name)?.$el).addTo(map);
         popUpMap.set(aStation.properties.name, popChart);
@@ -346,9 +347,8 @@ const findNearStation = (lng: number, lat: number) => {
     //循环，求最近的两站点
     let from, to;
     let minDis1 = 100000, minDis2 = 100000;
-    let minName1: string, minName2: string;
+    let minName1: string, minName2: string , tempName:string;
     from = turf.point([lng, lat]);
-    console.log(stations.size);
 
     for (let item of stations) {
         // console.log(item);
@@ -359,16 +359,8 @@ const findNearStation = (lng: number, lat: number) => {
             minName1 = item[0];
         }
     }
-    from = turf.point([lng, lat]);
-    for (let item of stations) {
-        to = turf.point([item[1].lng, item[1].lat]);
-        let dis = turf.distance(from, to);
-        if (dis < minDis2 && dis > minDis1) {
-            minDis2 = dis;
-            minName2 = item[0];
-        }
-    }
-    //request station water
+
+        //request station water
     let station1: WaterStation = {
         nameEn: minName1!,
         name: stations.get(minName1!)!.name,
@@ -376,7 +368,44 @@ const findNearStation = (lng: number, lat: number) => {
         lat: stations.get(minName1!)!.lat,
         water: stations.get(minName1!)!.water
     }
-    let station2: WaterStation = {
+
+    for (let item of stations) {
+        to = turf.point([item[1].lng, item[1].lat]);
+        let dis = turf.distance(from, to);
+        if (dis < minDis2 && dis > minDis1) {
+            
+            let line = turf.lineString([[station1.lng, station1.lat], [item[1].lng, item[1].lat]]);
+            let snapped = turf.nearestPointOnLine(line,from,{units: 'miles'});
+            if((snapped.geometry.coordinates[0] === station1.lng
+                &&snapped.geometry.coordinates[1] === station1.lat)||
+                snapped.geometry.coordinates[0] === to.geometry.coordinates[0]
+                &&snapped.geometry.coordinates[1] === to.geometry.coordinates[1])
+                    //没有找到两侧的站点,snapped == to 或者 station1
+                {
+                    tempName = item[0]; //特殊情况下，用该值
+                    continue;
+                }
+            else{
+                minDis2 = dis;
+                minName2 = item[0];
+            }
+        }
+    }
+
+    let station2: WaterStation;
+    if(minDis2 === 100000){
+        // console.log('ERROR::Not find the 2nd station in another side');
+        station2 = {
+            nameEn: tempName!,
+            name: stations.get(tempName!)!.name,
+            lng: stations.get(tempName!)!.lng,
+            lat: stations.get(tempName!)!.lat,
+            water: stations.get(tempName!)?.water
+        }
+        return [station1, station2];;
+    }
+
+    station2 = {
         nameEn: minName2!,
         name: stations.get(minName2!)!.name,
         lng: stations.get(minName2!)!.lng,
@@ -391,14 +420,21 @@ const Interpolate = (S: WaterStation[], herelng: number, herelat: number) => {
     let P = turf.point([herelng, herelat]);
     let A = turf.point([S[0].lng, S[0].lat]);
     let B = turf.point([S[1].lng, S[1].lat]);
+    
     let AB_line = turf.lineString([[S[0].lng, S[0].lat], [S[1].lng, S[1].lat]]);
-    let AP_length = turf.distance(A, P);
-    let BP_length = turf.distance(B, P);
-    let tri_height = turf.pointToLineDistance(P, AB_line);
-    let AC_length = Math.sqrt(AP_length * AP_length - tri_height * tri_height);
-    let BC_length = Math.sqrt(BP_length * BP_length - tri_height * tri_height);
-    //单线性插值
-    let result = S[0].water! * AC_length / (AC_length + BC_length) + S[1].water! * BC_length / (AC_length + BC_length);
+    let snapped = turf.nearestPointOnLine(AB_line,P,{units: 'miles'});
+
+    let AS_dis = turf.distance(A,snapped);
+    let BS_dis = turf.distance(B,snapped);
+
+    let result;
+    if(AS_dis === 0){
+        result = S[0].water;
+    }else if(BS_dis === 0){
+        result = S[1].water;
+    }else{
+        result = S[0].water! * BS_dis / (AS_dis + BS_dis) + S[1].water! * AS_dis / (AS_dis + BS_dis);
+    }
 
     return result;
 }
@@ -477,12 +513,23 @@ onMounted(async () => {
             width: fit-content;
             height: fit-content;
 
-            div.mapboxgl-popup-content {
+            div.mapboxgl-popup-content  {
                 background-color: #cde5ffc8;
                 backdrop-filter: blur(5px);
                 padding: 3px 3px 3px 3px;
             }
         }
+
+        div.pop-up{
+            div.mapboxgl-popup-anchor-bottom{
+                border-top-color: #b9d6f5d8; //no func
+            }
+            div.mapboxgl-popup-content{
+                background-color: #cde5ffc8;
+            }
+        }
+
+        
 
     }
 
