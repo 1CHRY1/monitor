@@ -159,8 +159,19 @@ export const asyncRouters: Array<RouteRecordRaw> = [
     ],
   },
   {
-    path:"/waterforecast",
-    component : ()=>import ("@/views/WaterForecastWrapper.vue"),
+    path: "/waterForecast",
+    component: () => import("@/layout/Index.vue"),
+    children: [
+      {
+        path: "",
+        name: "WaterForecast",
+        component: () => import("@/views/WaterForecastWrapper.vue"),
+        meta: {
+          requiresAuth: "member",
+          keepAlive: true,
+        },
+      },
+    ],
   },
   {
     path: "/:catchAll(.*)",

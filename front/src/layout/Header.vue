@@ -10,7 +10,7 @@
             交通运输行业野外科学观测研究基地<br />深水航道水沙环境与工程安全平台
           </div>
         </el-col>
-        <el-col :span="2" :offset="1">
+        <el-col :span="2">
           <div class="grid-content index" @click="nav('home')">首页</div>
         </el-col>
         <el-col :span="2">
@@ -22,6 +22,11 @@
         <el-col :span="2">
           <div class="grid-content analysis" @click="nav('waterway')">
             水运一张图
+          </div>
+        </el-col>
+        <el-col :span="2">
+          <div class="grid-content analysis" @click="nav('waterForecast')">
+            水位预报
           </div>
         </el-col>
         <el-col :span="2">
@@ -43,7 +48,7 @@
             </template>
           </el-dropdown>
         </el-col>
-        <el-col :span="2" :offset="3">
+        <el-col :span="2" :offset="2">
           <el-dropdown trigger="hover" @command="userNav" v-if="logined">
             <el-button
               type="primary"
@@ -109,6 +114,9 @@ export default defineComponent({
           return;
         case "waterway":
           router.push({ path: "/waterway" });
+          return;
+        case "waterForecast":
+          router.push({ path: "/waterForecast" });
           return;
         case "analysis":
           router.push({ path: "/analysis/list" });
