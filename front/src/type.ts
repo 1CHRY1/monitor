@@ -291,12 +291,11 @@ export type FileType = {
 };
 
 export type WaterStation={
-  name:string,
-  pos:{
-      lng:number,
-      lat:number,
-  },
-  water?:number
+  name?:string,
+  nameEn:string,
+  lng:number,
+  lat:number,
+  water?:number,
 }
 
 export type UploadRecord = {

@@ -98,12 +98,12 @@ onMounted(async () => {
             animateDashArray(0);
         })
     }
-    map.on('drag', () => {
-        console.log('zoom',map.getZoom())
-        console.log('b',map.getBearing())
-        console.log('p',map.getPitch())
-        console.log('c',map.getCenter())
-    })
+    // map.on('drag', () => {
+    //     console.log('zoom',map.getZoom())
+    //     console.log('b',map.getBearing())
+    //     console.log('p',map.getPitch())
+    //     console.log('c',map.getCenter())
+    // })
 
     
 
