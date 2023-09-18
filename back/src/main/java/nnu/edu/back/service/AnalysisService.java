@@ -22,6 +22,8 @@ import java.util.Set;
 public interface AnalysisService {
     void addAnalysis(AnalysisCase analysisCase, String email);
 
+    void deleteAnalysisCase(String id, String email);
+
     Map<String, Object> pageQuery(String email, String keyword, int page, int size);
 
     AnalysisCase getAnalysisInfo(String id, String email);

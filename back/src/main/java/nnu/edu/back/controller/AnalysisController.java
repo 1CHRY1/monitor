@@ -8,6 +8,7 @@ import nnu.edu.back.common.result.ResultUtils;
 import nnu.edu.back.pojo.AnalysisCase;
 import nnu.edu.back.service.AnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -34,6 +35,12 @@ public class AnalysisController {
     @RequestMapping(value = "/addAnalysis", method = RequestMethod.POST)
     public JsonResult addAnalysis(@RequestBody AnalysisCase analysisCase, @JwtTokenParser("email") String email) {
         analysisService.addAnalysis(analysisCase, email);
+        return ResultUtils.success();
+    }
+
+    @RequestMapping(value="/deleteAnalysisCase/{id}", method = RequestMethod.DELETE)
+    public JsonResult deleteAnalysisCase(@PathVariable String id, @JwtTokenParser("email") String email) {
+        analysisService.deleteAnalysisCase(id, email);
         return ResultUtils.success();
     }
 
