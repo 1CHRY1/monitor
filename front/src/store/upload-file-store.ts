@@ -49,10 +49,12 @@ export const useUploadFileStore = defineStore("uploadFile", () => {
     uploading.value = true;
     const handle = () => {
       return new Promise((resolve, reject) => {
+        console.log(fileList.value.length);
         if (fileList.value.length) {
           const id = uuidv4();
+          const f = fileList.value.shift()!;
           const file = {
-            ...fileList.value.shift()!,
+            ...f,
             finished: 0,
             cancel: false,
           };
@@ -72,13 +74,15 @@ export const useUploadFileStore = defineStore("uploadFile", () => {
               reject();
             });
         } else {
+          console.log("haha");
           resolve(1);
         }
       });
     };
     const promiseList = [];
     for (let i = 0; i < 5; i++) promiseList.push(handle());
-    Promise.all(promiseList).then(() => {
+    Promise.all(promiseList).then((res) => {
+      console.log(res);
       uploading.value = false;
     });
   };
