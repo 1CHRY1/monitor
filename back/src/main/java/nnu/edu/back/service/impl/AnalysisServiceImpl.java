@@ -81,6 +81,17 @@ public class AnalysisServiceImpl implements AnalysisService {
     }
 
     @Override
+    public void deleteAnalysisCase(String id, String email) {
+        AnalysisCase analysisInfo = analysisCaseMapper.getAnalysisInfo(id);
+        if (analysisInfo == null) {
+            throw new MyException(ResultEnum.NO_OBJECT);
+        }
+        if (analysisInfo.getCreator().equals(email)) {
+            analysisCaseMapper.deleteAnalysis(id);
+        } throw new MyException(ResultEnum.NO_ACCESS);
+    }
+
+    @Override
     public Map<String, Object> pageQuery(String email, String keyword, int page, int size) {
         if(!keyword.equals("")) {
             keyword = "%" + keyword + "%";

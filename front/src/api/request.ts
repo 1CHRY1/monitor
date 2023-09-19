@@ -1,3 +1,4 @@
+import { List } from "echarts";
 import { get, post, del, patch } from "./axios-config";
 import { DataListType } from "@/type";
 
@@ -309,6 +310,19 @@ export async function addAnalysisData(jsonData: {
   return await post(`/analysis/addData`, true, jsonData);
 }
 
+export async function addAnalysisList(jsonData: {
+  id: string;
+  projectName: string;
+  avatar: string;
+}) {
+
+  return await post('/analysis/addAnalysis', true, jsonData);
+}
+
+export async function deleteAnalysisCase(id: string) {
+  return await del(`/analysis/deleteAnalysisCase/${id}`, true);
+}
+
 export const getData = async (caseId: string) => {
   return await get(`/analysis/getData/${caseId}`, true);
 };
@@ -589,7 +603,7 @@ export async function bindVisualData(jsonData: {
   return await post(`/files/bindVisualData`, true, jsonData);
 }
 
-export async function getPredictionStation(){
+export async function getPredictionStation() {
   return await get(`/waterway/getPredictionStation`, true);
 }
 

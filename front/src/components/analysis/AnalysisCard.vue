@@ -79,6 +79,12 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+
+.icon{
+  width: 10px;
+  height: 10px;
+}
+
 .analysis-card {
   height: 20rem;
   padding: 20px;
