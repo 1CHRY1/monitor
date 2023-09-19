@@ -31,7 +31,10 @@
       </el-row>
     </div>
 
-    <div class="container" ref="container"></div>
+    <div class="container" ref="container">
+      <basemap @selectBasemap="selectBasemap" />
+    </div>
+
     <div ref="shipWindow" class="shipWindow">
       <ship-info :shipInfo="shipInfo" />
     </div>
@@ -49,6 +52,7 @@
     <div ref="meteorologyWindow" class="MeteorologyInfo">
       <meteorology-info :meteorologyInfo="meteorologyInfo" />
     </div>
+    <div></div>
     <el-dialog v-model="stationDialog" :width="1250" :show-close="false">
       <station-info :stationInfo="stationInfo" v-if="stationDialog" />
     </el-dialog>
@@ -104,6 +108,7 @@ import MeteorologyInfo from "@/components/waterway/MeteorologyInfo.vue";
 import HeadNotice from "@/components/waterway/HeadNotice.vue";
 import StationInfo from "@/components/waterway/StationInfo.vue";
 import Search from "@/components/waterway/Search.vue";
+import Basemap from "@/components/waterway/Basemap.vue";
 import proj4 from "proj4";
 import { register } from "ol/proj/proj4";
 import Select from "ol/interaction/Select.js";
@@ -119,6 +124,7 @@ export default defineComponent({
     HeadNotice,
     StationInfo,
     Search,
+    Basemap,
   },
   setup() {
     let map: Map;
@@ -211,6 +217,27 @@ export default defineComponent({
       },
     });
 
+    const basemapList: XYZ[] = [
+      new XYZ({
+        url: "http://t0.tianditu.com/DataServer?T=vec_c&x={x}&y={y}&l={z}&tk=35a94ab5985969d0b93229c30db6abd6",
+        projection: "EPSG:4326",
+      }),
+      new XYZ({
+        url: "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        projection: "EPSG:3857",
+      }),
+      new XYZ({
+        url: "https://tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=2d56ae4b9a10405c8d232dcdf2b94a6f",
+        projection: "EPSG:3857",
+      }),
+    ];
+
+    const selectBasemap = (value: number) => {
+      if (value === 0) map.getAllLayers()[1].setVisible(true);
+      else map.getAllLayers()[1].setVisible(false);
+      map.getAllLayers()[0].setSource(basemapList[value]);
+    };
+
     const init = () => {
       for (let i = 0; i < 24; i++) {
         let hour = "";
@@ -300,7 +327,6 @@ export default defineComponent({
           new TileLayer({
             visible: true,
             source: new XYZ({
-              // url: "http://t0.tianditu.com/DataServer?T=ter_c&x={x}&y={y}&l={z}&tk=2e23e92f7c9790018ab06498f1f55c1e",
               url: "http://t0.tianditu.com/DataServer?T=vec_c&x={x}&y={y}&l={z}&tk=35a94ab5985969d0b93229c30db6abd6",
               projection: "EPSG:4326",
             }),
@@ -563,7 +589,6 @@ export default defineComponent({
                     height: 30,
                     rotation: parseFloat(item.course),
                     // color: [13, 173, 72, 1],
-                    
                   }),
                 })
               );
@@ -932,6 +957,7 @@ export default defineComponent({
       stationDialog,
       returnPoint,
       shipDataModeChange,
+      selectBasemap,
     };
   },
 });

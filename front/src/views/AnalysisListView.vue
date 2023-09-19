@@ -9,18 +9,17 @@
           <div class="sign">+</div>
           <div class="text">创建分析条目</div>
         </button>
-
-        <!-- <button class="Btn" @click="deleteAnalysisList">
-          <div class="sign" style="font-size: 2.5em;">-</div>
-          <div class="text">删除选中条目</div>
-        </button> -->
       </div>
 
       <el-dialog v-model="createDialogVisible" width="20%">
         <div class="dialog">
           <div class="head">创建分析条目</div>
           <div class="dialog_text">条目名称：</div>
-          <el-input v-model="newListName" placeholder="Please input" clearable />
+          <el-input
+            v-model="newListName"
+            placeholder="Please input"
+            clearable
+          />
           <div class="dialog_text">上传图片:</div>
           <div class="avatar">
             <UploadAvatar @returnPicture="returnPicture"> </UploadAvatar>
@@ -28,28 +27,42 @@
         </div>
         <template #footer>
           <span class="dialog-footer">
-            <el-button @click="createDialogVisible = false; newListName = '';">取消</el-button>
-            <el-button type="primary" @click="createConfirm">
-              确定
-            </el-button>
+            <el-button
+              @click="
+                createDialogVisible = false;
+                newListName = '';
+              "
+              >取消</el-button
+            >
+            <el-button type="primary" @click="createConfirm"> 确定 </el-button>
           </span>
         </template>
       </el-dialog>
-
-
 
       <el-empty description="暂无数据" v-if="analysisList.length === 0" />
       <el-row v-else :gutter="50">
         <!-- OG -->
         <el-col :span="6" v-for="(item, index) in analysisList" :key="index">
-          <analysis-card :info="item" :keyword="keyword"
-            @click="handleClick(index, item)" @refresh-flag="getFlagFromChild"></analysis-card>
+          <analysis-card
+            :info="item"
+            :keyword="keyword"
+            @click="handleClick(index, item)"
+            @refresh-flag="getFlagFromChild"
+          ></analysis-card>
         </el-col>
       </el-row>
       <!-- 分页 -->
       <div class="page">
-        <el-pagination layout="total, prev, pager, next, jumper" :total="total" @current-change="currentChange"
-          v-model:current-page="currentPage" :page-size="8" :pager-count="5" :background="false">
+        <el-pagination
+          layout="total, prev, pager, next, jumper"
+          :total="total"
+          @current-change="currentChange"
+          v-model:current-page="currentPage"
+          :page-size="8"
+          :pager-count="5"
+          :background="true"
+          
+        >
         </el-pagination>
       </div>
     </div>
@@ -61,17 +74,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted , watch } from "vue";
+import { defineComponent, ref, onMounted, watch } from "vue";
 import NProgress from "nprogress";
-import router from "@/router";
 import { uuid } from "@/utils/common";
 import AnalysisCard from "@/components/analysis/AAnalysisCard.vue";
 import UploadAvatar from "@/components/upload/UploadAvatar.vue";
 import copyright from "@/layout/PageCopyright.vue";
-import { pageQueryAnalysis, addAnalysisList,deleteAnalysisCase } from "@/api/request";
+import {
+  pageQueryAnalysis,
+  addAnalysisList,
+} from "@/api/request";
 import { ElMessage, ElMessageBox } from "element-plus";
-
-
 
 NProgress.configure({ showSpinner: false });
 export default defineComponent({
@@ -93,9 +106,9 @@ export default defineComponent({
 
     const refreshFlag = ref(false);
 
-    const getFlagFromChild = (val:boolean)=>{
+    const getFlagFromChild = (val: boolean) => {
       refreshFlag.value = val;
-    }
+    };
 
     // const selectCard;
     // let selectedItem;
@@ -121,7 +134,6 @@ export default defineComponent({
         refreshFlag.value = false;
       }
     });
-
 
     // const searchClick = async () => {
     //   NProgress.start();
@@ -159,7 +171,7 @@ export default defineComponent({
 
     const returnPicture = (val: string) => {
       newListAvatar.value = val;
-    }
+    };
     // const computeOffset = () => {
     //   let div = document.createElement("div");
     //   div.style.height = "7vh";
@@ -180,33 +192,32 @@ export default defineComponent({
 
     const createAnalysisList = () => {
       createDialogVisible.value = true;
-      selectedIndex.value = -1;//新建后重置选择
-    }
+      selectedIndex.value = -1; //新建后重置选择
+    };
 
     const handleClick = (index: number, item: any) => {
       // 记录所选条目
       selectedIndex.value = index;
-    }
+    };
 
     const createConfirm = async () => {
-
       let jsondata = {
         id: uuid(),
         projectName: newListName.value,
         avatar: newListAvatar.value,
-      }
+      };
 
       await addAnalysisList(jsondata);
       await refresh();
 
       ElMessage({
         type: "success",
-        message: "创建成功"
+        message: "创建成功",
       });
 
       createDialogVisible.value = false;
-    }
-  
+    };
+
     const refresh = async () => {
       const data = await pageQueryAnalysis({
         size: 8,
@@ -217,9 +228,7 @@ export default defineComponent({
         analysisList.value = data.data.list;
         total.value = data.data.total;
       }
-    }
-
-
+    };
 
     // const deleteAnalysisList = async () => {
     //   if (selectedIndex.value === -1) {
@@ -241,7 +250,6 @@ export default defineComponent({
     //   ).then(async() => {
     //       // Delete 操作
 
-          
     //       await deleteAnalysisCase(analysisList.value[selectedIndex.value].id);
 
     //       const data = await pageQueryAnalysis({
@@ -267,7 +275,6 @@ export default defineComponent({
     //     })
     //   selectedIndex.value = -1;
     // }
-
 
     return {
       analysisList,
@@ -330,18 +337,14 @@ export default defineComponent({
     padding-top: 35px;
 
     :deep().el-pagination__jump {
-      color: #ffffff
+      color: #ffffff;
     }
 
-    ;
-
     :deep().el-pagination__total {
-      color: #ffffff
+      color: #ffffff;
     }
   }
 }
-
-
 
 .backTitle {
   position: absolute;
@@ -405,7 +408,6 @@ export default defineComponent({
   }
 }
 
-
 .control {
   display: inline-flex;
 
@@ -426,7 +428,6 @@ export default defineComponent({
     transition-duration: 0.5s;
     background: linear-gradient(144deg, #01ffc0, #197bec 50%, #00ddeb);
 
-
     .sign {
       width: 100%;
       font-size: 2.2em;
@@ -435,7 +436,6 @@ export default defineComponent({
       display: flex;
       align-items: center;
       justify-content: center;
-
     }
 
     .text {

@@ -17,7 +17,9 @@
           <div class="grid-content data" @click="nav('resource')">资源门户</div>
         </el-col>
         <el-col :span="2">
-          <div class="grid-content amap" @click="nav('dataview')">监测大屏</div>
+          <div class="grid-content amap" @click="nav('waterForecast')">
+            水位监测
+          </div>
         </el-col>
         <el-col :span="2">
           <div class="grid-content analysis" @click="nav('waterway')">
@@ -25,8 +27,8 @@
           </div>
         </el-col>
         <el-col :span="2">
-          <div class="grid-content analysis" @click="nav('waterForecast')">
-            水位预报
+          <div class="grid-content analysis" @click="nav('dataview')">
+            工程可视化
           </div>
         </el-col>
         <el-col :span="2">
