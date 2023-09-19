@@ -1,7 +1,7 @@
 export const classList = [
   {
     label: "地形数据",
-    value: ["DEM", "边界", "等高线", "DWG", "高程点", "固定断面线", "深泓线"],
+    value: ["DEM", "边界", "等高线", "高程点", "深泓线", "固定断面线"],
   },
   {
     label: "工程数据",
