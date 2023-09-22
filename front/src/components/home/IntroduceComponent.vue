@@ -22,16 +22,16 @@
       ><div class="grid-content ep-bg-purple" />
       <el-card
         class="box-card"
-        :class="{ Large: this.isLarge[2] }"
-        id="2"
+        :class="{ Large: this.isLarge[5] }"
+        id="5"
         @click="jumpToimg"
       >
         <div class="card-header">
-          <Monitor class="iconclass"></Monitor>
-          <h2 class="part-title">工程监测可视化</h2>
+          <Camera class="iconclass"></Camera>
+          <h2 class="part-title">日常监测</h2>
         </div>
         <div class="text item part-desc">
-          数据图表、指标与信息在大屏上实时呈现，提供全局数据洞察
+          根据历史和实时数据，预测未来一段时间内海洋或沿海地区的潮汐水位变化情况
         </div>
       </el-card>
     </el-col>
@@ -79,16 +79,16 @@
 
       <el-card
         class="box-card"
-        :class="{ Large: this.isLarge[5] }"
-        id="5"
+        :class="{ Large: this.isLarge[2] }"
+        id="2"
         @click="jumpToimg"
       >
         <div class="card-header">
-          <Camera class="iconclass"></Camera>
-          <h2 class="part-title">日常监测</h2>
+          <Monitor class="iconclass"></Monitor>
+          <h2 class="part-title">工程监测可视化</h2>
         </div>
         <div class="text item part-desc">
-          根据历史和实时数据，预测未来一段时间内海洋或沿海地区的潮汐水位变化情况
+          数据图表、指标与信息在大屏上实时呈现，提供全局数据洞察
         </div>
       </el-card>
     </el-col>

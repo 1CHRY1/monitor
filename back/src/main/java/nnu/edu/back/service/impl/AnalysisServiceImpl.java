@@ -24,6 +24,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -77,6 +78,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     public void addAnalysis(AnalysisCase analysisCase, String email) {
         analysisCase.setCreator(email);
         analysisCase.setLayerManage(new ArrayList<>());
+        new File(Paths.get(analysisDir, analysisCase.getId()).toString()).mkdirs();
         analysisCaseMapper.addAnalysis(analysisCase);
     }
 

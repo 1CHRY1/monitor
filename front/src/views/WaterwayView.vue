@@ -584,7 +584,9 @@ export default defineComponent({
               f.setStyle(
                 new Style({
                   image: new Icon({
-                    src: `/ship${item.classType}.png`,
+                    src: `/ship${
+                      parseInt(item.classType) > 5 ? "5" : item.classType
+                    }.png`,
                     width: 20,
                     height: 30,
                     rotation: parseFloat(item.course),

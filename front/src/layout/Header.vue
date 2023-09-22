@@ -18,7 +18,7 @@
         </el-col>
         <el-col :span="2">
           <div class="grid-content amap" @click="nav('waterForecast')">
-            水位监测
+            监测与预报
           </div>
         </el-col>
         <el-col :span="2">
