@@ -49,7 +49,7 @@ export default defineComponent({
 div.home {
   /* background-image: linear-gradient(#0026a3, #000e3b); */
   height: calc(100vh - 5rem);
-  background-image: url("../assets/starsky.jpg");
+  background-image: url("../assets/wave-back.jpg");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;

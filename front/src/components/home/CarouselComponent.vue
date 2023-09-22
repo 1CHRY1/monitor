@@ -1,5 +1,5 @@
 <template>
-    <el-carousel :interval="3000" type="card" height="67vh" @change="carouselChange" ref="carousel">
+    <el-carousel :interval="5000" type="card" height="67vh" @change="carouselChange" ref="carousel">
     <el-carousel-item id="first">
         <img class="picture" src="/resource/pic.jpg" />
         <div class="describe">
@@ -9,23 +9,28 @@
     </el-carousel-item>
     <el-carousel-item id="1">
       <!-- 门户图片 -->
-      <img class="picture" src="/resource/Portal.jpg" />
+      <div class="carousel-pic-title">资源门户</div>
+      <img class="picture" src="/resource/resource.png" />
     </el-carousel-item>
     <el-carousel-item id="2">
       <!-- 大屏图片 -->
-      <img class="picture" src="/resource/bigScreen.jpg" />
+      <div class="carousel-pic-title">日常监测可视化</div>
+      <img class="picture" src="/resource/daily-monitor.png" />
     </el-carousel-item>
     <el-carousel-item id="3">
       <!-- 一张图图片 -->
-        <img class="picture" src="/resource/oneMap.jpg" />
+      <div class="carousel-pic-title">水运一张图</div>
+        <img class="picture" src="/resource/ship-all.png" />
     </el-carousel-item>
     <el-carousel-item id="4">
       <!-- 分析中心图片 -->
-        <img class="picture" src="/resource/analysisCenter.jpg" />
+      <div class="carousel-pic-title">工程监测可视化</div>
+      <img class="picture" src="/resource/project-m.png" />
     </el-carousel-item>
     <el-carousel-item id="5">
       <!-- 潮位预报图片 -->
-        <img class="picture" src="/resource/waterForecast.png" />
+      <div class="carousel-pic-title">分析中心</div>
+        <img class="picture" src="/resource/analysis-pro.png" />
     </el-carousel-item>
   </el-carousel>
   <!-- <button @click="setActiveItem(2)">设置第三张轮播图为当前项</button> -->
@@ -62,9 +67,18 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .el-carousel {
-  padding-top: 2vh;
+  padding-top: 1vh;
+}
+.carousel-pic-title {
+  position: relative;
+  left: -10%;
+  top: 15%;
+  color: #fff;
+  font-weight: 600;
+  font-size: calc(1.2vw + 1.2vh);
+  z-index: 10;
 }
 .el-carousel__item.is-active {
   height: 65vh;
@@ -76,10 +90,10 @@ export default {
   }
 }
 .picture {
-    object-fit: cover;
+    object-fit: fill;
     width: 100%;
     height: 100%;
-    z-index: -1;
+    z-index: 5;
 }
 
 .describe {
@@ -87,7 +101,7 @@ export default {
   z-index: 2;
   color: #fff;
   right: 13vw;
-  top: 10vh;
+  top: 4vh;
   text-align: right;
 
   h1.title-text {
@@ -97,5 +111,9 @@ export default {
     font-size: 3vh;
   }
   
+}
+
+div.el-carousel__mask {
+  background-color: transparent;
 }
 </style>
