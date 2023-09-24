@@ -295,7 +295,7 @@ export type WaterStation={
   nameEn:string,
   lng:number,
   lat:number,
-  water?:number,
+  water?:Array<number>,
 }
 
 export type UploadRecord = {

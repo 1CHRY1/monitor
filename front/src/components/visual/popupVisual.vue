@@ -1,5 +1,5 @@
 <template>
-    <div class="d">
+    <div class="main">
         <div class="header">
             <svg t="1694154128190" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7915"
                 width="200" height="200">
@@ -15,86 +15,146 @@
 
         <div class="back-shadow">
             <div class="Position">
-                <div class="card">
-                    <div class="flex1">
-                        <text class="larger">
-                            当前位置:
-                        </text>
-                        <div class="one-line-info">
-                            <text class="default">经度:</text>
-                            <div class="data" style="width: 60%;">{{ props.lng }}</div>
-                        </div>
-                        <div class="one-line-info">
-                            <text class="default">纬度:</text>
-                            <div class="data" style="width: 60%;">{{ props.lat }}</div>
-                        </div>
-
-                        <div style="display: flex;margin-top: 10px;">
-                            <text class="larger">预报水位：</text>
-                            <div class="data" style="width: 40%; font-weight: 600;">{{ props.water }}</div>
-                        </div>
+                    <text class="larger" style="margin-top: 10px;">
+                        当前位置:
+                    </text><br>
+                    <div class="box">
+                        <text class="default">[ 经度 , 纬度 ] : </text>
+                        <div class="data" style="width: 60%;">{{ '[ '+props.lng!.value+' , '+props.lat!.value+' ]' }}</div>
                     </div>
-
-                    <div class="flex2">
-                        <svg t="1694156221548" class="_svg" viewBox="0 0 1025 1024" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" p-id="11639" width="200" height="200">
-                            <path
-                                d="M1025.1 568c0-24.2-13.7-46.4-35.4-57.2l-202.3-101c-10.8-5.4-17.7-16.5-17.7-28.6V172.7c0-26.7-16.6-50.6-41.6-59.9L550.5 46.3c-24.2-9-50.8-9-74.9 0.1l-176.9 66.8c-24.9 9.4-41.4 33.3-41.4 59.9v207.1c0 12.1-6.9 23.2-17.7 28.6L35.5 510.7C13.8 521.5 0 543.8 0.1 568.1l0.5 226c0 23.2 12.6 44.5 32.9 55.8l223.8 124.6 1.2 0.7c18.9 10.5 41.9 10.4 60.8-0.2l2-1.1L497 873.2c9.9-5.7 22.1-5.7 32 0.1l176.8 102.5c9.5 5.4 20.1 8.1 30.7 8.1 10.4 0 20.9-2.6 30.3-7.8l3-1.7L992.4 851c20.4-11.3 33-32.8 33-56.1l-0.3-226.9zM705.6 379.8c0 12.2-6.8 23.3-17.7 28.7l-131.4 65.7c-5.3 2.7-11.6-1.2-11.6-7.2V304.1c0-29.1 17.7-55.2 44.7-66L705 192l0.6 187.8zM257.5 621l-0.2-0.1-149.1-75 149.1-74.4 16.8-8.4c9.2-4.6 20-4.5 29.1 0.3l18.1 9.4 129.8 64.3c5.8 2.9 6 11.1 0.2 14.2l-130 69.8c-20 10.1-43.7 10-63.8-0.1z m205.7 203.9l-141.8 70.6-0.8-163.6c-0.1-27 15.1-51.8 39.2-63.9l108.8-54.5c5.3-2.7 11.6 1.2 11.6 7.1l0.8 175.6c0 12.1-6.9 23.2-17.8 28.7zM488 182.6L385 144l128-48 128 48-103 38.6c-16.1 6.1-33.9 6.1-50 0z m215.7 439.2l-129.2-70.5c-5.7-3.1-5.5-11.3 0.3-14.2l131-65.3 16.1-8.4c9.1-4.8 20-4.9 29.1-0.3l18.7 9.3L916.9 546l-146.2 76.5c-21.1 10.9-46.2 10.7-67-0.7zM961 780.7c0 11.8-6.5 22.7-17 28.3l-174.3 92.2-0.6-169.1c-0.1-27 15.1-51.8 39.3-63.8L961 592v188.7z"
-                                fill="#1296db" p-id="11640"></path>
-                        </svg>
-                    </div>
-                </div>
             </div>
 
             <div class="Water">
                 <text class="larger">
                     临近站点：</text><br>
                 <div class="card2">
-
                     <div class="one-Satation-info">
                         <div style="display: flex;"><text class="default" style="flex: 2;text-align: center;">站点名:</text>
                             <div class="data" style="flex: 3;">{{ props.station_1!.name }}</div>
                         </div>
-                        <div style="display: flex;"><text class="default" style="flex: 2;">实测水位:</text>
-                            <div class="data" style="flex: 3;">{{ props.station_1!.water }}</div>
-                        </div>
+
                     </div>
-            
+
                     <div class="one-Satation-info">
                         <div style="display: flex;"><text class="default" style="flex: 2;text-align: center;">站点名:</text>
                             <div class="data" style="flex: 3;">{{ props.station_2!.name }}</div>
                         </div>
-                        <div style="display: flex;"><text class="default" style="flex: 2;">实测水位:</text>
-                            <div class="data" style="flex: 3;">{{ props.station_2!.water }}</div>
-                        </div>
                     </div>
-            
+
                 </div>
             </div>
+            
+            <text class="larger" style="padding: 10px;">水位预报：</text>
+            <div id="chart"></div>
         </div>
+
+        
+
     </div>
 </template>
 <script setup lang="ts">
 import { WaterStation } from '@/type';
-import { PropType, onMounted } from 'vue';
+import { PropType, onMounted, watch, computed, ref } from 'vue';
+import { ElSelect,ElOption } from 'element-plus';
+import * as echarts from 'echarts';
+import { updateDataList } from '@/api/request';
 
+const selected = ref(0);
+var myChart:any = null;
 const props = defineProps({
+    flag: Boolean,
     lng: Object as PropType<Number>,
     lat: Object as PropType<Number>,
-    water: Object as PropType<Number>,
+    water: Array,
     station_1: Object as PropType<WaterStation>,
     station_2: Object as PropType<WaterStation>,
+    startTime: Object
 })
 
+const getTimeObj = (y: number, m: number, d: number, h: number) => {
+    let timeObj = {
+        y, m, d, h,
+        str: '',
+    }
+    timeObj.str = h + ':00';
+    return timeObj;
+}
+
+const options:Array<{value:number,label:string}> = [];
+const xAxis_dt :Array<string> = [];
+const yAxis_dt :Array<number> = [];
+
+
+
+watch(props,(newV)=>{
+    console.log(newV);
+    updateData();
+    setChartOptions();
+})
+
+const updateData=()=>{
+    let startT = getTimeObj(props.startTime!.year, props.startTime!.month, props.startTime!.day, props.startTime!.hours);
+    xAxis_dt.splice(0);
+    yAxis_dt.splice(0);
+
+    for (let i = 0; i < 12; i++) {
+    
+        let tempObj = getTimeObj(startT.y, startT.m, startT.d, (startT.h + i)%24);
+        xAxis_dt.push(tempObj.str);
+    }
+
+    
+    for (let i=0;i<12;i++){
+        let wat = props.water!.value[i] as number;
+        yAxis_dt.push(wat);
+    }
+}
+
+const setChartOptions=()=>{
+    // console.log('x data', xAxis_dt);
+    let option = {
+        title: {
+            left: 'center',
+            text: '12小时水位预报折线图'
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: xAxis_dt
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                data: yAxis_dt,
+                type: 'line',
+                emphasis: {
+                    focus: 'series'
+                },
+                areaStyle: {
+                    color:'#85C1E9'
+                },
+            }
+        ],
+   
+    };
+    option && myChart.setOption(option);
+}
+
+
 onMounted(() => {
-    // console.log('创建了实例');
+  
+    
+    var chartDom = document.getElementById('chart');
+    myChart = echarts.init(chartDom);
+
 })
 
 
 </script>
 <style lang="scss" scoped>
-.d {
-    width: 370px;
+.main {
     height: auto;
     margin-top: 4px;
 
@@ -135,37 +195,14 @@ onMounted(() => {
     }
 
     .Position {
-        padding-left: 10px;
-
-        .card {
-            width: 100%;
+        padding: 10px;
+        .box{
             display: flex;
-
-            .flex1 {
-                flex: 2;
-
-                .one-line-info {
-                    display: flex;
-                    width: 200px;
-                }
-            }
-
-            .flex2 {
-                flex: 1;
-                margin-left: 10px;
-
-                ._svg {
-                    width: 6rem;
-                    height: 6rem;
-                }
-            }
-
         }
     }
 
     .Water {
-        padding-left: 10px;
-        padding-bottom: 10px;
+        padding: 10px;
 
         .card2 {
             width: 100%;
@@ -182,6 +219,7 @@ onMounted(() => {
 }
 
 text.larger {
+    margin-top: 5px;
     font-size: 18px;
     font-weight: 600;
 }
@@ -200,5 +238,10 @@ text.default {
 .card {
     margin-top: 1rem;
     margin-bottom: 1rem;
+}
+
+#chart {
+    width:390px;
+    height: 280px;
 }
 </style>
