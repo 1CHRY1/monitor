@@ -242,8 +242,8 @@ div.part-container {
   }
   div.play-button {
     position: absolute;
-    right: 5%;
-    top: 2%;
+    right: 1%;
+    top: 35%;
     border: 0;
     background: transparent;
     box-sizing: border-box;
