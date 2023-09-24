@@ -9,6 +9,9 @@ const constantRoutes: Array<RouteRecordRaw> = [
         path: "",
         name: "home",
         component: () => import("@/views/HomeView.vue"),
+        meta: {
+          keepAlive: true,
+        },
       },
     ],
   },

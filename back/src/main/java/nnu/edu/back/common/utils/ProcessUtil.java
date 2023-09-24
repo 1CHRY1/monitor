@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 public class ProcessUtil {
 
-    //    static String pythonDir = "C:/nhri/pythonDir/";
+//    static String pythonDir = "C:/nhri/monitor/pythonDir/";
     static String pythonDir = "D:/zhuomian/水科院/python/";
     //    static String pythonDir = "/home/zym/python/";
     static String pythonStr = "python";

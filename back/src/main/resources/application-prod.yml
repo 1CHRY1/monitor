@@ -1,7 +1,7 @@
 spring:
   datasource:
     default:
-      jdbc-url: jdbc:sqlite:E:/monitor/main.db
+      jdbc-url: jdbc:sqlite:C:/nhri/monitor/data/main.db
       driver-class-name: org.sqlite.JDBC
     shp:
       jdbc-url: jdbc:postgresql://localhost:5432/shp_dataset?stringtype=unspecified
@@ -9,23 +9,23 @@ spring:
       username: postgres
       password: 123
     ship:
-      jdbc-url: jdbc:sqlite:E:/monitor/resources/ais.db
+      jdbc-url: jdbc:sqlite:C:/nhri/monitor/data/resources/ais.db
       driver-class-name: org.sqlite.JDBC
     waterway:
-      jdbc-url: jdbc:sqlite:E:/monitor/resources/waterway.db
+      jdbc-url: jdbc:sqlite:C:/nhri/monitor/data/resources/waterway.db
       driver-class-name: org.sqlite.JDBC
 
 
-baseDir: E:/monitor/resources/raw/
-avatarDir: E:/monitor/resources/avatar/
-tempDir: E:/monitor/temp/
-visualDir: E:/monitor/resources/visual/
-pgPath: D:/App/postgresql/bin/
-mapDir: E:/monitor/resources/map/
-resourceDir: E:/monitor/resources/
-analysisDir: E:/monitor/resources/analysis/
-analysisParameterDir: E:/monitor/resources/analysisParameter/
-projectDir: E:/monitor/project/
+baseDir: C:/nhri/monitor/data/resources/raw/
+avatarDir: C:/nhri/monitor/data/resources/avatar/
+tempDir: C:/nhri/monitor/data/temp/
+visualDir: C:/nhri/monitor/data/resources/visual/
+pgPath: C:/application/PostgreSQL/13/bin/
+mapDir: C:/nhri/monitor/data/resources/map/
+resourceDir: C:/nhri/monitor/data/resources/
+analysisDir: C:/nhri/monitor/data/resources/analysis/
+analysisParameterDir: C:/nhri/monitor/data/resources/analysisParameter/
+projectDir: C:/nhri/monitor/data/project/
 
 meteorologyUrl: https://weather.cma.cn/api/map/alarm
 meteorologyPngUrl:

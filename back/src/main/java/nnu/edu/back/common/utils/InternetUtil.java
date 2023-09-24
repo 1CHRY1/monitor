@@ -39,7 +39,7 @@ public class InternetUtil {
             HttpsURLConnection connection = (HttpsURLConnection) obj.openConnection();
             connection.setRequestMethod("GET");
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
             String inputLine;
 
             while ((inputLine = in.readLine()) != null) {
@@ -65,7 +65,7 @@ public class InternetUtil {
             for (String key : map.keySet()) {
                 connection.setRequestProperty(key, map.get(key));
             }
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
             String inputLine;
 
             while ((inputLine = in.readLine()) != null) {

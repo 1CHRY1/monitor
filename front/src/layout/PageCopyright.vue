@@ -5,9 +5,11 @@
         <el-col :span="8">
           <div><strong>支撑服务</strong></div>
           <div class="border"></div>
-          <div class="text">资源门户</div>
-          <div class="text">一张图</div>
-          <div class="text">分析中心</div>
+          <div class="text-model">资源门户</div>
+          <div class="text-model">监测与预报</div>
+          <div class="text-model">水运一张图</div>
+          <div class="text-model">工程可视化</div>
+          <div class="text-model">分析中心</div>
         </el-col>
         <el-col :span="8">
           <div><strong>联系我们</strong></div>
@@ -44,7 +46,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .page-copyrught {
-  height: 250px;
+  height: 280px;
   background: #424242;
   width: 100%;
   position: relative;
@@ -69,6 +71,11 @@ export default defineComponent({
         line-height: 28px;
         font-size: 12px;
       }
+      .text-model {
+        height: 28px;
+        // line-height: 2px;
+        font-size: 12px;
+      }
       img {
         width: 61px;
         height: 72px;
@@ -77,7 +84,7 @@ export default defineComponent({
     .dividing-line {
       position: absolute;
       top: 5px;
-      height: 150px;
+      height: 180px;
       width: 1px;
       border-right: solid 1px #cccccc;
     }
@@ -93,7 +100,7 @@ export default defineComponent({
     text-align: center;
     position: absolute;
     left: calc(50% - 400px);
-    top: 210px;
+    top: 240px;
   }
 }
 </style>
