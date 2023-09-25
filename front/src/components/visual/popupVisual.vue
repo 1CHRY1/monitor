@@ -125,6 +125,7 @@ const setChartOptions=()=>{
         yAxis: {
             type: 'value'
         },
+        tooltip: { show: true, trigger: 'axis' },
         series: [
             {
                 data: yAxis_dt,

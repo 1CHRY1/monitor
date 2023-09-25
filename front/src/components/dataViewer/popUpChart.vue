@@ -270,6 +270,7 @@ defineExpose({
 onMounted(async () => {
     // console.log("test");
     const res = (await getWaterLevelByStationAndTime(props.stationType, props.stationName, props.ysdTimeStr, props.curTimeStr))?.data;
+
     if (res.length == 0) {
         // console.log(props);
         curTimeStrRef.value = '无数据';
@@ -278,10 +279,11 @@ onMounted(async () => {
         curTimeStrRef.value = res[res.length - 1].time.split(' ')[1].slice(0, -3);
         // console.log(res[0])
         const dataKeyList: string[] = [];
-        if ("upstreamWaterLevel" in res[0] || "downstreamWaterLevel" in res[0]) {
-            const hasUpValue: boolean = ((res[0].upstreamWaterLevel !== '') && (res[0].upstreamWaterLevel));
-            const hasDownValue: boolean = ((res[0].downstreamWaterLevel !== '') && (res[0].downstreamWaterLevel))
+        if ("upstreamWaterLevel" in res[res.length - 1] || "downstreamWaterLevel" in res[res.length - 1]) {
+            const hasUpValue: boolean = ((res[res.length - 1].upstreamWaterLevel !== '') && (res[res.length - 1].upstreamWaterLevel));
+            const hasDownValue: boolean = ((res[res.length - 1].downstreamWaterLevel !== '') && (res[res.length - 1].downstreamWaterLevel))
             if (hasUpValue) {
+                // console.log(res[0], res[res.length - 1])
                 hasUpStreamData.value = true;
                 upStreamData.value = res[res.length - 1].upstreamWaterLevel.toFixed(2);
                 dataKeyList.push("upstreamWaterLevel");
@@ -292,7 +294,7 @@ onMounted(async () => {
                 dataKeyList.push("downstreamWaterLevel");
             }
         }
-        else if ("waterLevel" in res[0]) {
+        else if ("waterLevel" in res[res.length - 1]) {
             hasUpStreamData.value = true;
             upStreamData.value = res[res.length - 1].waterLevel.toFixed(2);
             dataKeyList.push("waterLevel");
