@@ -87,21 +87,19 @@ let popUpMap: Map<string, mapboxgl.Popup> = new Map();
 // let CJ_Layerdata: any = null;
 
 const stations: Map<string, WaterStation> = new Map();
-var sysTime:{
-  time:string ,
-  year:number,
-  month:number,
-  day:number,
-  hours:number,
+var sysTime: {
+  time: string;
+  year: number;
+  month: number;
+  day: number;
+  hours: number;
 } = {
-  time:'' ,
-  year:0,
-  month:0,
-  day:0,
-  hours:0,
+  time: "",
+  year: 0,
+  month: 0,
+  day: 0,
+  hours: 0,
 };
-
-
 
 const initStationData = async () => {
   const backend_stations = await getPredictionStation();
@@ -113,18 +111,16 @@ const initStationData = async () => {
   sysTime.hours = date.getHours() + 1;
   sysTime.year = date.getFullYear();
 
-  sysTime.time = sysTime.time + date.getFullYear() + '-';
-  sysTime.time = sysTime.time + date.getMonth() + '-';
-  sysTime.time= sysTime.time + date.getDate() + ' ';
-  sysTime.time= sysTime.time + sysTime.hours + ':00:00';
+  sysTime.time = sysTime.time + date.getFullYear() + "-";
+  sysTime.time = sysTime.time + date.getMonth() + "-";
+  sysTime.time = sysTime.time + date.getDate() + " ";
+  sysTime.time = sysTime.time + sysTime.hours + ":00:00";
 
   // console.log(sysTime);
-  
 
   const stDATA = backend_stations?.data;
 
   for (let i = 0; i < stDATA.length; i++) {
-    
     stations!.set(stDATA[i].nameEn, {
       name: stDATA[i].name,
       nameEn: stDATA[i].nameEn,
@@ -136,7 +132,7 @@ const initStationData = async () => {
   const waterData = backend_values?.data;
   for (let i = 0; i < waterData.length; i++) {
     //console.log(waterData[i].name);//this name is nameEn
-    for(let j = 0;j<12;j++){
+    for (let j = 0; j < 12; j++) {
       // stations!.get(waterData[i].name)!.water = waterData[i].res.value[0];
       stations!.get(waterData[i].name)!.water![j] = waterData[i].res.value[j];
     }
@@ -207,6 +203,7 @@ const initMap = async (map: mapboxgl.Map) => {
         });
 
         map.on("click", "CJLayer", (e) => {
+          pop.remove()
           flag.value = true;
           const nearStation = findNearStation(e.lngLat.lng, e.lngLat.lat);
 
@@ -229,7 +226,7 @@ const initMap = async (map: mapboxgl.Map) => {
         });
 
         map.on("mouseleave", "CJLayer", () => {
-          pop.remove();
+          // pop.remove();
           flag.value = false;
           map.getCanvas().style.cursor = "";
         });
@@ -572,15 +569,15 @@ const Interpolate = (S: WaterStation[], herelng: number, herelat: number) => {
   //     (S[1].water! * AS_dis) / (AS_dis + BS_dis);
   // }
 
-  for(let i = 0 ; i<12 ; i++){
-    if(AS_dis === 0){
+  for (let i = 0; i < 12; i++) {
+    if (AS_dis === 0) {
       result[i] = S[0].water![i];
-    }else if(BS_dis === 0){
+    } else if (BS_dis === 0) {
       result[i] = S[1].water![i];
-    }else{
-      result[i] = 
-          (S[0].water![i] * BS_dis) / (AS_dis + BS_dis) +
-          (S[1].water![i] * AS_dis) / (AS_dis + BS_dis);
+    } else {
+      result[i] =
+        (S[0].water![i] * BS_dis) / (AS_dis + BS_dis) +
+        (S[1].water![i] * AS_dis) / (AS_dis + BS_dis);
     }
   }
 
@@ -609,7 +606,6 @@ const showInfoWindow = (
   // nearStation_2.water = Number(enearStations[1].water!.toFixed(6));
   nearStation_2.water = enearStations[1].water! as never[];
 
-
   pop.setLngLat([elng, elat]).setDOMContent(apd!.$el).addTo(map);
 };
 
@@ -637,7 +633,7 @@ onMounted(async () => {
     water: WaterVarying,
     station_1: nearStation_1,
     station_2: nearStation_2,
-    startTime:sysTime,
+    startTime: sysTime,
   };
   ap = createApp(PopupVisual, info);
   apd = ap!.mount("#pop");
