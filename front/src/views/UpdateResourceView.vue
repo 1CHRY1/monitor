@@ -303,6 +303,7 @@ export default defineComponent({
     };
 
     const returnPicture = (val: string) => {
+      console.log(val);
       form.avatar = val;
     };
 
