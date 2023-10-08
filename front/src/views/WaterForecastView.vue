@@ -139,18 +139,21 @@ const initStationData = async () => {
   }
 };
 
-const getTimeStr = (curTime: Date) =>
-  curTime.getFullYear() +
-  "-0" +
-  (curTime.getMonth() + 1) +
-  "-" +
-  curTime.getDate() +
-  " " +
-  curTime.getHours() +
-  ":" +
-  curTime.getMinutes() +
-  ":" +
-  curTime.getSeconds();
+const getTimeStr = (timer: Date) => {
+  const year = timer.getFullYear();
+  const month = timer.getMonth() + 1; // 由于月份从0开始，因此需加1
+  const day = timer.getDate();
+  const hour = timer.getHours();
+  const minute = timer.getMinutes();
+  const second = timer.getSeconds();
+  return `${pad(year, 4)}-${pad(month)}-${pad(day)} ${pad(hour)}:${pad(
+    minute
+  )}:${pad(second)}`;
+};
+
+function pad(timeEl: number, total = 2, str = "0") {
+  return timeEl.toString().padStart(total, str);
+}
 const curTime = new Date();
 const curTimeStr = getTimeStr(curTime);
 const ysdTime = new Date(+curTime - 24 * 3600 * 1000);
@@ -203,7 +206,7 @@ const initMap = async (map: mapboxgl.Map) => {
         });
 
         map.on("click", "CJLayer", (e) => {
-          pop.remove()
+          pop.remove();
           flag.value = true;
           const nearStation = findNearStation(e.lngLat.lng, e.lngLat.lat);
 

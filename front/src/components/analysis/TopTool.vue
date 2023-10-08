@@ -34,6 +34,10 @@
       >
     </div>
 
+    <div class="right">
+      <el-button type="info" @click="flowClick">流场动画</el-button>
+    </div>
+
     <el-dialog v-model="dialogAddData" width="1000px" title="添加数据">
       <add-data-dialog @returnData="returnData" v-if="dialogAddData" />
     </el-dialog>
@@ -97,6 +101,10 @@ export default defineComponent({
       dialogAnalyse.value = false;
     };
 
+    const flowClick = () => {
+      window.open("https://ycsoku.github.io/FowFieldVisualization_Demo/");
+    };
+
     return {
       state,
       dialogAddData,
@@ -105,6 +113,7 @@ export default defineComponent({
       regionClick,
       dialogAnalyse,
       analyse,
+      flowClick,
     };
   },
 });
@@ -137,6 +146,7 @@ export default defineComponent({
     height: 100%;
     right: 30px;
     position: absolute;
+    top: 10px;
     cursor: pointer;
     .el-dropdown {
       margin-top: 18px;
