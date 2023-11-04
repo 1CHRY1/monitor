@@ -12,6 +12,7 @@ import nnu.edu.back.common.utils.TileUtil;
 import nnu.edu.back.dao.main.AnalysisResultMapper;
 import nnu.edu.back.dao.main.FilesMapper;
 import nnu.edu.back.dao.main.VisualFileMapper;
+import nnu.edu.back.dao.map.MapMapper;
 import nnu.edu.back.dao.shp.VectorTileMapper;
 import nnu.edu.back.pojo.AnalysisResult;
 import nnu.edu.back.pojo.Files;
@@ -80,6 +81,9 @@ public class VisualServiceImpl implements VisualService {
     @Autowired
     AnalysisResultMapper analysisResultMapper;
 
+    @Autowired
+    MapMapper mapMapper;
+
 
 
     @Override
@@ -119,26 +123,36 @@ public class VisualServiceImpl implements VisualService {
     public void getRaster(String visualId, int x, int y, int z, HttpServletResponse response) {
         VisualFile visualFile = visualFileMapper.findById(visualId);
         y = (int) Math.pow(2, z) - y - 1;
-        String path = visualDir + visualFile.getContent() + "/" + z + "/" + x + "/" + y + ".png";
         InputStream in = null;
         ServletOutputStream sos = null;
         try {
             response.setContentType("image/png");
             sos = response.getOutputStream();
-            File file = new File(path);
-            if (!file.exists()) {
+            byte[] bytes = (byte[]) mapMapper.getRasterTile(String.valueOf(x), String.valueOf(y), String.valueOf(z), visualFile.getContent());
+            if (bytes == null) {
                 in = new FileInputStream(visualDir + "blank.png");
+                byte[] byteArray = new byte[1024];
+                int len;
+                while ((len = in.read(byteArray)) > -1) {
+                    sos.write(byteArray, 0, len);
+                }
+                sos.flush();
+                sos.close();
+                in.close();
             } else {
-                in = new FileInputStream(path);
+                int off = 0;
+                while (off < bytes.length) {
+                    if (off + 1024 <= bytes.length) {
+                        sos.write(bytes, off, 1024);
+                    } else {
+                        sos.write(bytes, off, bytes.length - off);
+                    }
+                    off += 1024;
+                }
+                sos.flush();
+                sos.close();
             }
-            byte[] bytes = new byte[1024];
-            int len;
-            while ((len = in.read(bytes)) > -1) {
-                sos.write(bytes, 0, len);
-            }
-            sos.flush();
-            sos.close();
-            in.close();
+
         } catch (Exception e) {
             log.error(e.getMessage());
             try {

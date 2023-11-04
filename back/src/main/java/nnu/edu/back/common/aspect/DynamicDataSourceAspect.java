@@ -89,6 +89,13 @@ public class DynamicDataSourceAspect {
         }
     }
 
+    @Before("execution(* nnu.edu.back.dao.map.*.*(..))")
+    public void switchMapDataSource() {
+        if (!DataSourceContextHolder.getDataSourceKey().equals("map")) {
+            DataSourceContextHolder.setDataSourceKey("map");
+        }
+    }
+
 
     @Before("execution(* nnu.edu.back.dao.main.*.*(..))")
     public void restoreDataSource() {

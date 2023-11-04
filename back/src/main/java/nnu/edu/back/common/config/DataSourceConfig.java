@@ -48,6 +48,9 @@ public class DataSourceConfig {
     @ConfigurationProperties("spring.datasource.waterway")
     public DataSource waterwaySource() { return DataSourceBuilder.create().build(); }
 
+    @Bean("mapSource")
+    @ConfigurationProperties("spring.datasource.map")
+    public DataSource mapSource() { return DataSourceBuilder.create().build(); }
 
     /**
      * 自定义动态数据源
@@ -62,6 +65,7 @@ public class DataSourceConfig {
         dataSourceMap.put("shp", shpSource());
         dataSourceMap.put("waterway", waterwaySource());
         dataSourceMap.put("ship", shipSource());
+        dataSourceMap.put("map", mapSource());
 
         // 默认数据源
         dynamicDataSource.setDefaultDataSource(defaultSource());

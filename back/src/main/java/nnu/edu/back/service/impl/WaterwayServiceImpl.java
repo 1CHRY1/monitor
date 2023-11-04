@@ -7,6 +7,7 @@ import nnu.edu.back.common.exception.MyException;
 import nnu.edu.back.common.result.ResultEnum;
 import nnu.edu.back.common.utils.FileUtil;
 import nnu.edu.back.common.utils.InternetUtil;
+import nnu.edu.back.dao.map.MapMapper;
 import nnu.edu.back.dao.ship.ShipMapper;
 import nnu.edu.back.dao.waterway.WaterwayMapper;
 import nnu.edu.back.pojo.*;
@@ -43,6 +44,9 @@ public class WaterwayServiceImpl implements WaterwayService {
 
     @Autowired
     ShipMapper shipMapper;
+
+    @Autowired
+    MapMapper mapMapper;
 
     @Value("${resourceDir}")
     String resourceDir;
@@ -370,35 +374,44 @@ public class WaterwayServiceImpl implements WaterwayService {
 
     @Override
     public void seaChart(String type, String x, String y, String z, HttpServletResponse response) {
-        String path;
-        if (type.equals("map")) {
-            path = resourceDir + "shipSpiderRes/depth_" + z + "/map/" + y + "_" + x + "_map.png";
-        } else if(type.equals("mark")) {
-            path = resourceDir + "shipSpiderRes/depth_" + z + "/mark/" + y + "_" + x + "_mark.png";
-        } else if (type.equals("yangtze")) {
-            path = MessageFormat.format(resourceDir + "yangtzeTiles/{0}/{1}/{2}.png", z, x, y);
-        } else {
-            throw new MyException(-99, "type参数错误");
-        }
         InputStream in = null;
         ServletOutputStream sos = null;
         try {
             response.setContentType("image/png");
             sos = response.getOutputStream();
-            File file = new File(path);
-            if (!file.exists()) {
+            byte[] bytes;
+            if (type.equals("map")) {
+                bytes = (byte[]) mapMapper.getWaterwayMap(x, y, z);
+            } else if (type.equals("mark")) {
+                bytes = (byte[]) mapMapper.getWaterwayMark(x, y, z);
+            } else if (type.equals("yangtze")) {
+                bytes = (byte[]) mapMapper.getRasterTile(x, y, z, "yangtzeTiles");
+            } else throw new MyException(-99, "type参数错误");
+            if (bytes == null) {
                 in = new FileInputStream(visualDir + "blank.png");
+                byte[] byteArray = new byte[1024];
+                int len;
+                while ((len = in.read(byteArray)) > -1) {
+                    sos.write(byteArray, 0, len);
+                }
+                sos.flush();
+                sos.close();
+                in.close();
             } else {
-                in = new FileInputStream(path);
+                int off = 0;
+                while (off < bytes.length) {
+                    if (off + 1024 <= bytes.length) {
+                        sos.write(bytes, off, 1024);
+                    } else {
+                        sos.write(bytes, off, bytes.length - off);
+                    }
+                    off += 1024;
+                }
+                sos.flush();
+                sos.close();
             }
-            byte[] bytes = new byte[1024];
-            int len;
-            while ((len = in.read(bytes)) > -1) {
-                sos.write(bytes, 0, len);
-            }
-            sos.flush();
-            sos.close();
-            in.close();
+
+
         } catch (Exception e) {
             log.error(e.getMessage());
 //            throw new MyException(ResultEnum.DEFAULT_EXCEPTION);

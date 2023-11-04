@@ -14,6 +14,9 @@ spring:
     waterway:
       jdbc-url: jdbc:sqlite:E:/monitor/resources/waterway.db
       driver-class-name: org.sqlite.JDBC
+    map:
+      jdbc-url: jdbc:sqlite:E:/monitor/resources/map.db
+      driver-class-name: org.sqlite.JDBC
 
 #D:/UyNauhL/Assignments/monitor_data/monitor
 

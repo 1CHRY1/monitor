@@ -2,7 +2,7 @@ server:
   port: 8700
 spring:
   profiles:
-    active: dev
+    active: prod
   servlet:
     multipart:
       enabled: true

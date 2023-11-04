@@ -7,7 +7,7 @@
         </el-col>
         <el-col :span="5">
           <div class="grid-content name">
-            交通运输行业野外科学观测研究基地<br />深水航道水沙环境与工程安全平台
+            长江深水航道<br />水沙监测分析研究服务系统
           </div>
         </el-col>
         <el-col :span="2">
