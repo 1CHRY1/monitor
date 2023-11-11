@@ -28,7 +28,14 @@ const constantRoutes: Array<RouteRecordRaw> = [
       keepAlive: true,
     },
   },
-
+  {
+    path: "/flow",
+    name: "flow",
+    component: () => import("@/views/FlowView.vue"),
+    meta: {
+      keepAlive: false,
+    },
+  },
   {
     path: "/login",
     name: "login",
@@ -173,6 +180,7 @@ export const asyncRouters: Array<RouteRecordRaw> = [
       },
     ],
   },
+
   {
     path: "/:catchAll(.*)",
     name: "Redirect404",

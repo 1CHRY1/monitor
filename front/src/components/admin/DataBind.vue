@@ -171,7 +171,7 @@ export default defineComponent({
 
     const downloadClick = async (val: DialogTableType) => {
       console.log(val);
-      window.location.href = `${process.env.VUE_APP_BACK_ADDRESS}files/downloadFile/${val.id}`;
+      window.location.href = `/monitor/files/downloadFile/${val.id}`
     };
 
     const deleteClick = (val: DialogTableType) => {

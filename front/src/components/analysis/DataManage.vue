@@ -6,28 +6,15 @@
         <el-skeleton :rows="5" animated v-if="skeletonFlag" />
         <div class="scroll" v-else>
           <el-scrollbar>
-            <el-tree
-              :data="treeData"
-              :props="defaultProps"
-              @node-contextmenu="rightClick"
-              default-expand-all
-            >
+            <el-tree :data="treeData" :props="defaultProps" @node-contextmenu="rightClick" default-expand-all>
               <template #default="{ data }">
                 <div class="custom">
                   <div class="icon">
-                    <el-icon
-                      v-if="data.flag"
-                      :color="data.label == '分析结果集' ? '#43c9b0' : ''"
-                      ><FolderOpened
-                    /></el-icon>
+                    <el-icon v-if="data.flag" :color="data.label == '分析结果集' ? '#43c9b0' : ''"><FolderOpened /></el-icon>
                     <el-icon v-else><Document /></el-icon>
                   </div>
                   <div class="text">
-                    <strong
-                      v-if="data.flag"
-                      :style="data.label == '分析结果集' ? 'color:#43c9b0' : ''"
-                      >{{ data.label }}</strong
-                    >
+                    <strong v-if="data.flag" :style="data.label == '分析结果集' ? 'color:#43c9b0' : ''">{{ data.label }}</strong>
                     <span v-else>{{ data.label }}</span>
                   </div>
                 </div>
@@ -42,26 +29,17 @@
     </div>
     <div v-show="showRightMenu">
       <ul class="right-menu" ref="menu">
-        <li
-          :class="!isLayerVisual ? 'menu-item disabled' : 'menu-item'"
-          @click="operateLayer('add', isLayerVisual)"
-        >
+        <li :class="!isLayerVisual ? 'menu-item disabled' : 'menu-item'" @click="operateLayer('add', isLayerVisual)">
           <span>添加至图层</span>
         </li>
-        <li
-          :class="isLayerVisual ? 'menu-item disabled' : 'menu-item'"
-          @click="operateLayer('chart', !isLayerVisual)"
-        >
+        <li :class="isLayerVisual ? 'menu-item disabled' : 'menu-item'" @click="operateLayer('chart', !isLayerVisual)">
           <span>可视化</span>
         </li>
 
         <li class="menu-item" @click="operateLayer('rename', true)">
           <span>重命名</span>
         </li>
-        <li
-          :class="downloadAble ? 'menu-item' : 'menu-item disabled'"
-          @click="operateLayer('download', downloadAble)"
-        >
+        <li :class="downloadAble ? 'menu-item' : 'menu-item disabled'" @click="operateLayer('download', downloadAble)">
           <span>下载</span>
         </li>
         <li class="menu-item" @click="operateLayer('del', true)">
@@ -72,9 +50,7 @@
     <el-dialog v-model="dialogRename" width="350px" :show-close="false">
       <el-input v-model="input" />
       <div class="btn">
-        <el-button type="primary" plain size="small" @click="btnClick"
-          >确定</el-button
-        >
+        <el-button type="primary" plain size="small" @click="btnClick">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -90,14 +66,7 @@ type Tree = {
   visualId?: string;
 };
 import router from "@/router";
-import {
-  defineComponent,
-  ref,
-  onMounted,
-  computed,
-  watch,
-  onBeforeUnmount,
-} from "vue";
+import { defineComponent, ref, onMounted, computed, watch, onBeforeUnmount } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import {
   addAnalysisData,
@@ -183,10 +152,7 @@ export default defineComponent({
           }
         }
         if (flag1) {
-          if (
-            treeData.value.length > 0 &&
-            treeData.value[treeData.value.length - 1].id === ""
-          ) {
+          if (treeData.value.length > 0 && treeData.value[treeData.value.length - 1].id === "") {
             treeData.value.splice(treeData.value.length - 1, 0, {
               id: item.dataListId,
               label: item.dataListName,
@@ -229,11 +195,7 @@ export default defineComponent({
       }
     };
 
-    const addDrawData = async (param: {
-      geoJson: any;
-      visualType: string;
-      fileName: string;
-    }) => {
+    const addDrawData = async (param: { geoJson: any; visualType: string; fileName: string }) => {
       const jsonData: {
         caseId: string;
         geoJson: any;
@@ -247,10 +209,7 @@ export default defineComponent({
       };
       const data = await addDraw(jsonData);
       if (data != null && (data as any).code === 0) {
-        if (
-          treeData.value.length != 0 &&
-          treeData.value[treeData.value.length - 1].id === ""
-        ) {
+        if (treeData.value.length != 0 && treeData.value[treeData.value.length - 1].id === "") {
           treeData.value[treeData.value.length - 1].children.push({
             id: data.data,
             label: param.fileName,
@@ -329,12 +288,7 @@ export default defineComponent({
         if (data != null && data.code === 0) {
           await checkStateHandle(data.data, "断面比较");
         }
-      } else if (
-        param.type === "sectionFlush" ||
-        param.type === "regionFlush" ||
-        param.type === "elevationFlush" ||
-        param.type === "flushContour"
-      ) {
+      } else if (param.type === "sectionFlush" || param.type === "regionFlush" || param.type === "elevationFlush" || param.type === "flushContour") {
         addData([param.value.benchmarkDem]);
         context.emit("operateLayer", {
           content: {
@@ -478,28 +432,18 @@ export default defineComponent({
           if (parentId.value === "") {
             data = await delAnalysisResult(selectedData.value?.id as string);
           } else {
-            data = await delData(
-              router.currentRoute.value.params.id as string,
-              parentId.value,
-              selectedData.value?.id as string
-            );
+            data = await delData(router.currentRoute.value.params.id as string, parentId.value, selectedData.value?.id as string);
           }
           if (data != null && (data as any).code === 0) {
             for (let i = 0; i < treeData.value.length; i++) {
               if (treeData.value[i].id === parentId.value) {
-                if (
-                  treeData.value[i].children.length === 0 ||
-                  treeData.value[i].children.length === 1
-                ) {
+                if (treeData.value[i].children.length === 0 || treeData.value[i].children.length === 1) {
                   treeData.value.splice(i, 1);
                   notice("success", "成功", "数据删除成功!");
                   return;
                 } else {
                   for (let j = 0; j < treeData.value[i].children.length; j++) {
-                    if (
-                      treeData.value[i].children[j].id ===
-                      selectedData.value?.id
-                    ) {
+                    if (treeData.value[i].children[j].id === selectedData.value?.id) {
                       treeData.value[i].children.splice(j, 1);
                       notice("success", "成功", "数据删除成功!");
                       return;
@@ -513,10 +457,8 @@ export default defineComponent({
           dialogRename.value = true;
           input.value = selectedData.value?.label as string;
         } else if (keyword === "download") {
-          window.location.href =
-            process.env.VUE_APP_BACK_ADDRESS +
-            "analysis/downloadAnalysisResult/" +
-            selectedData.value?.id;
+  
+          window.location.href = `/monitor/analysis/downloadAnalysisResult/${selectedData.value?.id}`
         }
       }
     };
@@ -610,17 +552,9 @@ export default defineComponent({
         },
         type: "rename",
       });
-      for (
-        let i = 0;
-        i < treeData.value[treeData.value.length - 1].children.length;
-        i++
-      ) {
-        if (
-          treeData.value[treeData.value.length - 1].children[i].id ===
-          selectedData.value?.id
-        ) {
-          treeData.value[treeData.value.length - 1].children[i].label =
-            input.value;
+      for (let i = 0; i < treeData.value[treeData.value.length - 1].children.length; i++) {
+        if (treeData.value[treeData.value.length - 1].children[i].id === selectedData.value?.id) {
+          treeData.value[treeData.value.length - 1].children[i].label = input.value;
           break;
         }
       }
@@ -725,7 +659,6 @@ export default defineComponent({
   },
 });
 </script>
-
 
 <style lang="scss" scoped>
 .data-manage {

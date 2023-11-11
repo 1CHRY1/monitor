@@ -10,19 +10,12 @@
           </div>
           <div class="tags">
             <span>标签：</span>
-            <el-tag
-              v-for="(item, index) in fileInfo.tags"
-              :key="index"
-              effect="dark"
-              color="#446aad"
-            >
+            <el-tag v-for="(item, index) in fileInfo.tags" :key="index" effect="dark" color="#446aad">
               {{ item }}
             </el-tag>
           </div>
           <div class="des"><span>简介：</span>{{ fileInfo.description }}</div>
-          <div class="creator">
-            <span>条目作者：</span><strong>管理员</strong>
-          </div>
+          <div class="creator"><span>条目作者：</span><strong>管理员</strong></div>
         </div>
         <div class="top-right">
           <img :src="avatar" />
@@ -62,15 +55,10 @@
               ></data-description>
             </el-col>
             <el-col :span="12">
-              <data-description
-                style="color: #ff8c00"
-                :data="{ key: '数据类型：', value: fileInfo.type }"
-              ></data-description>
+              <data-description style="color: #ff8c00" :data="{ key: '数据类型：', value: fileInfo.type }"></data-description>
             </el-col>
             <el-col :span="12">
-              <data-description
-                :data="{ key: '创建时间：', value: date(fileInfo.createTime) }"
-              ></data-description>
+              <data-description :data="{ key: '创建时间：', value: date(fileInfo.createTime) }"></data-description>
             </el-col>
             <el-col :span="12">
               <data-description
@@ -81,10 +69,7 @@
               ></data-description>
             </el-col>
             <el-col :span="24">
-              <data-description
-                style="width: 100%"
-                :data="{ key: '空间描述：', value: fileInfo.range }"
-              ></data-description>
+              <data-description style="width: 100%" :data="{ key: '空间描述：', value: fileInfo.range }"></data-description>
             </el-col>
           </el-row>
         </div>
@@ -141,14 +126,7 @@
 
                 <el-table-column fixed="right" label="下载">
                   <template #default="scope">
-                    <el-button
-                      type="success"
-                      icon="Share"
-                      round
-                      size="small"
-                      @click.prevent="downloadOrigin(scope.$index)"
-                    >
-                    </el-button>
+                    <el-button type="success" icon="Share" round size="small" @click.prevent="downloadOrigin(scope.$index)"> </el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -171,12 +149,7 @@
           <el-skeleton :rows="5" animated v-if="visualSkeleton" />
           <div v-else>
             <div v-if="mapShow" class="map">
-              <map-visual
-                :shpArray="shpArray"
-                :movePngArray="movePngArray"
-                :pngArray="pngArray"
-                :rasterTileArray="rasterTileArray"
-              />
+              <map-visual :shpArray="shpArray" :movePngArray="movePngArray" :pngArray="pngArray" :rasterTileArray="rasterTileArray" />
             </div>
             <div v-if="photoShow" class="photo">
               <photo-visual :photoList="photoList" />
@@ -208,10 +181,7 @@
 
       <div class="right">
         <div class="title"><strong>空间位置</strong></div>
-        <location-map
-          style="width: 100%; height: 300px"
-          :location="location"
-        ></location-map>
+        <location-map style="width: 100%; height: 300px" :location="location"></location-map>
         <div class="title"><strong>近10天访问记录</strong></div>
         <div class="visit">
           <statistics></statistics>
@@ -220,13 +190,7 @@
         <el-skeleton :rows="5" animated v-if="similarSkeleton" />
         <div class="similar" v-else>
           <div v-if="similarDataList.length > 0">
-            <div
-              v-for="(item, index) in similarDataList"
-              :key="index"
-              class="similar-item"
-              :title="item.name"
-              @click="similarClick(item.id)"
-            >
+            <div v-for="(item, index) in similarDataList" :key="index" class="similar-item" :title="item.name" @click="similarClick(item.id)">
               <el-icon><Right /></el-icon>
               {{ item.name }}
             </div>
@@ -259,13 +223,7 @@ import DataDescription from "@/components/resource/DataDescription.vue";
 import DataHead from "@/components/resource/DataHead.vue";
 import { dateFormat, imgBase64, traverseDate } from "@/utils/common";
 import { usePermissionStore } from "@/store/permission-store";
-import {
-  getCoordinates,
-  findFiles,
-  getSimilarData,
-  getStationInfoByDataListId,
-  getWaterLevelByStationAndTime,
-} from "@/api/request";
+import { getCoordinates, findFiles, getSimilarData, getStationInfoByDataListId, getWaterLevelByStationAndTime } from "@/api/request";
 import "@/assets/css/wangeditor.css";
 import LocationMap from "@/components/resource/LocationMap.vue";
 import router from "@/router";
@@ -317,9 +275,7 @@ export default defineComponent({
         view: { zoom: number; center: number[] };
       }[]
     >([]);
-    const rasterTileArray = ref<
-      { visualId: string; view: { zoom: number; center: number[] } }[]
-    >([]);
+    const rasterTileArray = ref<{ visualId: string; view: { zoom: number; center: number[] } }[]>([]);
     const movePngArray = ref<
       {
         visualId: string;
@@ -360,11 +316,7 @@ export default defineComponent({
       if ((props.fileInfo as any).avatar != "") {
         return "/monitor/visual/getAvatar/" + (props.fileInfo as any).avatar;
       }
-      return imgBase64(
-        (props.fileInfo as any).name === undefined
-          ? ""
-          : (props.fileInfo as any).name
-      );
+      return imgBase64((props.fileInfo as any).name === undefined ? "" : (props.fileInfo as any).name);
     });
 
     const date = (time: string) => {
@@ -383,37 +335,30 @@ export default defineComponent({
           window.location.href = `${process.env.VUE_APP_WATERLEVEL_ADDRESS}download/downloadOne2/${fileList.value[val].fileName}`;
         }
       } else {
-        window.location.href = `${process.env.VUE_APP_BACK_ADDRESS}files/downloadFile/${fileList.value[val].id}`;
+        window.location.href = `/monitor/files/downloadFile/${fileList.value[val].id}`;
       }
     };
 
     // 下载所有
-    const downloadAll = async () => {
+    const downloadAll = async () => { 
       if (props.fileInfo?.type === "实时水位") {
         window.location.href = `${process.env.VUE_APP_WATERLEVEL_ADDRESS}download/downloadByStation/${stationName}`;
       } else {
-        window.location.href = `${
-          process.env.VUE_APP_BACK_ADDRESS
-        }dataList/downloadAll/${fileInfo.value!.id}/${store.email}`;
+        window.location.href = `/monitor/dataList/downloadAll/${fileInfo.value!.id}/${store.email}`
       }
     };
 
     const similarClick = (val: string) => {
       router.push({
         name: "resourceDetail",
-        params: {
+        params: { 
           id: val,
         },
       });
     };
 
     const pageChangeSimilar = async (val: number) => {
-      const data = await getSimilarData(
-        fileInfo.value!.type,
-        fileInfo.value!.id,
-        10,
-        val - 1
-      );
+      const data = await getSimilarData(fileInfo.value!.type, fileInfo.value!.id, 10, val - 1);
       if (data != null && (data as any).code === 0) {
         similarDataList.value = data.data.list;
         similarTotal.value = data.data.total;
@@ -482,18 +427,8 @@ export default defineComponent({
         const data = await getWaterLevelByStationAndTime(
           type,
           station,
-          dateFormat(
-            new Date(
-              dateFormat(startDate.toString(), "yyyy-MM-dd hh") + ":00:00"
-            ).toString(),
-            "yyyy-MM-dd hh"
-          ) + ":00:00",
-          dateFormat(
-            new Date(
-              dateFormat(endDate.toString(), "yyyy-MM-dd hh") + ":00:00"
-            ).toString(),
-            "yyyy-MM-dd hh"
-          ) + ":00:00"
+          dateFormat(new Date(dateFormat(startDate.toString(), "yyyy-MM-dd hh") + ":00:00").toString(), "yyyy-MM-dd hh") + ":00:00",
+          dateFormat(new Date(dateFormat(endDate.toString(), "yyyy-MM-dd hh") + ":00:00").toString(), "yyyy-MM-dd hh") + ":00:00"
         );
         if (data != null && (data as any).code === 0) {
           (data.data as any).forEach((item: any) => {
@@ -561,10 +496,7 @@ export default defineComponent({
           visualType = fileList.value[i].visualType;
           visualId = fileList.value[i].visualId;
           if (visualType != "") {
-            if (
-              visualType === "lineVectorTile3D" ||
-              visualType === "lineVectorTile"
-            ) {
+            if (visualType === "lineVectorTile3D" || visualType === "lineVectorTile") {
               shpArray.value.push({
                 visualId: visualId,
                 type: "line",
@@ -572,10 +504,7 @@ export default defineComponent({
               });
               MapFlag = true;
             }
-            if (
-              visualType === "pointVectorTile" ||
-              visualType === "pointVectorTile3D"
-            ) {
+            if (visualType === "pointVectorTile" || visualType === "pointVectorTile3D") {
               shpArray.value.push({
                 visualId: visualId,
                 type: "circle",
@@ -583,10 +512,7 @@ export default defineComponent({
               });
               MapFlag = true;
             }
-            if (
-              visualType === "polygonVectorTile" ||
-              visualType === "polygonVectorTile3D"
-            ) {
+            if (visualType === "polygonVectorTile" || visualType === "polygonVectorTile3D") {
               shpArray.value.push({
                 visualId: visualId,
                 type: "fill",
@@ -625,9 +551,7 @@ export default defineComponent({
               MapFlag = true;
             }
             if (visualType === "photo") {
-              photoList.value.push(
-                `/monitor/visual/getPhoto/${fileList.value[i].id}`
-              );
+              photoList.value.push(`/monitor/visual/getPhoto/${fileList.value[i].id}`);
               photoFlag = true;
             }
             if (visualType === "video") {

@@ -15,19 +15,13 @@
     </div>
 
     <div class="map-tool">
-      <el-button
-        type="primary"
-        :text="state === 1 ? false : true"
-        @click="sectionClick"
+      <el-button type="primary" :text="state === 1 ? false : true" @click="sectionClick"
         ><svg style="width: 16px; height: 16px; margin-right: 10px">
           <use xlink:href="#icon-xian"></use></svg
         >绘制断面</el-button
       >
       <el-divider direction="vertical" />
-      <el-button
-        type="primary"
-        :text="state === 2 ? false : true"
-        @click="regionClick"
+      <el-button type="primary" :text="state === 2 ? false : true" @click="regionClick"
         ><svg style="width: 16px; height: 16px; margin-right: 10px">
           <use xlink:href="#icon-mian"></use></svg
         >绘制区域</el-button
@@ -52,7 +46,7 @@
 import { defineComponent, ref } from "vue";
 import AddDataDialog from "./AddDataDialog.vue";
 import AnalyseDialog from "./AnalyseDialog.vue";
-
+import router from "@/router";
 export default defineComponent({
   components: {
     AddDataDialog,
@@ -102,7 +96,7 @@ export default defineComponent({
     };
 
     const flowClick = () => {
-      window.open("https://ycsoku.github.io/FowFieldVisualization_Demo/");
+      router.push({ path: "/flow" });
     };
 
     return {

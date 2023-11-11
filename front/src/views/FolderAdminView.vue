@@ -458,7 +458,7 @@ const batDelete = async () => {
 
 const downloadClick = async (item: FolderType | FileType) => {
   //基于ID 获取文件下载URL
-  window.location.href = `${process.env.VUE_APP_BACK_ADDRESS}files/downloadFile/${item.id}`;
+  window.location.href = `/monitor/files/downloadFile/${item.id}`;
 };
 
 const upLoadChange = (uploadFile: UploadFile) => {

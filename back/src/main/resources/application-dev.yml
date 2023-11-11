@@ -20,7 +20,7 @@ spring:
 
 #D:/UyNauhL/Assignments/monitor_data/monitor
 
-
+# 记得手动修改pythonDir
 baseDir: E:/monitor/resources/raw/
 avatarDir: E:/monitor/resources/avatar/
 tempDir: E:/monitor/temp/
