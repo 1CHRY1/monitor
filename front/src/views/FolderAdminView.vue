@@ -15,54 +15,25 @@
               </div>
             </div>
             <div class="btn">
-              <el-button size="default" @click="OpenCreateFolder"
-                >创建文件夹</el-button
-              >
+              <el-button size="default" @click="OpenCreateFolder">创建文件夹</el-button>
               <el-button size="default" @click="flushed">刷新</el-button>
-              <el-upload
-                action="#"
-                multiple
-                :auto-upload="false"
-                :show-file-list="false"
-                :on-change="upLoadChange"
-                ref="upload"
-              >
-                <el-button type="primary" size="default" class="upload-btn"
-                  >上传</el-button
-                >
+              <el-upload action="#" multiple :auto-upload="false" :show-file-list="false" :on-change="upLoadChange" ref="upload">
+                <el-button type="primary" size="default" class="upload-btn">上传</el-button>
               </el-upload>
-              <el-button size="default" @click="uploadPageFlag = true"
-                >上传记录</el-button
-              >
+              <el-button size="default" @click="uploadPageFlag = true">上传记录</el-button>
             </div>
           </div>
 
           <div class="table" v-if="!skeletonFlag">
-            <el-empty
-              description="暂无数据"
-              v-if="tableData.length === 0"
-            ></el-empty>
-            <el-table
-              v-else
-              :data="tableData"
-              style="width: 100%"
-              max-height="calc(90vh - 240px - 5rem)"
-              stripe
-              v-loading="loading"
-              @cell-dblclick="dblclick"
-              highlight-current-row
-            >
+            <el-empty description="暂无数据" v-if="tableData.length === 0"></el-empty>
+            <el-table v-else :data="tableData" style="width: 100%" max-height="calc(90vh - 240px - 5rem)" stripe v-loading="loading" @cell-dblclick="dblclick" highlight-current-row>
               <el-table-column width="40">
                 <template #default="scope">
                   <!-- #default="scope" 插槽，作为参数可以让外面的方法能够访问到scope内部的数据 -->
                   <div class="table-name">
                     <!-- <el-checkbox v-model="scope.row.flag" size="large" @change="changeHandle(scope.row)" /> -->
                     <label class="container">
-                      <input
-                        v-model="scope.row.flag"
-                        type="checkbox"
-                        @change="changeHandle(scope.row)"
-                      />
+                      <input v-model="scope.row.flag" type="checkbox" @change="changeHandle(scope.row)" />
                       <div class="checkmark"></div>
                     </label>
                   </div>
@@ -93,101 +64,38 @@
 
               <el-table-column align="right" fixed="right" width="300">
                 <template #header>
-                  <el-button
-                    type="primary"
-                    size="small"
-                    @click="selectAll"
-                    round
-                    >全选</el-button
-                  >
-                  <el-button
-                    type="primary"
-                    size="small"
-                    @click="cancelAll"
-                    round
-                    >重置</el-button
-                  >
+                  <el-button type="primary" size="small" @click="selectAll" round>全选</el-button>
+                  <el-button type="primary" size="small" @click="cancelAll" round>重置</el-button>
 
-                  <el-button
-                    type="danger"
-                    size="small"
-                    :disabled="selectList.length === 0"
-                    :hide-after="50"
-                    @click="batDelete"
-                    round
-                    >批量删除</el-button
-                  >
+                  <el-button type="danger" size="small" :disabled="selectList.length === 0" :hide-after="50" @click="batDelete" round>批量删除</el-button>
                 </template>
                 <template #default="scope">
-                  <el-tooltip
-                    effect="dark"
-                    content="预览"
-                    placement="top"
-                    :hide-after="50"
-                    v-if="!isFolder(scope.row) && scope.row.visualType"
-                  >
+                  <el-tooltip effect="dark" content="预览" placement="top" :hide-after="50" v-if="!isFolder(scope.row) && scope.row.visualType">
                     <span style="margin-right: 10px">
-                      <el-button
-                        size="small"
-                        type="primary"
-                        @click="previewClick(scope.row)"
-                        plain
-                      >
+                      <el-button size="small" type="primary" @click="previewClick(scope.row)" plain>
                         <el-icon><View /></el-icon>
                       </el-button>
                     </span>
                   </el-tooltip>
 
-                  <el-tooltip
-                    effect="dark"
-                    content="绑定可视化数据"
-                    placement="top"
-                    :hide-after="50"
-                    v-if="!isFolder(scope.row)"
-                  >
+                  <el-tooltip effect="dark" content="绑定可视化数据" placement="top" :hide-after="50" v-if="!isFolder(scope.row)">
                     <span style="margin-right: 10px">
-                      <el-button
-                        size="small"
-                        type="primary"
-                        v-if="!isFolder(scope.row)"
-                        @click="visualClick(scope.row)"
-                        plain
+                      <el-button size="small" type="primary" v-if="!isFolder(scope.row)" @click="visualClick(scope.row)" plain
                         ><el-icon><Link /></el-icon
                       ></el-button>
                     </span>
                   </el-tooltip>
 
-                  <el-tooltip
-                    effect="dark"
-                    content="下载"
-                    placement="top"
-                    :hide-after="50"
-                    v-if="!isFolder(scope.row)"
-                  >
+                  <el-tooltip effect="dark" content="下载" placement="top" :hide-after="50" v-if="!isFolder(scope.row)">
                     <span style="margin-right: 10px">
-                      <el-button
-                        size="small"
-                        type="primary"
-                        @click="downloadClick(scope.row)"
-                        plain
-                      >
+                      <el-button size="small" type="primary" @click="downloadClick(scope.row)" plain>
                         <el-icon><Download /></el-icon>
                       </el-button>
                     </span>
                   </el-tooltip>
-                  <el-tooltip
-                    effect="dark"
-                    content="删除"
-                    placement="top"
-                    :hide-after="50"
-                  >
+                  <el-tooltip effect="dark" content="删除" placement="top" :hide-after="50">
                     <span style="margin-right: 10px">
-                      <el-button
-                        size="small"
-                        type="primary"
-                        @click="deleteClick(scope.row)"
-                        plain
-                      >
+                      <el-button size="small" type="primary" @click="deleteClick(scope.row)" plain>
                         <el-icon><Delete /></el-icon
                       ></el-button>
                     </span>
@@ -201,39 +109,19 @@
             <el-skeleton :rows="5" animated></el-skeleton>
           </div>
 
-          <el-dialog
-            v-model="Visible_CreateFolderDialog"
-            width="15%"
-            :show-close="false"
-          >
+          <el-dialog v-model="Visible_CreateFolderDialog" width="15%" :show-close="false">
             <!-- 这里是一个组件，专门写CreateFolderDialog -->
-            <folder-dialog
-              @createFolder="CreateFolder"
-              v-if="Visible_CreateFolderDialog"
-              :folderNames="folderNames"
-            >
-            </folder-dialog>
+            <folder-dialog @createFolder="CreateFolder" v-if="Visible_CreateFolderDialog" :folderNames="folderNames"> </folder-dialog>
           </el-dialog>
 
           <el-dialog v-model="Visible_PreviewDialog" :show-close="false">
             <!-- 一个组件，专门写PreviewDialog -->
-            <data-preview-dialog
-              :fileInfo="fileInfo"
-              v-if="Visible_PreviewDialog"
-            ></data-preview-dialog>
+            <data-preview-dialog :fileInfo="fileInfo" v-if="Visible_PreviewDialog"></data-preview-dialog>
           </el-dialog>
 
-          <el-dialog
-            v-model="Visible_BindDialog"
-            width="600px"
-            :show-close="false"
-          >
+          <el-dialog v-model="Visible_BindDialog" width="600px" :show-close="false">
             <!-- 一个组件，专门写VisualDataBind -->
-            <visual-bind-dialog
-              v-if="Visible_BindDialog"
-              :fileInfo="fileInfo"
-              @updateVisualFile="updateVisualFile"
-            ></visual-bind-dialog>
+            <visual-bind-dialog v-if="Visible_BindDialog" :fileInfo="fileInfo" @updateVisualFile="updateVisualFile"></visual-bind-dialog>
           </el-dialog>
         </div>
       </el-col>
@@ -259,9 +147,7 @@ import { UploadFile, UploadFiles } from "element-plus";
 import PageCopyright from "@/layout/PageCopyright.vue";
 import { useUploadFileStore } from "@/store/upload-file-store";
 
-const tableData = ref<
-  ((FolderType & { flag: boolean }) | (FileType & { flag: boolean }))[]
->([]);
+const tableData = ref<((FolderType & { flag: boolean }) | (FileType & { flag: boolean }))[]>([]);
 const fileInfo = ref<any>();
 const skeletonFlag = ref(true);
 const selectList = ref<{ id: string; type: string }[]>([]);
@@ -277,6 +163,8 @@ const loading = ref(false);
 const uploadPageFlag = ref(false);
 
 const store = useUploadFileStore();
+
+let maxLength = 0;
 
 const getName = (item: FolderType | FileType) => {
   if ("fileName" in item) {
@@ -461,7 +349,10 @@ const downloadClick = async (item: FolderType | FileType) => {
   window.location.href = `/monitor/files/downloadFile/${item.id}`;
 };
 
-const upLoadChange = (uploadFile: UploadFile) => {
+const upLoadChange = (uploadFile: UploadFile, files: UploadFiles) => {
+  console.log(1);
+  let length = files.length;
+  maxLength = Math.max(length, maxLength);
   let parentId = "";
   if (path.value.length) {
     parentId = path.value[path.value.length - 1].id;
@@ -472,26 +363,20 @@ const upLoadChange = (uploadFile: UploadFile) => {
     finished: 0,
     parentId: parentId,
   });
-  console.log(store.uploading);
-  if (!store.uploading) {
-    store.executeUpload();
-  }
-  // (upload.value as any).clearFiles();
-  // store.commit("ADD_WAIT_ITEM", {
-  //   id: uuid(),
-  //   name: uploadFile.name,
-  //   file: uploadFile.raw!,
-  //   size: getFileSize(uploadFile.size!),
-  // });
-  // store.dispatch("uploadFiles", {
-  //   parentId:
-  //     path.value.length === 0 ? "" : path.value[path.value.length - 1].id,
-  // });
+  setTimeout(() => {
+    if (length === maxLength) {
+      console.log("当前length为最大值", length);
+
+      console.log(store.uploading);
+      if (!store.uploading) {
+        store.executeUpload();
+      }
+      maxLength = 0;
+    }
+  });
 };
 
-const changeHandle = (
-  item: (FolderType & { flag: boolean }) | (FileType & { flag: boolean })
-) => {
+const changeHandle = (item: (FolderType & { flag: boolean }) | (FileType & { flag: boolean })) => {
   //checkBox  to  select List
   if (item.flag) {
     if ("folderName" in item) {

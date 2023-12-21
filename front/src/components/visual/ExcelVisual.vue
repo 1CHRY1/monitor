@@ -56,36 +56,12 @@
       </el-col>
     </el-row> -->
 
-    <sand-content
-      :visualId="sandContentList[centerIndex]"
-      ref="sandContent"
-      v-if="sandContentList.length != 0"
-    />
-    <suspension
-      :visualId="suspensionList[centerIndex]"
-      ref="suspension"
-      v-if="suspensionList.length != 0"
-    />
-    <rate-and-direction
-      :visualId="rateDirectionList[centerIndex]"
-      ref="rateAndDirection"
-      v-if="rateDirectionList.length != 0"
-    />
-    <salinity
-      :visualId="salinityList[centerIndex]"
-      ref="salinity"
-      v-if="salinityList.length != 0"
-    />
-    <flow-sand-z
-      :visualId="flowSandZList[centerIndex]"
-      ref="flowSandZ"
-      v-if="flowSandZList.length != 0"
-    />
-    <water-level-chart
-      :info="waterLevelChartInfo"
-      v-if="waterLevelChartInfo"
-      ref="waterLevelChart"
-    ></water-level-chart>
+    <sand-content :visualId="sandContentList[centerIndex]" ref="sandContent" v-if="sandContentList.length != 0" />
+    <suspension :visualId="suspensionList[centerIndex]" ref="suspension" v-if="suspensionList.length != 0" />
+    <rate-and-direction :visualId="rateDirectionList[centerIndex]" ref="rateAndDirection" v-if="rateDirectionList.length != 0" />
+    <salinity :visualId="salinityList[centerIndex]" ref="salinity" v-if="salinityList.length != 0" />
+    <flow-sand-z :visualId="flowSandZList[centerIndex]" ref="flowSandZ" v-if="flowSandZList.length != 0" />
+    <water-level-chart :info="waterLevelChartInfo" v-if="waterLevelChartInfo.flag" ref="waterLevelChart"></water-level-chart>
   </div>
 </template>
 
@@ -127,7 +103,7 @@ export default defineComponent({
       type: Array,
     },
     waterLevelChartInfo: {
-      type: Object as PropType<WaterLevelChartType>,
+      type: Object as PropType<WaterLevelChartType & { flag: boolean }>,
     },
   },
   setup(props) {
@@ -139,10 +115,7 @@ export default defineComponent({
     const waterLevelChart = ref();
     const centerIndex = ref(0);
     const leftIndex = computed(() => {
-      return (
-        (centerIndex.value - 1 + (tableNameList.value as string[]).length) %
-        (tableNameList.value as string[]).length
-      );
+      return (centerIndex.value - 1 + (tableNameList.value as string[]).length) % (tableNameList.value as string[]).length;
     });
     const rightIndex = computed(() => {
       return (centerIndex.value + 1) % (tableNameList.value as string[]).length;
@@ -172,38 +145,29 @@ export default defineComponent({
 
     const changeExcel = async (handle: string) => {
       if (handle === "left") {
-        centerIndex.value =
-          (centerIndex.value - 1 + (tableNameList.value as string[]).length) %
-          (tableNameList.value as string[]).length;
+        centerIndex.value = (centerIndex.value - 1 + (tableNameList.value as string[]).length) % (tableNameList.value as string[]).length;
       } else {
-        centerIndex.value =
-          (centerIndex.value + 1) % (tableNameList.value as string[]).length;
+        centerIndex.value = (centerIndex.value + 1) % (tableNameList.value as string[]).length;
       }
 
       if (sandContentList.value?.length != 0) {
-        await sandContent.value.refreshData(
-          (sandContentList.value as string[])[centerIndex.value]
-        );
+        await sandContent.value.refreshData((sandContentList.value as string[])[centerIndex.value]);
       } else if (suspensionList.value?.length != 0) {
-        await suspension.value.refreshData(
-          (suspensionList.value as string[])[centerIndex.value]
-        );
+        await suspension.value.refreshData((suspensionList.value as string[])[centerIndex.value]);
       } else if (rateDirectionList.value?.length != 0) {
-        await rateAndDirection.value.refreshData(
-          (rateDirectionList.value as string[])[centerIndex.value]
-        );
+        await rateAndDirection.value.refreshData((rateDirectionList.value as string[])[centerIndex.value]);
       } else if (salinityList.value?.length != 0) {
-        await salinity.value.refreshData(
-          (salinityList.value as string[])[centerIndex.value]
-        );
+        await salinity.value.refreshData((salinityList.value as string[])[centerIndex.value]);
       } else if (flowSandZList.value?.length != 0) {
-        await flowSandZ.value.refreshData(
-          (flowSandZList.value as string[])[centerIndex.value]
-        );
+        await flowSandZ.value.refreshData((flowSandZList.value as string[])[centerIndex.value]);
       } else if (waterLevelChart) {
         waterLevelChart.value.refreshData();
       }
     };
+
+    onMounted(() => {
+      console.log(props.waterLevelChartInfo);
+    });
 
     return {
       sandContent,

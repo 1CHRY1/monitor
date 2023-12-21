@@ -292,11 +292,12 @@ export default defineComponent({
     const rateDirectionList = ref<string[]>([]);
     const salinityList = ref<string[]>([]);
     const flowSandZList = ref<string[]>([]);
-    const waterLevelInfo = ref<WaterLevelChartType>({
+    const waterLevelInfo = ref<WaterLevelChartType & {flag: boolean}>({
       timeList: [],
       legend: [],
       yAxis: [],
       series: [],
+      flag: false
     });
     const fileList = ref<any[]>([]);
     const similarDataList = ref<[]>();
@@ -372,6 +373,7 @@ export default defineComponent({
           yAxis: [],
           series: [],
           legend: [],
+          flag: true
         };
         const station = stationInfo.name;
         const type = stationInfo.type;
