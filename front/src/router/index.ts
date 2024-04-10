@@ -180,7 +180,21 @@ export const asyncRouters: Array<RouteRecordRaw> = [
       },
     ],
   },
-
+  {
+    path: "/stormPrediction",
+    component: () => import("@/layout/Index.vue"),
+    children: [
+      {
+        path: "",
+        name: "StormPrediction",
+        component: () => import("@/views/StormPrediction.vue"),
+        meta: {
+          requiresAuth: "member",
+          keepAlive: true,
+        },
+      },
+    ],
+  },
   {
     path: "/:catchAll(.*)",
     name: "Redirect404",

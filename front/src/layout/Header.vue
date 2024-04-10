@@ -5,7 +5,7 @@
         <el-col :span="1">
           <div class="grid-content" />
         </el-col>
-        <el-col :span="5">
+        <el-col :span="3">
           <div class="grid-content name">
             长江深水航道<br />水沙监测分析研究服务系统
           </div>
@@ -29,6 +29,11 @@
         <el-col :span="2">
           <div class="grid-content analysis" @click="nav('dataview')">
             工程可视化
+          </div>
+        </el-col>
+        <el-col :span="2">
+          <div class="grid-content prediction" @click="nav('stormPrediction')">
+            潮位预报
           </div>
         </el-col>
         <el-col :span="2">
@@ -119,6 +124,9 @@ export default defineComponent({
           return;
         case "waterForecast":
           router.push({ path: "/waterForecast" });
+          return;
+        case "stormPrediction":
+          router.push({ path: "/stormPrediction" });
           return;
         case "analysis":
           router.push({ path: "/analysis/list" });
@@ -225,6 +233,18 @@ div.header-main {
             #fffcd2 0%,
             #d5ffd5 40%,
             #3aff3a 100%
+          );
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          -webkit-animation: hue 60s infinite linear;
+        }
+        &.prediction {
+          font-size: 2.5vh;
+          background-image: linear-gradient(
+            30deg,
+            #bad4e2 0%,
+            #e6b3f0 40%,
+            #834765 100%
           );
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
