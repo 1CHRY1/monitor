@@ -1,6 +1,6 @@
 <template>
   <el-row class="row-bg" justify="space-evenly">
-    <el-col :span="4.8">
+    <el-col :span="4.2">
       <div class="grid-content ep-bg-purple" />
       <el-card class="box-card" :class="{ Large: this.isLarge[1] }" id="1" @mouseover="jumpToimg" @click="routeToPage(1)">
         <div class="card-header">
@@ -13,7 +13,7 @@
       </el-card>
     </el-col>
 
-    <el-col :span="4.8">
+    <el-col :span="4.2">
       <div class="grid-content ep-bg-purple" />
       <el-card class="box-card" :class="{ Large: this.isLarge[2] }" id="2" @mouseover="jumpToimg" @click="routeToPage(2)">
         <div class="card-header">
@@ -26,7 +26,7 @@
       </el-card>
     </el-col>
 
-    <el-col :span="4.8">
+    <el-col :span="4.2">
       <div class="grid-content ep-bg-purple" />
 
       <el-card class="box-card" :class="{ Large: this.isLarge[3] }" id="3" @mouseover="jumpToimg"  @click="routeToPage(3)">
@@ -40,7 +40,7 @@
       </el-card>
     </el-col>
 
-    <el-col :span="4.8">
+    <el-col :span="4.2">
       <div class="grid-content ep-bg-purple" />
 
       <el-card class="box-card" :class="{ Large: this.isLarge[4] }" id="4" @mouseover="jumpToimg"  @click="routeToPage(4)">
@@ -54,10 +54,24 @@
       </el-card>
     </el-col>
 
-    <el-col :span="6">
+    <el-col :span="4.2">
       <div class="grid-content ep-bg-purple" />
 
       <el-card class="box-card" :class="{ Large: this.isLarge[5] }" id="5" @mouseover="jumpToimg"  @click="routeToPage(5)">
+        <div class="card-header">
+          <div class="iconclass project-visual"></div>
+          <h2 class="part-title">潮位预报</h2>
+        </div>
+        <div class="text item part-desc">
+          工程监测成果数据聚合，利用数据图表、地图、表格等在大屏上实时呈现，提供全局数据洞察
+        </div>
+      </el-card>
+    </el-col>
+
+    <el-col :span="4.2">
+      <div class="grid-content ep-bg-purple" />
+
+      <el-card class="box-card" :class="{ Large: this.isLarge[6] }" id="6" @mouseover="jumpToimg"  @click="routeToPage(6)">
         <div class="card-header">
           <div class="iconclass geo-analysis"></div>
           <h2 class="part-title">分析中心</h2>
@@ -79,7 +93,7 @@ export default {
   },
   data() {
     return {
-      isLarge: [null, false, false, false, false, false],
+      isLarge: [null, false, false, false, false, false, false],
     };
   },
   watch: {
@@ -124,6 +138,10 @@ export default {
           break;
         case 5:
           // console.log("home")
+          router.push({ path: "/stormPrediction" });
+          break;
+        case 6:
+          // console.log("home")
           router.push({ path: "/analysis/list" });
           break;
         default:
@@ -140,7 +158,7 @@ export default {
 .el-row {
   margin-top: 1vh;
   margin-bottom: 0px;
-  margin-left: 7vw;
+  // margin-left: 7vw;
 }
 
 .el-col {

@@ -132,7 +132,7 @@
     <page-copyright style="bottom: 0px" />
   </div>
 </template>
-
+ 
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import { FolderType, FileType } from "@/type";

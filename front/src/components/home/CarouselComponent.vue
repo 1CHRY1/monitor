@@ -28,6 +28,11 @@
       <img class="picture" src="/resource/project-m.png" />
     </el-carousel-item>
     <el-carousel-item id="5">
+      <!-- 分析中心图片 -->
+      <div class="carousel-pic-title">潮位预报</div>
+      <img class="picture" src="/resource/stormPrediction.png" />
+    </el-carousel-item>
+    <el-carousel-item id="6">
       <!-- 潮位预报图片 -->
       <div class="carousel-pic-title">分析中心</div>
         <img class="picture" src="/resource/analysis-pro.png" />
