@@ -281,7 +281,7 @@ export default defineComponent({
               type: "raster",
               source: param.id,
             });
-            const description = `深度：${content.data.deep}，容积：${content.data.volume}㎡`;
+            const description = `深度：${content.data.deep}，容积：${content.data.volume}m³`;
             volumeList.value.push({
               id: param.id,
               coordinates: content.data.coordinates,

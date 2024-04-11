@@ -59,11 +59,11 @@
 
       <el-card class="box-card" :class="{ Large: this.isLarge[5] }" id="5" @mouseover="jumpToimg"  @click="routeToPage(5)">
         <div class="card-header">
-          <div class="iconclass project-visual"></div>
+          <div class="iconclass storm-prediction"></div>
           <h2 class="part-title">潮位预报</h2>
         </div>
         <div class="text item part-desc">
-          工程监测成果数据聚合，利用数据图表、地图、表格等在大屏上实时呈现，提供全局数据洞察
+          集成气象产品、台风预报及各站点潮位预报与预报结果精度评估，可视化展示风暴潮影响下的区域流场、风场和增水场。
         </div>
       </el-card>
     </el-col>
@@ -245,6 +245,10 @@ export default {
 
     &.geo-analysis {
       background-image: url('../../assets/location-mark.png');
+    }
+
+    &.storm-prediction {
+      background-image: url('../../assets/storm-prediction.png');
     }
   }
 

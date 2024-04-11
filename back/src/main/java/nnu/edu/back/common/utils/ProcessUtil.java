@@ -149,9 +149,11 @@ public class ProcessUtil {
         }
         ProcessBuilder processBuilder = new ProcessBuilder();
         List<String> commands = new ArrayList<>();
+
         commands.add(pythonStr);
         commands.add(pythonDir + "compute_volume.py");
         commands.add(tempPath);
+        log.info(pythonDir + "compute_volume.py" + tempPath);
         processBuilder.command(commands);
         return processBuilder.start();
     }
