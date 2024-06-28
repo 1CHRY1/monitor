@@ -18,7 +18,7 @@ spring:
       jdbc-url: jdbc:sqlite:D:/monitor/data/resources/map.db
       driver-class-name: org.sqlite.JDBC
 
-
+pythonDir: "E:/monitor/pythonDir/"
 baseDir: D:/monitor/data/resources/raw/
 avatarDir: D:/monitor/data/resources/avatar/
 tempDir: D:/monitor/data/temp/

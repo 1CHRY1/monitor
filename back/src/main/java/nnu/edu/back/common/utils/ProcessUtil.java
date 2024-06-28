@@ -2,6 +2,8 @@ package nnu.edu.back.common.utils;
 
 import com.alibaba.fastjson2.JSONArray;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -16,13 +18,18 @@ import java.util.List;
  * @Description:
  */
 @Slf4j
+@Component
 public class ProcessUtil {
 
-//    static String pythonDir = "C:/nhri/monitor/pythonDir/";
+//    static String pythonDir = "E:/monitor/pythonDir/";
+//    static String pythonStr = "/root/miniconda3/envs/Env1/bin/python";
+
+//    static String pythonDir = "/usr/local/resource/monitor_pythonDir/";
     static String pythonDir = "E:/monitor/pythonDir/";
-    //    static String pythonDir = "/home/zym/python/";
-    static String pythonStr = "python";
-//    static String pythonStr = "python3";
+    static String pythonStr = "python ";
+
+//    static String cmdStr = "bash";
+    static String cmdStr = "cmd.exe";
 
     public static Process cmdShp2Pgsql(List<String> commands) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder();
@@ -95,6 +102,7 @@ public class ProcessUtil {
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         List<String> commands = new ArrayList<>();
+        log.info(pythonStr + " " + pythonDir + "SectionContrast.py " + tempPath);
         commands.add(pythonStr);
         commands.add(pythonDir + "SectionContrast.py");
         commands.add(tempPath);
@@ -121,9 +129,9 @@ public class ProcessUtil {
         }
         ProcessBuilder processBuilder = new ProcessBuilder();
         List<String> commands = new ArrayList<>();
+        log.info(pythonStr + " " + pythonDir + "section_flush.py " + tempPath);
         commands.add(pythonStr);
         commands.add(pythonDir + "section_flush.py");
-        commands.add(tempPath);
         processBuilder.command(commands);
         return processBuilder.start();
     }
@@ -153,7 +161,7 @@ public class ProcessUtil {
         commands.add(pythonStr);
         commands.add(pythonDir + "compute_volume.py");
         commands.add(tempPath);
-        log.info(pythonDir + "compute_volume.py" + tempPath);
+        log.info(pythonStr + " " + pythonDir + "compute_volume.py " + tempPath);
         processBuilder.command(commands);
         return processBuilder.start();
     }
@@ -180,6 +188,7 @@ public class ProcessUtil {
         commands.add(pythonStr);
         commands.add(pythonDir + "raster_clip.py");
         commands.add(tempPath);
+        log.info(pythonStr + " " + pythonDir + "raster_clip.py " + tempPath);
         processBuilder.command(commands);
         return processBuilder.start();
 

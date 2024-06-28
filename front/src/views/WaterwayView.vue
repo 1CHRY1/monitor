@@ -219,7 +219,8 @@ export default defineComponent({
 
     const basemapList: XYZ[] = [
       new XYZ({
-        url: "http://t0.tianditu.com/DataServer?T=vec_c&x={x}&y={y}&l={z}&tk=35a94ab5985969d0b93229c30db6abd6",
+        url: "http://t0.tianditu.gov.cn/DataServer?T=vec_c&x={x}&y={y}&l={z}&tk=35a94ab5985969d0b93229c30db6abd6",
+        // url: "http://t0.tianditu.gov.cn/vec_c/wmts?tk=105294c4a8e3d1c81b632742ba323798",
         projection: "EPSG:4326",
       }),
       new XYZ({
@@ -327,14 +328,14 @@ export default defineComponent({
           new TileLayer({
             visible: true,
             source: new XYZ({
-              url: "http://t0.tianditu.com/DataServer?T=vec_c&x={x}&y={y}&l={z}&tk=35a94ab5985969d0b93229c30db6abd6",
+              url: "http://t0.tianditu.gov.cn/DataServer?T=vec_c&x={x}&y={y}&l={z}&tk=35a94ab5985969d0b93229c30db6abd6",
               projection: "EPSG:4326",
             }),
           }),
           new TileLayer({
             visible: true,
             source: new XYZ({
-              url: "http://t0.tianditu.com/DataServer?T=cva_c&x={x}&y={y}&l={z}&tk=35a94ab5985969d0b93229c30db6abd6",
+              url: "http://t0.tianditu.gov.cn/DataServer?T=cva_c&x={x}&y={y}&l={z}&tk=35a94ab5985969d0b93229c30db6abd6",
               projection: "EPSG:4326",
             }),
           }),

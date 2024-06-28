@@ -350,6 +350,7 @@ export default defineComponent({
   position: absolute;
   right: 1vw;
   top: 15vh;
+  height: 50vh;
   writing-mode: vertical-rl;
   text-orientation: upright;
   font-size: 8vh;

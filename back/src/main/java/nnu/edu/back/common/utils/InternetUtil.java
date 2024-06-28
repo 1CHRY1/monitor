@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -132,5 +133,31 @@ public class InternetUtil {
             throw new Exception();
         }
         return result.getBody();
+    }
+
+    public static JSONObject GetRealData(String url) {
+        try {
+            URL Url = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) Url.openConnection();
+            connection.setRequestMethod("GET");
+            int responseCode = connection.getResponseCode();
+            StringBuilder response = new StringBuilder();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+            } else {
+                System.out.println("GET request failed with response code " + responseCode);
+                return new JSONObject();
+            }
+            connection.disconnect();
+            return JSONObject.parseObject(response.toString());
+        } catch (Exception e) {
+            System.out.println(e);
+            return new JSONObject();
+        }
     }
 }

@@ -77,7 +77,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import {
   SearchTable,
   BuoyType,
@@ -97,6 +97,7 @@ export default defineComponent({
     const showFlag = ref(false);
     const skeletonFlag = ref(false);
     const tableData = ref<SearchTable[]>([]);
+
     const switchValue = ref(true);
 
     const currentPage = ref(1);
@@ -270,6 +271,7 @@ export default defineComponent({
         skeletonFlag.value = false;
       }
     };
+
 
     return {
       inputValue,

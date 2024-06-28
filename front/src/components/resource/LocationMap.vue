@@ -9,6 +9,8 @@
 import { defineComponent, computed, onMounted, PropType, watch } from "vue";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import MapboxLanguage  from '@mapbox/mapbox-gl-language'
+
 export default defineComponent({
   props: {
     location: {
@@ -87,45 +89,48 @@ export default defineComponent({
       map = new mapboxgl.Map({
         container: "map2",
         // 这是osm的style
-        // style: "mapbox://styles/16651699376/ckmpu8kuk0h8r17msqpz351vf",
+        style: "mapbox://styles/mapbox/streets-v12",
 
         // 下方是天地图的style
-        style: {
-          version: 8,
-          sources: {
-            tdtVec: {
-              type: "raster",
-              tiles: [
-                "http://t0.tianditu.com/vec_w/wmts?tk=35a94ab5985969d0b93229c30db6abd6&SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=tiles",
-              ],
-              tileSize: 256,
-            },
-            txt: {
-              type: "raster",
-              tiles: [
-                "http://t0.tianditu.com/cva_w/wmts?tk=35a94ab5985969d0b93229c30db6abd6&SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=tiles",
-              ],
-              tileSize: 256,
-            },
-          },
-          layers: [
-            {
-              id: "tdtVec",
-              type: "raster",
-              source: "tdtVec",
-            },
-            {
-              id: "txt",
-              type: "raster",
-              source: "txt",
-            },
-          ],
-        },
+        // style: {
+        //   version: 8,
+        //   sources: {
+        //     tdtVec: {
+        //       type: "raster",
+        //       tiles: [
+        //         "http://t0.tianditu.gov.cn/vec_w/wmts?tk=35a94ab5985969d0b93229c30db6abd6&SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=tiles",
+        //       ],
+        //       tileSize: 256,
+        //     },
+        //     txt: {
+        //       type: "raster",
+        //       tiles: [
+        //         "http://t0.tianditu.gov.cn/cva_w/wmts?tk=35a94ab5985969d0b93229c30db6abd6&SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=tiles",
+        //       ],
+        //       tileSize: 256,
+        //     },
+        //   },
+        //   layers: [
+        //     {
+        //       id: "tdtVec",
+        //       type: "raster",
+        //       source: "tdtVec",
+        //     },
+        //     {
+        //       id: "txt",
+        //       type: "raster",
+        //       source: "txt",
+        //     },
+        //   ],
+        // },
         center: computeCenter(props.location!),
         zoom: 7,
         accessToken:
           "pk.eyJ1Ijoiam9obm55dCIsImEiOiJja2xxNXplNjYwNnhzMm5uYTJtdHVlbTByIn0.f1GfZbFLWjiEayI6hb_Qvg",
       });
+      
+      var language = new MapboxLanguage({ defaultLanguage: "zh-Hans" });
+      map.addControl(language);
 
       map.on("load", () => {
         map.addSource("someS id", {

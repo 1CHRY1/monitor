@@ -7,7 +7,7 @@
         </el-col>
         <el-col :span="3">
           <div class="grid-content name">
-            长江深水航道<br />水沙监测分析研究服务系统
+            长江南京以下深水航道<br />基础设施数据服务平台
           </div>
         </el-col>
         <el-col :span="2">
@@ -18,7 +18,7 @@
         </el-col>
         <el-col :span="2">
           <div class="grid-content amap" @click="nav('waterForecast')">
-            监测与预报
+            监测数据
           </div>
         </el-col>
         <el-col :span="2">
@@ -276,11 +276,12 @@ div.header-main {
         }
       }
       &.name {
+        width: 14vw;
         font-weight: 500;
         text-align: left;
         font-size: 2vh;
         line-height: 3vh;
-        padding-left: 2vh;
+        margin-left: 2vh;
         color: aliceblue;
         background-image: linear-gradient(
           45deg,
@@ -319,7 +320,7 @@ div.header-main {
           border-width: 1px;
           border-color: #b4b4b4c9;
           margin-top: 7%;
-          width: 70%;
+          width: 90%;
           height: 76%;
           font-size: 2vh;
           font-weight: 600;

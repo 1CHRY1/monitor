@@ -3,7 +3,7 @@
     <el-carousel-item id="first">
         <img class="picture" src="/resource/pic.jpg" />
         <div class="describe">
-            <h1 class="title-text">长江深水航道水沙监测分析研究服务系统</h1>
+            <h1 class="title-text">长江南京以下深水航道基础设施数据服务平台</h1>
             <p class="title-desc">高效监测 高效管理</p>
         </div>
     </el-carousel-item>

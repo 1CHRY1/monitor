@@ -14,8 +14,11 @@ import nnu.edu.back.pojo.*;
 import nnu.edu.back.service.WaterwayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -207,7 +210,9 @@ public class WaterwayServiceImpl implements WaterwayService {
             String url = waterLevelAddress + "/" + prefix + "/getInfoByStationAndTime/" + station + "/" + startTime + "/" + endTime;
             url = InternetUtil.encodeSpaceChinese(url, "UTF-8");
 
-            JSONObject res = InternetUtil.doGet(url);
+//            HttpEntity requestEntity = new HttpEntity(new HttpHeaders());
+//            JSONObject res = InternetUtil.httpHandle(url, requestEntity, JSONObject.class, "get");
+            JSONObject res = InternetUtil.GetRealData(url);
             return res.getJSONArray("data");
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -494,7 +499,7 @@ public class WaterwayServiceImpl implements WaterwayService {
     @Override
     public JSONObject getPredictionValue(String name) {
         String url = waterLevelAddress + "/prediction/getPrediction/" + name;
-        JSONObject jsonObject = InternetUtil.doGet(url);
+        JSONObject jsonObject = InternetUtil.GetRealData(url);
         if (jsonObject.getIntValue("code") == 0) {
             return jsonObject.getJSONObject("data");
         } throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);
@@ -503,7 +508,7 @@ public class WaterwayServiceImpl implements WaterwayService {
     @Override
     public JSONArray getAllPredictionValue() {
         String url = waterLevelAddress + "/prediction/getAllPrediction";
-        JSONObject jsonObject = InternetUtil.doGet(url);
+        JSONObject jsonObject = InternetUtil.GetRealData(url);
         if (jsonObject.getIntValue("code") == 0) {
             return jsonObject.getJSONArray("data");
         } throw new MyException(ResultEnum.REMOTE_SERVICE_ERROR);

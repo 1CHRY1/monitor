@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkfront"]=self["webpackChunkfront"]||[]).push([[267],{5936:function(r,n,t){t.r(n),t.d(n,{default:function(){return o}});var e=t(3396);const s={class:"iframe",src:"https://192.168.30.3:5173"};function a(r,n){return(0,e.wg)(),(0,e.iD)("iframe",s)}var c=t(89);const f={},u=(0,c.Z)(f,[["render",a],["__scopeId","data-v-1055241e"]]);var o=u}}]);
+//# sourceMappingURL=267.9d6e182b.js.map
