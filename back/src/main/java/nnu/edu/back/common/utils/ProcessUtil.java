@@ -26,7 +26,7 @@ public class ProcessUtil {
 
 //    static String pythonDir = "/usr/local/resource/monitor_pythonDir/";
     static String pythonDir = "E:/monitor/pythonDir/";
-    static String pythonStr = "python ";
+    static String pythonStr = "C:/Users/22171/.conda/envs/Env1/python";
 
 //    static String cmdStr = "bash";
     static String cmdStr = "cmd.exe";
