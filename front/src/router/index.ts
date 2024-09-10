@@ -21,6 +21,11 @@ const constantRoutes: Array<RouteRecordRaw> = [
     component: () => import("@/views/RegisterView.vue"),
   },
   {
+    path: "/test",
+    name: "test",
+    component: () => import("@/views/test.vue"),
+  },
+  {
     path: "/dataViewer",
     name: "dataViewer",
     component: () => import("@/views/DataViewWrapper.vue"),

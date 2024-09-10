@@ -9,7 +9,8 @@
 import { defineComponent, computed, onMounted, PropType, watch } from "vue";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import MapboxLanguage  from '@mapbox/mapbox-gl-language'
+import MapboxLanguage from '@mapbox/mapbox-gl-language'
+import { styleLight } from "@/utils/mapStyleJson";
 
 export default defineComponent({
   props: {
@@ -86,10 +87,13 @@ export default defineComponent({
     };
 
     const initMap = () => {
+      const dom = document.getElementById("map2");
+      dom!.style.backgroundColor = styleLight.background
       map = new mapboxgl.Map({
         container: "map2",
         // 这是osm的style
-        style: "mapbox://styles/mapbox/streets-v12",
+        // style: "mapbox://styles/mapbox/streets-v12",
+        style: styleLight.styleJson as any,
 
         // 下方是天地图的style
         // style: {
@@ -128,7 +132,7 @@ export default defineComponent({
         accessToken:
           "pk.eyJ1Ijoiam9obm55dCIsImEiOiJja2xxNXplNjYwNnhzMm5uYTJtdHVlbTByIn0.f1GfZbFLWjiEayI6hb_Qvg",
       });
-      
+
       var language = new MapboxLanguage({ defaultLanguage: "zh-Hans" });
       map.addControl(language);
 
@@ -189,10 +193,12 @@ export default defineComponent({
 div.scene-map-wrapper2 {
   height: 100%;
   width: 100%;
+
   div#map2 {
     width: 100%;
     height: 100%;
   }
+
   img {
     width: 100%;
     height: 100%;

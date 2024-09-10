@@ -7,6 +7,7 @@ import { defineComponent, ref, onMounted } from "vue";
 import { FlowMapbox } from "mapbox-flow";
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapBoxGl, { MapboxOptions } from "mapbox-gl";
+import { styleDark } from "@/utils/mapStyleJson";
 export default defineComponent({
   setup() {
     const container = ref<HTMLDivElement>();
@@ -99,9 +100,11 @@ export default defineComponent({
       flowMapbox.changeState(22);
     };
     const initMap = (layer: { id: string; type: "custom"; onAdd(map: any, gl: any): void; render(gl: any, matrix: any): void }) => {
+      container.value!.style.background = styleDark.background;
       const mapOpt: MapboxOptions & { useWebGL2: boolean } = {
         container: container.value!,
-        style: "mapbox://styles/johnnyt/clblx2t3v000a14proaq4e9qv",
+        // style: "mapbox://styles/johnnyt/clblx2t3v000a14proaq4e9qv",
+        style: styleDark.styleJson as any,
         center: [121.024075, 31.765318],
         zoom: 8.8,
         useWebGL2: true,

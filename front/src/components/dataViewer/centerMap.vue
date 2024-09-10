@@ -12,6 +12,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { onMounted } from '@vue/runtime-core';
 import { MapDataPreparer } from '@/utils/viewerData';
+import { styleDark } from '@/utils/mapStyleJson';
 
 
 interface Props {
@@ -48,17 +49,20 @@ onMounted(async () => {
     // mapbox key
     mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obm55dCIsImEiOiJja2xxNXplNjYwNnhzMm5uYTJtdHVlbTByIn0.f1GfZbFLWjiEayI6hb_Qvg';
 
+    const dom = document.getElementById('map');
+    dom!.style.background = styleDark.background
     const map = new mapboxgl.Map(
         {
             container: 'map',
-            style: 'mapbox://styles/johnnyt/clld6armr00f901q0dyqh7452',
+            // style: 'mapbox://styles/johnnyt/clld6armr00f901q0dyqh7452',
+            style: styleDark.styleJson as any,
             center: [120.861, 31.8813],
             zoom: 11.16,
-            pitch:15, 
+            pitch: 15,
             bearing: 20
         }
     )
-    
+
     // const popUp = new mapboxgl.Popup().setDOMContent(testPopIns.$el);
     let floatLineData = await mapDataPreparer.prepareFloatLineDataSource(props.projectId);
 
@@ -72,10 +76,10 @@ onMounted(async () => {
         if (newStep !== step) {
             // console.log(step)
             // console.log(1);
-            for(let i = 0; i<mapDataPreparer.floatPtNum; i++) {
+            for (let i = 0; i < mapDataPreparer.floatPtNum; i++) {
                 map.setPaintProperty(
                     'floatLine' + i + '-dashed',
-                    'line-dasharray', 
+                    'line-dasharray',
                     dashArraySequence[step]
                 );
             }
@@ -105,7 +109,7 @@ onMounted(async () => {
     //     console.log('c',map.getCenter())
     // })
 
-    
+
 
 });
 

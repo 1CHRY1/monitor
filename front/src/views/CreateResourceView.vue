@@ -180,6 +180,7 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { uuid } from "@/utils/common";
 import { classList } from "@/common-config";
 import { DataListType, StationType } from "@/type";
+import { styleLight } from "@/utils/mapStyleJson";
 export default defineComponent({
   components: {
     Editor,
@@ -341,9 +342,11 @@ export default defineComponent({
     });
 
     const initMap = () => {
+      container.value!.style.background = styleLight.background;
       map = new mapBoxGl.Map({
         container: container.value as HTMLElement,
-        style: "mapbox://styles/johnnyt/cl9miecpn001t14rspop38nyk",
+        // style: "mapbox://styles/johnnyt/cl9miecpn001t14rspop38nyk",
+        style: styleLight.styleJson as any,
         center: [121.18, 31.723],
         zoom: 8,
         accessToken:

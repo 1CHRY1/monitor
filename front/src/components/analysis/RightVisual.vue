@@ -1,25 +1,14 @@
 <template>
   <div class="right-visual">
     <div ref="container" class="container"></div>
-    <el-dialog
-      v-model="chartVisual"
-      width="900px"
-      id="chart"
-      title="可视化结果"
-    >
+    <el-dialog v-model="chartVisual" width="900px" id="chart" title="可视化结果">
       <chart-visual :chartVisualInfo="chartVisualInfo"></chart-visual>
     </el-dialog>
-    <el-dialog
-      v-model="dialogVisible"
-      :width="300"
-      :title="visualType == 'geoJsonLine' ? '断面名称：' : '区域名称：'"
-    >
+    <el-dialog v-model="dialogVisible" :width="300" :title="visualType == 'geoJsonLine' ? '断面名称：' : '区域名称：'">
       <div class="name">
         <el-input v-model="inputValue" />
         <div class="btn">
-          <el-button type="primary" plain size="small" @click="clickHandle"
-            >确定</el-button
-          >
+          <el-button type="primary" plain size="small" @click="clickHandle">确定</el-button>
         </div>
       </div>
     </el-dialog>
@@ -33,6 +22,7 @@ import { getCoordinates, getAnalysisGeoJson, getContent } from "@/api/request";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import "mapbox-gl/dist/mapbox-gl.css";
 import ChartVisual from "./ChartVisual.vue";
+import { styleLight } from '@/utils/mapStyleJson'
 export default defineComponent({
   components: { ChartVisual },
   props: {
@@ -144,11 +134,13 @@ export default defineComponent({
     };
 
     const initMap = () => {
+      container.value!.style.backgroundColor = styleLight.background as string;
       map = new mapBoxGl.Map({
         container: container.value as HTMLElement,
         accessToken:
           "pk.eyJ1Ijoiam9obm55dCIsImEiOiJja2xxNXplNjYwNnhzMm5uYTJtdHVlbTByIn0.f1GfZbFLWjiEayI6hb_Qvg",
-        style: "mapbox://styles/johnnyt/cl9miecpn001t14rspop38nyk",
+        // style: "mapbox://styles/johnnyt/cl9miecpn001t14rspop38nyk",
+        style: styleLight.styleJson as any,
         center: [121.18, 31.723],
         zoom: 8,
       });
@@ -170,10 +162,10 @@ export default defineComponent({
               .setLngLat([
                 (volumeList.value[i].coordinates[0][0] +
                   volumeList.value[i].coordinates[2][0]) /
-                  2,
+                2,
                 (volumeList.value[i].coordinates[0][1] +
                   volumeList.value[i].coordinates[2][1]) /
-                  2,
+                2,
               ])
               .setHTML(volumeList.value[i].description)
               .addTo(map);
@@ -419,36 +411,45 @@ export default defineComponent({
   width: 100%;
   position: relative;
   padding: 5px;
+
   .container {
     height: 100%;
     width: 100%;
     border-radius: 8px;
   }
+
   :deep() .el-dialog {
     .el-dialog__header {
       padding: 10px;
       background: #4c75a9;
       margin: 0px;
+
       .el-dialog__title {
         color: white;
       }
+
       .el-dialog__headerbtn {
         height: 40px;
+
         .el-icon {
           color: white;
         }
       }
     }
+
     .el-dialog__body {
       padding: 0px;
     }
   }
+
   .name {
     padding: 10px;
     height: 70px;
+
     .btn {
       position: relative;
       margin-top: 10px;
+
       .el-button {
         position: absolute;
         right: 0px;

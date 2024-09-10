@@ -65,6 +65,7 @@ import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import mapBoxGl, { AnySourceData } from "mapbox-gl";
 import MapboxLanguage  from '@mapbox/mapbox-gl-language'
 import "mapbox-gl/dist/mapbox-gl.css";
+import { styleLight } from "@/utils/mapStyleJson";
 
 export default defineComponent({
   props: {
@@ -189,10 +190,12 @@ export default defineComponent({
     };
 
     const initMap = () => {
+      container.value!.style.background = styleLight.background;
       map = new mapBoxGl.Map({
         container: container.value as HTMLElement,
         // 这是osm的style
-        style: "mapbox://styles/mapbox/streets-v12",
+        // style: "mapbox://styles/mapbox/streets-v12",
+        style: styleLight.styleJson as any,
 
         // 下方是天地图的style
         // style: {

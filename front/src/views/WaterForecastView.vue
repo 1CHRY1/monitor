@@ -49,6 +49,7 @@ import {
 import { number } from "echarts";
 import { arrayToGlsl } from "ol/style/expressions";
 // import LoginView from "./LoginView.vue";
+import { styleDark } from "@/utils/mapStyleJson";
 
 type PopupChartProps = {
   stationName: string;
@@ -613,9 +614,12 @@ const showInfoWindow = (
 };
 
 onMounted(async () => {
+  const dom = document.getElementById("container");
+  dom!.style.background = styleDark.background;
   const map = new mapboxgl.Map({
     container: "container",
-    style: "mapbox://styles/johnnyt/clld6armr00f901q0dyqh7452",
+    // style: "mapbox://styles/johnnyt/clld6armr00f901q0dyqh7452",
+    style:styleDark.styleJson as any,
     center: [120.001, 31.8813],
     zoom: 9.05,
     accessToken:
